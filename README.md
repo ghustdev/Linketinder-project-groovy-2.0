@@ -1,76 +1,64 @@
-# Linketinder (Groovy CLI)
+# Linketinder (Groovy CLI Version)
 
-MVP de uma plataforma de recrutamento inspirada no conceito de *match* do Tinder com foco em competências técnicas, no estilo LinkedIn.
+MVP de uma plataforma de recrutamento em linha de comando inspirada no conceito de *match* por competências.
 
-## Contexto do projeto
+## Status atual
 
-Este projeto foi desenvolvido a partir do desafio proposto no **Acelera ZG**: criar uma solução prática para aproximar empresas e candidatos com base em habilidades, reduzindo ruído de relevância social e priorizando aderência técnica. Mas vale também o lado da zoeira kkkk
-
-## Objetivo do MVP
-
-Entregar uma aplicação de terminal simples para validar o fluxo principal de cadastro e visualização de perfis de:
-
-- Candidatos
-- Empresas
-
-Cada perfil possui dados cadastrais e lista de competências (*skills*).
+O projeto está funcional como aplicação CLI e já possui testes automatizados para a camada de serviço.
 
 ## Funcionalidades implementadas
 
 - Menu interativo no terminal
-- Listagem de empresas cadastradas
-- Listagem de candidatos cadastrados
-- Cadastro de novas empresas
-- Cadastro de novos candidatos
-- Carga inicial com dados pré-cadastrados (7 candidatos e 7 empresas)
+- Cadastro de empresas
+- Cadastro de candidatos
+- Listagem de empresas
+- Listagem de candidatos
+- Carga inicial com dados em memória (7 candidatos e 7 empresas)
 
-## Requisitos do desafio
+## Estrutura do projeto
 
-### Obrigatórios
+```text
+src/main/groovy
+├── Main.groovy
+├── model
+│   ├── Candidato.groovy
+│   ├── Empresa.groovy
+│   ├── InterfacePessoa.groovy
+│   └── Pessoa.groovy
+├── repository
+│   └── Repository.groovy
+├── services
+│   └── PessoaServices.groovy
+└── view
+    └── Interface.groovy
 
-- Estruturas para candidatos e empresas com os campos exigidos
-- Atributo de competências para ambos os tipos
-- Menu simples de terminal para listagem de dados
-- Base inicial com no mínimo 5 candidatos e 5 empresas
-
-### Opcionais
-
-- Cadastro de novos candidatos e empresas implementado
-
-## Arquitetura atual
-
-A aplicação segue um MVC com separação simples por camadas:
-
-- `src/Main.groovy`: ponto de entrada da aplicação
-- `src/view/Interface.groovy`: menu CLI e interação com usuário
-- `src/services/PessoaServices.groovy`: regras de criação de candidatos e empresas
-- `src/repository/Repository.groovy`: armazenamento em memória e dados iniciais
-- `src/model/Pessoa.groovy`: interface e classe base (`Pessoa`)
-- `src/model/Cadidato.groovy`: entidade `Candidato`
-- `src/model/Empresa.groovy`: entidade `Empresa`
+src/test/groovy
+└── services
+    └── PessoaServicesTest.groovy
+```
 
 ## Tecnologias
 
-- Groovy 5
-- Execução em linha de comando
-- Estruturas em memória (`List`) para persistência temporária
+- Groovy 4
+- Gradle (wrapper: 9.2.0)
+- Spock Framework
+- JUnit Platform
+- Mockito (dependência disponível no projeto)
+
+## Pré-requisitos
+
+- JDK 17+
+- Bash/terminal
 
 ## Como executar
-
-### Pré-requisitos
-
-- JDK 17+ (recomendado)
-- Groovy instalado no ambiente
-
-### Execução
 
 Na raiz do projeto:
 
 ```bash
-groovy src/Main.groovy
+groovy src/main/groovy/Main.groovy
 ```
 
-Após iniciar, use o menu:
+Menu disponível:
 
 - `[1]` Adicionar empresa
 - `[2]` Adicionar candidato
@@ -78,18 +66,33 @@ Após iniciar, use o menu:
 - `[4]` Listar candidatos
 - `[0]` Encerrar
 
-## Estado do projeto
+## Como testar
 
-Projeto em estágio de MVP, com foco em validação funcional local via terminal.
+Executar todos os testes:
 
-Evoluções naturais para próximas versões:
+```bash
+./gradlew test
+```
+
+Relatórios gerados em:
+
+- `build/reports/tests/test/index.html`
+- `build/test-results/test/`
+
+## Documentação detalhada
+
+- [Documentação técnica do projeto](docs/PROJETO.md)
+- [Documentação de testes](docs/TESTES.md)
+
+## Limitações atuais
+
+- Persistência apenas em memória
+- Sem validações de formato/consistência (CPF, CNPJ, e-mail, CEP)
+- Sem mecanismo de match automático entre candidatos e empresas
+
+## Próximos passos sugeridos
 
 - Persistência em banco de dados
-- Validação robusta de CPF/CNPJ, e-mail e CEP
-- Regras de match entre skills de candidatos e empresas
-- Testes automatizados
-- API REST e interface web
-
-## Licença
-
-Este projeto está sob a licença MIT. Consulte `LICENSE` para detalhes.
+- Validação de entrada e tratamento de erros por regra de domínio
+- Implementação de algoritmo de match por skills
+- Expansão da cobertura de testes (camadas de repositório e interface)

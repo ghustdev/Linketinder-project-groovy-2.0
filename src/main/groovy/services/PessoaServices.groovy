@@ -12,8 +12,8 @@ class PessoaServices {
     Repository repository
 
     @CompileDynamic
-    PessoaServices(Repository repo) {
-        this.repository = repo
+    PessoaServices(Repository repository) {
+        this.repository = repository
     }
 
     @CompileDynamic
