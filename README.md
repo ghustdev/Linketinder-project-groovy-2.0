@@ -38,7 +38,7 @@ src/test/groovy
 ```
 
 #### Modelagem UML (básica apenas para entendimento)
-
+<img width="721" height="541" alt="UML Linketinder Groovy 2 0 drawio" src="https://github.com/user-attachments/assets/81d8d3b9-a33a-439a-b136-34a640adf317" />
 
 ## Tecnologias
 
