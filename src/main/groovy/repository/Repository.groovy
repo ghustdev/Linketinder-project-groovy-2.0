@@ -4,10 +4,10 @@ import model.Candidato
 import model.Empresa
 
 class Repository {
-    static List<Candidato> arrayCandidatos = []
-    static List<Empresa> arrayEmpresas = []
+    List<Candidato> arrayCandidatos = []
+    List<Empresa> arrayEmpresas = []
 
-    static {
+    Repository() {
         /* Candidatos */
         // 1. Gustavo
         arrayCandidatos.add(Candidato.builder()

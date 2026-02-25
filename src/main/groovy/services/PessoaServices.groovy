@@ -1,12 +1,24 @@
 package services
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import model.Candidato
 import model.Empresa
 import repository.Repository
 
+@CompileStatic
 class PessoaServices {
+
+    Repository repository
+
+    @CompileDynamic
+    PessoaServices(Repository repo) {
+        this.repository = repo
+    }
+
+    @CompileDynamic
     void createCandidato(String name, String email, String cpf, int old, String state, String cep, String description, List<String> skills) {
-        Repository.arrayCandidatos.add(Candidato.builder()
+        repository.arrayCandidatos.add(Candidato.builder()
                 .name(name)
                 .email(email)
                 .cpf(cpf)
@@ -18,8 +30,9 @@ class PessoaServices {
                 .build())
     }
 
+    @CompileDynamic
     void createEmpresa(String name, String email, String cnpj, String country, String state, String cep, String description, List<String> skills) {
-        Repository.arrayEmpresas.add(Empresa.builder()
+        repository.arrayEmpresas.add(Empresa.builder()
                 .name(name)
                 .email(email)
                 .cnpj(cnpj)

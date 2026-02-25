@@ -13,7 +13,7 @@ class Candidato extends Pessoa {
     String cep
     List<String> skills = []
 
-    // Campos específicos
+    // Specific fields
     String cpf
     int old
 }

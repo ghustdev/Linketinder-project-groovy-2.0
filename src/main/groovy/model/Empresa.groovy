@@ -13,7 +13,7 @@ class Empresa extends Pessoa {
     String cep
     List<String> skills = []
 
-    // Campos específicos
+    // Specific fields
     String cnpj
     String country
 }

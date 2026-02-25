@@ -4,7 +4,15 @@ import repository.Repository
 import services.PessoaServices
 
 class Interface {
+    PessoaServices pessoaServices
+    Repository repository
+
     Scanner scanner = new Scanner(System.in)
+
+    Interface(PessoaServices pessoaServices, Repository repo) {
+        this.pessoaServices = pessoaServices
+        this.repository = repo
+    }
 
     void cliMenu() {
         while (true) {
@@ -61,7 +69,7 @@ class Interface {
             println("Email: ")
             String email = scanner.nextLine()
             println("CNPJ: ")
-            String cpf = scanner.nextLine()
+            String cnpj = scanner.nextLine()
             println("País: ")
             String country = scanner.nextLine()
             println("Estado: ")
@@ -74,7 +82,7 @@ class Interface {
             String input = scanner.nextLine()
             List<String> skills = input.split(",").collect { it.trim() }
 
-            PessoaServices.createEmpresa(name, email, cpf, country, state, cep, description, skills)
+            pessoaServices.createEmpresa(name, email, cnpj, country, state, cep, description, skills)
 
             println("+================================================+")
             println("Empresa cadastrada com sucesso!")
@@ -115,7 +123,7 @@ class Interface {
             String input = scanner.nextLine()
             List<String> skills = input.split(",").collect { it.trim() }
 
-            PessoaServices.createCandidato(name, email, cpf, old, state, cep, description, skills)
+            pessoaServices.createCandidato(name, email, cpf, old, state, cep, description, skills)
 
             println("+================================================+")
             println("Candidato cadastrado com sucesso!")
@@ -137,7 +145,9 @@ class Interface {
             println("+================================================+")
             println("|              Listagem de candidatos             |")
             println("+================================================+")
-            Repository.arrayCandidatos.each { c ->
+            int id = 1
+            repository.arrayCandidatos.each { c ->
+                println "Candidato: ${id}"
                 println "CPF: ${c.cpf}"
                 println "Nome candidato: ${c.name}"
                 println "Email pessoal: ${c.email}"
@@ -149,6 +159,7 @@ class Interface {
                 c.skills.each {s ->
                     println "   ${s}"
                 }
+                id++
                 println("+================================================+")
             }
             println("Aperte \"Enter\" para continuar")
@@ -168,7 +179,9 @@ class Interface {
             println("+================================================+")
             println("|              Listagem de empresas              |")
             println("+================================================+")
-            Repository.arrayEmpresas.each {e ->
+            int id = 1
+            repository.arrayEmpresas.each {e ->
+                println "Empresa: ${id}"
                 println "CNPJ: ${e.cnpj}"
                 println "Nome empresa: ${e.name}"
                 println "Email corporativo: ${e.email}"
@@ -180,6 +193,7 @@ class Interface {
                 e.skills.each {s ->
                     println "   ${s}"
                 }
+                id++
                 println("+================================================+")
             }
             println("Aperte \"Enter\" para continuar")
