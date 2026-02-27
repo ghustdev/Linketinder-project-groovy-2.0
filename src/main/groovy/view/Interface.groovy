@@ -24,6 +24,10 @@ class Interface {
                 println("[2] - Adicionar candidato")
                 println("[3] - Listar empresas")
                 println("[4] - Listar candidatos")
+                println("[5] - Cadastrar vaga (Empresa)")
+                println("[6] - Verificar curtidas (Empresa)")
+                println("[7] - Vizualizar vagas (Candidato)")
+                println("[8] - Verificar Matches")
                 println("[0] - Encerrar programa")
                 println("+================================================+")
                 print("Selecione uma opção: ")
@@ -39,12 +43,20 @@ class Interface {
                     cliListEmpresas()
                 } else if (optionMenu == 4) {
                     cliListCandidatos()
+                } else if (optionMenu == 5) {
+                    cliCreateVaga()
+                } else if (optionMenu == 6) {
+                    cliVerifyLikes()
+                } else if (optionMenu == 7) {
+                    cliListVagas()
+                } else if (optionMenu == 8) {
+                    clirListMacthes()
                 } else if (optionMenu == 0) {
                     scanner.close()
                     break
                 } else {
                     println("+================================================+")
-                    println("Insira uma opção válida (números de 0 - 4). Erro: opção fora do limite")
+                    println("Insira uma opção válida (números de 0 - 6). Erro: opção fora do limite")
                     println("+================================================+")
                     println("Aperte \"Enter\" para continuar")
                     scanner.nextLine()
@@ -202,6 +214,36 @@ class Interface {
         catch (Exception e) {
             println("+================================================+")
             println("Falha ao listar candidatos. Erro: ${e}")
+            println("+================================================+")
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
+    }
+
+    void cliCreateVaga() {
+        try {
+            println("+================================================+")
+            println("|                 Cadastrar vaga                 |")
+            println("+================================================+")
+            println("Título: ")
+            String title = scanner.nextLine()
+            println("Descrição da vaga: ")
+            String description = scanner.nextLine()
+            println("Lista de habilidades requeridas (separado por ','): ")
+            String input = scanner.nextLine()
+            List<String> skillsRequests = input.split(",").collect { it.trim() }
+
+            pessoaServices.createCandidato(name, email, cpf, old, state, cep, description, skills)
+
+            println("+================================================+")
+            println("Candidato cadastrado com sucesso!")
+            println("+================================================+")
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
+        catch (Exception e) {
+            println("+================================================+")
+            println("Falha ao cadastrar candidato. Erro: ${e}")
             println("+================================================+")
             println("Aperte \"Enter\" para continuar")
             scanner.nextLine()
