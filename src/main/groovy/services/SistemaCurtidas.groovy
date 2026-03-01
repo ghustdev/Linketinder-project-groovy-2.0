@@ -4,12 +4,11 @@ import model.Curtidas
 import model.Candidato
 import model.Empresa
 import model.Vaga
-import services.SistemaMatch
 
 class SistemaCurtidas {
 
-    private List<Curtidas>        todasCurtidas = []
-    private List<SistemaMatch> matches       = []
+    private List<Curtidas> todasCurtidas = []
+    private List<SistemaMatch> matches = []
 
     // Registra que um candidato curtiu uma vaga
     Curtidas candidatoCurteVaga(Candidato candidato, Vaga vaga) {
