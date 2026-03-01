@@ -1,7 +1,6 @@
 package model
 
 class Vaga {
-
     int id
     String title
     String description

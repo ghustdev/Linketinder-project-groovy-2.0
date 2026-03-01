@@ -10,7 +10,7 @@ O sistema é orientado a objetos, com armazenamento em memória e separação em
 
 ### 2.1 Camadas
 
-- **View (`view.Interface`)**
+- **View (`view.Cli`)**
   - Exibe o menu de interação
   - Coleta entradas do usuário via `Scanner`
   - Chama os serviços e o repositório para listar/cadastrar dados

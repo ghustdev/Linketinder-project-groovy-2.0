@@ -3,13 +3,13 @@ package view
 import repository.Repository
 import services.PessoaServices
 
-class Interface {
+class Cli {
     PessoaServices pessoaServices
     Repository repository
 
     Scanner scanner = new Scanner(System.in)
 
-    Interface(PessoaServices pessoaServices, Repository repo) {
+    Cli(PessoaServices pessoaServices, Repository repo) {
         this.pessoaServices = pessoaServices
         this.repository = repo
     }
@@ -27,7 +27,7 @@ class Interface {
                 println("[5] - Cadastrar vaga (Empresa)")
                 println("[6] - Verificar curtidas (Empresa)")
                 println("[7] - Vizualizar vagas (Candidato)")
-                println("[8] - Verificar Matches")
+                println("[8] - Listar Matches")
                 println("[0] - Encerrar programa")
                 println("+================================================+")
                 print("Selecione uma opção: ")
@@ -248,5 +248,17 @@ class Interface {
             println("Aperte \"Enter\" para continuar")
             scanner.nextLine()
         }
+    }
+
+    void cliVerifyLikes() {
+
+    }
+
+    void cliListVagas() {
+
+    }
+
+    void clirListMacthes() {
+
     }
 }

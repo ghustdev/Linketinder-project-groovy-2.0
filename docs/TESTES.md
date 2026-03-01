@@ -72,7 +72,7 @@ Execução mais recente nesta atualização:
 
 Atualmente não há testes para:
 
-- `view.Interface` (fluxo de entrada/saída no terminal)
+- `view.Cli` (fluxo de entrada/saída no terminal)
 - `repository.Repository` (carga inicial)
 - validações de dados de entrada
 - cenários de erro com entradas inválidas
