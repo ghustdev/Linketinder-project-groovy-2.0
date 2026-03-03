@@ -2,98 +2,15 @@ package repository
 
 import model.Candidato
 import model.Empresa
+import model.Vaga
 
 class Repository {
     List<Candidato> arrayCandidatos = []
     List<Empresa> arrayEmpresas = []
+    List<Vaga> arrayVagas = []
 
     Repository() {
-        /* Candidatos */
-        // 1. Gustavo
-        arrayCandidatos.add(Candidato.builder()
-                .name("Gustavo Cardoso")
-                .email("gustavo@exemplo.com")
-                .cpf("123.456.789-01")
-                .old(25)
-                .state("GO")
-                .cep("74000-000")
-                .description("Desenvolvedor apaixonado por inovação e Java.")
-                .skills(["Java", "Groovy", "Linux", "Competitive Programming"])
-                .build())
-
-        // 2. Ana
-        arrayCandidatos.add(Candidato.builder()
-                .name("Ana Silva")
-                .email("ana.silva@tech.com")
-                .cpf("234.567.890-02")
-                .old(28)
-                .state("SP")
-                .cep("01001-000")
-                .description("Especialista em Front-end e UX Design.")
-                .skills(["React", "TypeScript", "Figma"])
-                .build())
-
-        // 3. Bruno
-        arrayCandidatos.add(Candidato.builder()
-                .name("Bruno Souza")
-                .email("bruno.souza@dev.com")
-                .cpf("345.678.901-03")
-                .old(30)
-                .state("RJ")
-                .cep("20040-002")
-                .description("Engenheiro de Software focado em Cloud Computing.")
-                .skills(["AWS", "Docker", "Kubernetes", "Go"])
-                .build())
-
-        // 4. Carla
-        arrayCandidatos.add(Candidato.builder()
-                .name("Carla Oliveira")
-                .email("carla.oli@work.com")
-                .cpf("456.789.012-04")
-                .old(24)
-                .state("MG")
-                .cep("30130-010")
-                .description("Cientista de dados com foco em IA.")
-                .skills(["Python", "Pandas", "Scikit-learn", "SQL"])
-                .build())
-
-        // 5. Diego
-        arrayCandidatos.add(Candidato.builder()
-                .name("Diego Santos")
-                .email("diego.santos@code.com")
-                .cpf("567.890.123-05")
-                .old(27)
-                .state("BA")
-                .cep("40020-000")
-                .description("Desenvolvedor Mobile Android.")
-                .skills(["Kotlin", "Jetpack Compose", "Firebase"])
-                .build())
-
-        // 6. Elena
-        arrayCandidatos.add(Candidato.builder()
-                .name("Elena Martins")
-                .email("elena.m@sys.com")
-                .cpf("678.912.345-06")
-                .old(32)
-                .state("PR")
-                .cep("80010-000")
-                .description("Analista de Sistemas e Gestora de Projetos.")
-                .skills(["Scrum", "Kanban", "Jira", "Groovy"])
-                .build())
-
-        // 7. Fabio
-        arrayCandidatos.add(Candidato.builder()
-                .name("Fabio Rocha")
-                .email("fabio.rocha@web.com")
-                .cpf("789.012.345-07")
-                .old(22)
-                .state("SC")
-                .cep("88010-000")
-                .description("Entusiasta de Segurança da Informação.")
-                .skills(["Cybersecurity", "Linux", "Python", "Networking"])
-                .build())
-
-        /* Empresas */
+        /* ----- Empresas ----- */
         // 1. ZG Soluções
         arrayEmpresas.add(Empresa.builder()
                 .name("ZG Soluções")
@@ -184,6 +101,105 @@ class Repository {
                 .country("Brasil")
                 .build()
         )
+
+        /* ----- Candidatos ----- */
+        // 1. Gustavo
+        arrayCandidatos.add(Candidato.builder()
+                .name("Gustavo Cardoso")
+                .email("gustavo@exemplo.com")
+                .cpf("123.456.789-01")
+                .old(25)
+                .state("GO")
+                .cep("74000-000")
+                .description("Desenvolvedor apaixonado por inovação e Java.")
+                .skills(["Java", "Groovy", "Linux", "Competitive Programming"])
+                .build())
+
+        // 2. Ana
+        arrayCandidatos.add(Candidato.builder()
+                .name("Ana Silva")
+                .email("ana.silva@tech.com")
+                .cpf("234.567.890-02")
+                .old(28)
+                .state("SP")
+                .cep("01001-000")
+                .description("Especialista em Front-end e UX Design.")
+                .skills(["React", "TypeScript", "Figma"])
+                .build())
+
+        // 3. Bruno
+        arrayCandidatos.add(Candidato.builder()
+                .name("Bruno Souza")
+                .email("bruno.souza@dev.com")
+                .cpf("345.678.901-03")
+                .old(30)
+                .state("RJ")
+                .cep("20040-002")
+                .description("Engenheiro de Software focado em Cloud Computing.")
+                .skills(["AWS", "Docker", "Kubernetes", "Go"])
+                .build())
+
+        // 4. Carla
+        arrayCandidatos.add(Candidato.builder()
+                .name("Carla Oliveira")
+                .email("carla.oli@work.com")
+                .cpf("456.789.012-04")
+                .old(24)
+                .state("MG")
+                .cep("30130-010")
+                .description("Cientista de dados com foco em IA.")
+                .skills(["Python", "Pandas", "Scikit-learn", "SQL"])
+                .build())
+
+        // 5. Diego
+        arrayCandidatos.add(Candidato.builder()
+                .name("Diego Santos")
+                .email("diego.santos@code.com")
+                .cpf("567.890.123-05")
+                .old(27)
+                .state("BA")
+                .cep("40020-000")
+                .description("Desenvolvedor Mobile Android.")
+                .skills(["Kotlin", "Jetpack Compose", "Firebase"])
+                .build())
+
+        // 6. Elena
+        arrayCandidatos.add(Candidato.builder()
+                .name("Elena Martins")
+                .email("elena.m@sys.com")
+                .cpf("678.912.345-06")
+                .old(32)
+                .state("PR")
+                .cep("80010-000")
+                .description("Analista de Sistemas e Gestora de Projetos.")
+                .skills(["Scrum", "Kanban", "Jira", "Groovy"])
+                .build())
+
+        // 7. Fabio
+        arrayCandidatos.add(Candidato.builder()
+                .name("Fabio Rocha")
+                .email("fabio.rocha@web.com")
+                .cpf("789.012.345-07")
+                .old(22)
+                .state("SC")
+                .cep("88010-000")
+                .description("Entusiasta de Segurança da Informação.")
+                .skills(["Cybersecurity", "Linux", "Python", "Networking"])
+                .build())
+
+        /* ----- Vagas ----- */
+        arrayVagas.add(Vaga.builder()
+                .id(1)
+                .title("Estágio de Desenvolvimento")
+                .description("""
+                    - Cursando superior em tecnologia,
+                    - Conheicmento básico de Java e Groovy,
+                    - Versionamento e Git,
+                    - Conhecimento em API e CRUD""")
+                .skillsRequests(["Java", "Groovy", "Git"])
+                .empresa(arrayEmpresas.get(0))
+                .build())
+
     }
 }
 

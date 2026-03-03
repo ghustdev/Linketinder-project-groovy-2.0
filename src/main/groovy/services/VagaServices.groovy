@@ -1,0 +1,81 @@
+package services
+
+import groovy.transform.CompileDynamic
+import model.Candidato
+import repository.Repository
+import model.Empresa
+import model.Vaga
+
+class VagaServices {
+    Repository repository
+
+    @CompileDynamic
+    VagaServices(Repository repository) {
+        this.repository = repository
+    }
+
+    Empresa searchEmpresa(String cnpj) {
+        try {
+            def empresa = repository.arrayEmpresas.find {it.cnpj.equalsIgnoreCase(cnpj)}
+
+            if (empresa != null) {
+                return empresa
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    Candidato searchCandidato(String cpf) {
+        try {
+            def candidato = repository.arrayCandidatos.find {it.cpf.equalsIgnoreCase(cpf)}
+
+            if (candidato != null) {
+                return candidato
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    @CompileDynamic
+    void createVaga(String title, String description, Empresa empresa, List<String> skillsRequests) {
+        List<Vaga> vagas = repository.arrayVagas
+
+        try {
+            int maxId = vagas.stream().mapToInt(Vaga::getId).max().orElse(0) + 1
+
+            repository.arrayVagas.add(Vaga.builder()
+                    .id(maxId)
+                    .title(title)
+                    .description(description)
+                    .empresa(empresa)
+                    .skillsRequests(skillsRequests)
+                    .build())
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+    }
+
+    @CompileDynamic
+    void listVagas() {
+        repository.arrayVagas.each { v ->
+            println("+================================================+")
+            println "Id: ${v.id}"
+            println "Empresa: ${v.empresa.name}"
+            println "CNPJ: ${v.empresa.cnpj}"
+            println "Título: ${v.title}"
+            println "Descrição: ${v.description}"
+            println "Requisitos: "
+            v.skillsRequests.each {s ->
+                println " - ${s}"
+            }
+            println("+================================================+")
+        }
+    }
+}

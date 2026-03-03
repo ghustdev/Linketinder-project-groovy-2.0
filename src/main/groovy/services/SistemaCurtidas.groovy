@@ -7,8 +7,8 @@ import model.Vaga
 
 class SistemaCurtidas {
 
-    private List<Curtidas> todasCurtidas = []
-    private List<SistemaMatch> matches = []
+    List<Curtidas> allCurtidas = []
+    List<SistemaMatch> allMatches = []
 
     // Registra que um candidato curtiu uma vaga
     Curtidas candidatoCurteVaga(Candidato candidato, Vaga vaga) {

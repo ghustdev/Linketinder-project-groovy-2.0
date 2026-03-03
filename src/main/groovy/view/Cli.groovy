@@ -2,16 +2,21 @@ package view
 
 import repository.Repository
 import services.PessoaServices
+import services.VagaServices
+import model.Empresa
+import model.Candidato
 
 class Cli {
     PessoaServices pessoaServices
+    VagaServices vagaServices
     Repository repository
 
     Scanner scanner = new Scanner(System.in)
 
-    Cli(PessoaServices pessoaServices, Repository repo) {
+    Cli(PessoaServices pessoaServices, Repository repository, VagaServices vagaServices) {
         this.pessoaServices = pessoaServices
-        this.repository = repo
+        this.repository = repository
+        this.vagaServices = vagaServices
     }
 
     void cliMenu() {
@@ -25,8 +30,8 @@ class Cli {
                 println("[3] - Listar empresas")
                 println("[4] - Listar candidatos")
                 println("[5] - Cadastrar vaga (Empresa)")
-                println("[6] - Verificar curtidas (Empresa)")
-                println("[7] - Vizualizar vagas (Candidato)")
+                println("[6] - Visualizar curtidas (Empresa)")
+                println("[7] - Visualizar vagas (Candidato)")
                 println("[8] - Listar Matches")
                 println("[0] - Encerrar programa")
                 println("+================================================+")
@@ -157,23 +162,9 @@ class Cli {
             println("+================================================+")
             println("|              Listagem de candidatos             |")
             println("+================================================+")
-            int id = 1
-            repository.arrayCandidatos.each { c ->
-                println "Candidato: ${id}"
-                println "CPF: ${c.cpf}"
-                println "Nome candidato: ${c.name}"
-                println "Email pessoal: ${c.email}"
-                println "Descrição: ${c.description}"
-                println "Idade: ${c.old}"
-                println "Estado: ${c.state}"
-                println "CEP: ${c.cep}"
-                println "Habilidades: "
-                c.skills.each {s ->
-                    println "   ${s}"
-                }
-                id++
-                println("+================================================+")
-            }
+
+            pessoaServices.listCandidatos()
+
             println("Aperte \"Enter\" para continuar")
             scanner.nextLine()
         }
@@ -191,23 +182,9 @@ class Cli {
             println("+================================================+")
             println("|              Listagem de empresas              |")
             println("+================================================+")
-            int id = 1
-            repository.arrayEmpresas.each {e ->
-                println "Empresa: ${id}"
-                println "CNPJ: ${e.cnpj}"
-                println "Nome empresa: ${e.name}"
-                println "Email corporativo: ${e.email}"
-                println "Descrição: ${e.description}"
-                println "País: ${e.country}"
-                println "Estado: ${e.state}"
-                println "CEP: ${e.cep}"
-                println "Habilidades que buscamos: "
-                e.skills.each {s ->
-                    println "   ${s}"
-                }
-                id++
-                println("+================================================+")
-            }
+
+            pessoaServices.listEmpresas()
+
             println("Aperte \"Enter\" para continuar")
             scanner.nextLine()
         }
@@ -220,11 +197,85 @@ class Cli {
         }
     }
 
-    void cliCreateVaga() {
+    Empresa cliChoiceEmpresa() {
+        Empresa empresa = null
+
         try {
             println("+================================================+")
             println("|                 Cadastrar vaga                 |")
             println("+================================================+")
+
+            pessoaServices.listEmpresas()
+
+            println("+================================================+")
+            println("Escolha a empresa da vaga (pelo CNPJ): ")
+            def cnpj = scanner.nextLine()
+
+            empresa = vagaServices.searchEmpresa(cnpj)
+
+            if (empresa == null) {
+                println("+================================================+")
+                println("Essa empresa não existe!")
+                println("+================================================+")
+                println("Aperte \"Enter\" para continuar")
+                scanner.nextLine()
+                return empresa
+            }
+        }
+        catch (Exception e) {
+            println("+================================================+")
+            println("Falha ao confirmar empresa. Erro: ${e}")
+            println("+================================================+")
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
+        return empresa
+    }
+
+    Candidato cliChoiceCandidato() {
+        Candidato candidato = null
+
+        try {
+            println("+================================================+")
+            println("|                Visualizar vagas                |")
+            println("+================================================+")
+
+            pessoaServices.listCandidatos()
+
+            println("+================================================+")
+            println("Escolha o candidato para ver as vagas (pelo CPF): ")
+            def cpf = scanner.nextLine()
+
+            candidato = vagaServices.searchCandidato(cpf)
+
+            if (candidato == null) {
+                println("+================================================+")
+                println("Esse candidato não existe!")
+                println("+================================================+")
+                println("Aperte \"Enter\" para continuar")
+                scanner.nextLine()
+                return null
+            }
+        }
+        catch (Exception e) {
+            println("+================================================+")
+            println("Falha ao confirmar candidato. Erro: ${e}")
+            println("+================================================+")
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
+        return candidato
+    }
+
+    void cliCreateVaga() {
+        try {
+            def empresa = cliChoiceEmpresa()
+            if (empresa == null) return
+
+            println("+================================================+")
+            println("|                 Cadastrar vaga                 |")
+            println("+================================================+")
+            println("${empresa.name} preencha as informações: ")
             println("Título: ")
             String title = scanner.nextLine()
             println("Descrição da vaga: ")
@@ -233,17 +284,17 @@ class Cli {
             String input = scanner.nextLine()
             List<String> skillsRequests = input.split(",").collect { it.trim() }
 
-            pessoaServices.createCandidato(name, email, cpf, old, state, cep, description, skills)
+            vagaServices.createVaga(title, description, empresa, skillsRequests)
 
             println("+================================================+")
-            println("Candidato cadastrado com sucesso!")
+            println("Vaga cadastrada com sucesso!")
             println("+================================================+")
             println("Aperte \"Enter\" para continuar")
             scanner.nextLine()
         }
         catch (Exception e) {
             println("+================================================+")
-            println("Falha ao cadastrar candidato. Erro: ${e}")
+            println("Falha ao cadastrar vaga. Erro: ${e}")
             println("+================================================+")
             println("Aperte \"Enter\" para continuar")
             scanner.nextLine()
@@ -255,7 +306,55 @@ class Cli {
     }
 
     void cliListVagas() {
+        def candidato = cliChoiceCandidato()
+        if (candidato == null) return
 
+        try {
+            println("+================================================+")
+            println("|                Visualizar vagas                |")
+            println("+================================================+")
+
+            vagaServices.listVagas()
+
+            println("+================================================+")
+
+            println("${candidato.name}, deseja curtir alguma vaga? (s/n)")
+            def answer = scanner.nextLine()
+
+            while (answer == "s") {
+                println("+================================================+")
+                println("Escolha o ID da vaga que deseja curtir: ")
+                // criar lógica da curtida - apenas converter para curtidas
+                def cnpj = scanner.nextLine().toLowerCase().trim()
+
+                def empresa = vagaServices.searchEmpresa(cnpj)
+
+                if (empresa == null) {
+                    println("+================================================+")
+                    println("Essa empresa não existe!")
+                    println("+================================================+")
+                    println("Aperte \"Enter\" para continuar")
+                    scanner.nextLine()
+                    return
+                }
+
+                println("+================================================+")
+                println("Vaga CURTIDA com sucesso, ${candidato.name}!")
+                println("+================================================+")
+                println("Aperte \"Enter\" para continuar")
+                scanner.nextLine()
+
+                println("Deseja curtir outra vaga? (s/n)")
+                answer = scanner.nextLine()
+            }
+        }
+        catch (Exception e) {
+            println("+================================================+")
+            println("Falha ao listar vagas. Erro: ${e}")
+            println("+================================================+")
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
     }
 
     void clirListMacthes() {

@@ -1,5 +1,6 @@
 import repository.Repository
 import services.PessoaServices
+import services.VagaServices
 import view.Cli
 
 class Main {
@@ -7,7 +8,8 @@ class Main {
         // Constructors / Dependency Injections
         def repository = new Repository()
         def pessoaServices = new PessoaServices(repository)
-        def cli = new Cli(pessoaServices, repository)
+        def vagaServices = new VagaServices(repository)
+        def cli = new Cli(pessoaServices, repository, vagaServices)
 
         cli.cliMenu()
     }
