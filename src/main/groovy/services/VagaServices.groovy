@@ -8,12 +8,15 @@ import model.Vaga
 
 class VagaServices {
     Repository repository
+    Empresa empresa
 
     @CompileDynamic
-    VagaServices(Repository repository) {
+    VagaServices(Repository repository, Empresa empresa) {
         this.repository = repository
+        this.empresa = empresa
     }
 
+    @CompileDynamic
     Empresa searchEmpresa(String cnpj) {
         try {
             def empresa = repository.arrayEmpresas.find {it.cnpj.equalsIgnoreCase(cnpj)}
@@ -28,6 +31,22 @@ class VagaServices {
         return null
     }
 
+    @CompileDynamic
+    Vaga searchIdVaga(int id) {
+        try {
+            def vaga = repository.arrayVagas.find { (it.id == id) }
+
+            if (vaga != null) {
+                return vaga
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    @CompileDynamic
     Candidato searchCandidato(String cpf) {
         try {
             def candidato = repository.arrayCandidatos.find {it.cpf.equalsIgnoreCase(cpf)}
@@ -44,10 +63,8 @@ class VagaServices {
 
     @CompileDynamic
     void createVaga(String title, String description, Empresa empresa, List<String> skillsRequests) {
-        List<Vaga> vagas = repository.arrayVagas
-
         try {
-            int maxId = vagas.stream().mapToInt(Vaga::getId).max().orElse(0) + 1
+            int maxId = repository.arrayVagas.stream().mapToInt(Vaga::getId).max().orElse(0) + 1
 
             repository.arrayVagas.add(Vaga.builder()
                     .id(maxId)
@@ -65,7 +82,6 @@ class VagaServices {
     @CompileDynamic
     void listVagas() {
         repository.arrayVagas.each { v ->
-            println("+================================================+")
             println "Id: ${v.id}"
             println "Empresa: ${v.empresa.name}"
             println "CNPJ: ${v.empresa.cnpj}"

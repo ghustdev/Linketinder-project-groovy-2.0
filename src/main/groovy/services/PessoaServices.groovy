@@ -48,7 +48,6 @@ class PessoaServices {
     void listEmpresas() {
         int id = 1
         repository.arrayEmpresas.each {e ->
-            println("+================================================+")
             println "Empresa: ${id}"
             println "CNPJ: ${e.cnpj}"
             println "Nome empresa: ${e.name}"
@@ -66,7 +65,6 @@ class PessoaServices {
     void listCandidatos() {
         int id = 1
         repository.arrayCandidatos.each { c ->
-            println("+================================================+")
             println "Candidato: ${id}"
             println "CPF: ${c.cpf}"
             println "Nome candidato: ${c.name}"

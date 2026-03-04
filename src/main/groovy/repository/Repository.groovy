@@ -200,6 +200,18 @@ class Repository {
                 .empresa(arrayEmpresas.get(0))
                 .build())
 
+        arrayVagas.add(Vaga.builder()
+                .id(2)
+                .title("Dev Sênior")
+                .description("""
+                    - Superior completo,
+                    - Conheicmento avançado em Java e Groovy,
+                    - Versionamento e Git,
+                    - Conhecimento em API Restfull
+                    - Padrões de projetos""")
+                .skillsRequests(["Java", "Groovy", "Git", "GOF, MVC"])
+                .empresa(arrayEmpresas.get(1))
+                .build())
     }
 }
 

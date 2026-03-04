@@ -2,6 +2,7 @@ package view
 
 import repository.Repository
 import services.PessoaServices
+import services.SistemaCurtidas
 import services.VagaServices
 import model.Empresa
 import model.Candidato
@@ -10,13 +11,15 @@ class Cli {
     PessoaServices pessoaServices
     VagaServices vagaServices
     Repository repository
+    SistemaCurtidas sistemaCurtidas
 
     Scanner scanner = new Scanner(System.in)
 
-    Cli(PessoaServices pessoaServices, Repository repository, VagaServices vagaServices) {
+    Cli(PessoaServices pessoaServices, Repository repository, VagaServices vagaServices, SistemaCurtidas sistemaCurtidas) {
         this.pessoaServices = pessoaServices
         this.repository = repository
         this.vagaServices = vagaServices
+        this.sistemaCurtidas = sistemaCurtidas
     }
 
     void cliMenu() {
@@ -25,14 +28,19 @@ class Cli {
                 println("+================================================+")
                 println("|                   Linketinder                  |")
                 println("+================================================+")
+                /* println("[1] - Empresa")
+                println("[2] - Candidato")
+                println("[3] - Admin")
+                println("+================================================+")*/
                 println("[1] - Adicionar empresa")
                 println("[2] - Adicionar candidato")
                 println("[3] - Listar empresas")
                 println("[4] - Listar candidatos")
-                println("[5] - Cadastrar vaga (Empresa)")
-                println("[6] - Visualizar curtidas (Empresa)")
-                println("[7] - Visualizar vagas (Candidato)")
-                println("[8] - Listar Matches")
+                println("[5] - [Empresa] Cadastrar vaga")
+                println("[6] - [Empresa] Visualizar curtidas (curtir Candidato)")
+                println("[7] - [Candidato] Visualizar feed de vagas (curtir Vaga)")
+                println("[8] - [Candidato] Visualizar curtidas")
+                println("[9] - Listar Matches")
                 println("[0] - Encerrar programa")
                 println("+================================================+")
                 print("Selecione uma opção: ")
@@ -49,26 +57,28 @@ class Cli {
                 } else if (optionMenu == 4) {
                     cliListCandidatos()
                 } else if (optionMenu == 5) {
-                    cliCreateVaga()
+                    cliCreateVaga() // Done
                 } else if (optionMenu == 6) {
-                    cliVerifyLikes()
+                    cliVerifyLikesEmpresa() // Doing 2
                 } else if (optionMenu == 7) {
-                    cliListVagas()
+                    cliListVagas() // Done
                 } else if (optionMenu == 8) {
-                    clirListMacthes()
+                    cliListLikesCandidato() // Doing 1
+                }else if (optionMenu == 9) {
+                    cliListMacthes() // Doing 3
                 } else if (optionMenu == 0) {
                     scanner.close()
                     break
                 } else {
                     println("+================================================+")
-                    println("Insira uma opção válida (números de 0 - 6). Erro: opção fora do limite")
+                    println("Insira uma opção válida (números de 0 - 9). Erro: opção fora do limite")
                     println("+================================================+")
                     println("Aperte \"Enter\" para continuar")
                     scanner.nextLine()
                 }
             } catch (Exception e) {
                 println("+================================================+")
-                println("Adicione a entrada correta (números de 0 - 4). Erro: ${e}")
+                println("Adicione a entrada correta (números de 0 - 9). Erro: ${e}")
                 println("+================================================+")
                 println("Aperte \"Enter\" para continuar")
                 scanner.nextLine()
@@ -236,10 +246,6 @@ class Cli {
         Candidato candidato = null
 
         try {
-            println("+================================================+")
-            println("|                Visualizar vagas                |")
-            println("+================================================+")
-
             pessoaServices.listCandidatos()
 
             println("+================================================+")
@@ -268,13 +274,13 @@ class Cli {
     }
 
     void cliCreateVaga() {
+        println("+================================================+")
+        println("|                 Cadastrar vaga                 |")
+        println("+================================================+")
         try {
             def empresa = cliChoiceEmpresa()
             if (empresa == null) return
 
-            println("+================================================+")
-            println("|                 Cadastrar vaga                 |")
-            println("+================================================+")
             println("${empresa.name} preencha as informações: ")
             println("Título: ")
             String title = scanner.nextLine()
@@ -301,45 +307,40 @@ class Cli {
         }
     }
 
-    void cliVerifyLikes() {
-
-    }
-
     void cliListVagas() {
+        println("+================================================+")
+        println("|                Visualizar vagas                |")
+        println("+================================================+")
         def candidato = cliChoiceCandidato()
         if (candidato == null) return
 
         try {
-            println("+================================================+")
-            println("|                Visualizar vagas                |")
-            println("+================================================+")
-
             vagaServices.listVagas()
-
-            println("+================================================+")
 
             println("${candidato.name}, deseja curtir alguma vaga? (s/n)")
             def answer = scanner.nextLine()
 
             while (answer == "s") {
-                println("+================================================+")
-                println("Escolha o ID da vaga que deseja curtir: ")
-                // criar lógica da curtida - apenas converter para curtidas
-                def cnpj = scanner.nextLine().toLowerCase().trim()
+                println("Escolha o Id da vaga que deseja curtir: ")
+                def id = scanner.nextInt()
+                scanner.nextLine()
 
-                def empresa = vagaServices.searchEmpresa(cnpj)
+                def vaga = vagaServices.searchIdVaga(id)
 
-                if (empresa == null) {
+                if (vaga == null) {
                     println("+================================================+")
-                    println("Essa empresa não existe!")
+                    println("Essa vaga não existe!")
                     println("+================================================+")
                     println("Aperte \"Enter\" para continuar")
                     scanner.nextLine()
                     return
                 }
 
+                // Lógica das curtidas
+                sistemaCurtidas.candidatoCurteVaga(candidato, vaga)
+
                 println("+================================================+")
-                println("Vaga CURTIDA com sucesso, ${candidato.name}!")
+                println("${candidato.name} curtiu a vaga '${vaga.title}' (${vaga.empresa.name}). Vaga CURTIDA com sucesso!")
                 println("+================================================+")
                 println("Aperte \"Enter\" para continuar")
                 scanner.nextLine()
@@ -350,14 +351,128 @@ class Cli {
         }
         catch (Exception e) {
             println("+================================================+")
-            println("Falha ao listar vagas. Erro: ${e}")
+            println("Falha ao listar vagas ou ao curtir. Erro: ${e}")
             println("+================================================+")
             println("Aperte \"Enter\" para continuar")
             scanner.nextLine()
         }
     }
 
-    void clirListMacthes() {
+    void cliVerifyLikesEmpresa() {
+        println("+================================================+")
+        println("|          CANDIDATOS QUE CURTIRAM VOCÊ          |")
+        println("|                     Empresa                    |")
+        println("+================================================+")
 
+        def empresa = cliChoiceEmpresa()
+        if (empresa == null) return
+
+        try {
+            def curtidasRecebidas = sistemaCurtidas.allCurtidas.findAll { it.vaga.empresa.cnpj == empresa.cnpj }
+
+            if (curtidasRecebidas.isEmpty()) {
+                println("+================================================+")
+                println("Nenhum candidato curtiu suas vagas ainda.")
+                println("+================================================+")
+                println("Aperte \"Enter\" para continuar")
+                scanner.nextLine()
+                return
+            }
+
+            println("+================================================+")
+            println "Candidatos interessados:"
+            curtidasRecebidas.eachWithIndex { curtida, index ->
+                def c = curtida.candidato
+                println "[${index + 1}] - Nome: ${c.name} | Skills: ${c.skills.join(', ')}"
+                println "      Vaga: ${curtida.vaga.title} | Status: ${curtida.isMatch() ? '🔥 MATCH!' : '⌛ Pendente'}"
+                println("+================================================+")
+            }
+
+            println("Deseja curtir algum candidato de volta? (s/n)")
+            def answer = scanner.nextLine().toLowerCase().trim()
+
+            while (answer == "s") {
+                println("Digite o número do candidato da lista acima: ")
+                def inputIndex = scanner.nextInt()
+                scanner.nextLine()
+
+                if (inputIndex > 0 && inputIndex <= curtidasRecebidas.size()) {
+                    def curtidaSelecionada = curtidasRecebidas[inputIndex - 1]
+                    def candidatoAlvo = curtidaSelecionada.candidato
+
+                    // 3. Lógica de curtir e verificar Match
+                    // Usando o método que já existe na sua classe Empresa
+                    def resultadoMatch = empresa.curtirCandidato(candidatoAlvo, sistemaCurtidas.allCurtidas)
+
+                    if (resultadoMatch != null && resultadoMatch.isMatch()) {
+                        println("+================================================+")
+                        println("🔥 É UM MATCH! Você e ${candidatoAlvo.name} agora estão conectados.")
+                        println("+================================================+")
+                    } else {
+                        println("+================================================+")
+                        println("Você curtiu ${candidatoAlvo.name} com sucesso!")
+                        println("+================================================+")
+                    }
+                } else {
+                    println("Índice inválido!")
+                }
+
+                println("Deseja curtir outro candidato? (s/n)")
+                answer = scanner.nextLine().toLowerCase()
+            }
+
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
+        catch (Exception e) {
+            println("+================================================+")
+            println("Erro ao processar curtidas da empresa: ${e.message}")
+            println("+================================================+")
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
+    }
+
+    void cliListLikesCandidato() {
+        println("+================================================+")
+        println("|              Visualizar curtidas               |")
+        println("|                    Candidato                   |")
+        println("+================================================+")
+
+        def candidato = cliChoiceCandidato()
+        if (candidato == null) return
+
+        try {
+            def vagasCurtidas = candidato.listCurtidas()
+            if (vagasCurtidas == null) {
+                println("+================================================+")
+                println("${candidato.name} não possui curtidas")
+                println("+================================================+")
+            } else {
+                sistemaCurtidas.listCurtidasCandidato(vagasCurtidas)
+            }
+
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
+        catch (Exception e) {
+            println("+================================================+")
+            println("Falha ao listar candidatos. Erro: ${e}")
+            println("+================================================+")
+            println("Aperte \"Enter\" para continuar")
+            scanner.nextLine()
+        }
+    }
+
+    void cliListMacthes() {
+        // listar todos os matches
+    }
+
+    void cliListMacthesCandidato() {
+        // listar todos os matches de um candidato
+    }
+
+    void cliListMacthesEmpresa() {
+        // listar todos os matches de uma empresa
     }
 }
