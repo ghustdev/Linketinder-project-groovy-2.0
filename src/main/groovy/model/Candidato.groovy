@@ -25,6 +25,7 @@ class Candidato extends Pessoa {
         if (vagasCurtidas == null) {
             vagasCurtidas = []
         }
+
         if (jaCortiuVaga(vaga)) {
             throw new IllegalStateException("Erro: ${name} já curtiu a vaga '${vaga.title}'.")
         }
@@ -37,8 +38,7 @@ class Candidato extends Pessoa {
     }
 
     boolean jaCortiuVaga(Vaga vaga) {
-        vagasCurtidas.any { it.vaga == vaga }
-//        vagasCurtidas.contains(vaga)
+        vagasCurtidas.any { it.vaga.id == vaga.id }
     }
 
     List<Curtida> listCurtidas() {

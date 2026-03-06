@@ -1,13 +1,17 @@
 package repository
 
 import model.Candidato
+import model.Curtida
 import model.Empresa
+import model.Match
 import model.Vaga
 
 class Repository {
     List<Candidato> arrayCandidatos = []
     List<Empresa> arrayEmpresas = []
     List<Vaga> arrayVagas = []
+    List<Curtida> allCurtidasCandidatos = []
+    List<Match> allMatches = []
 
     Repository() {
         /* ----- Empresas ----- */
@@ -191,11 +195,7 @@ class Repository {
         arrayVagas.add(Vaga.builder()
                 .id(1)
                 .title("Estágio de Desenvolvimento")
-                .description("""
-                    - Cursando superior em tecnologia,
-                    - Conheicmento básico de Java e Groovy,
-                    - Versionamento e Git,
-                    - Conhecimento em API e CRUD""")
+                .description("Cursando superior em tecnologia, Conheicmento básico de Java e Groovy, Versionamento e Git, Conhecimento em API e CRUD")
                 .skillsRequests(["Java", "Groovy", "Git"])
                 .empresa(arrayEmpresas.get(0))
                 .build())
@@ -203,12 +203,7 @@ class Repository {
         arrayVagas.add(Vaga.builder()
                 .id(2)
                 .title("Dev Sênior")
-                .description("""
-                    - Superior completo,
-                    - Conheicmento avançado em Java e Groovy,
-                    - Versionamento e Git,
-                    - Conhecimento em API Restfull
-                    - Padrões de projetos""")
+                .description("Cursando superior em tecnologia, Conheicmento básico de Java e Groovy, Versionamento e Git, Conhecimento em API e CRUD")
                 .skillsRequests(["Java", "Groovy", "Git", "GOF, MVC"])
                 .empresa(arrayEmpresas.get(1))
                 .build())

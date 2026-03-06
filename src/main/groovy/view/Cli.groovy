@@ -28,10 +28,6 @@ class Cli {
                 println("+================================================+")
                 println("|                   Linketinder                  |")
                 println("+================================================+")
-                /* println("[1] - Empresa")
-                println("[2] - Candidato")
-                println("[3] - Admin")
-                println("+================================================+")*/
                 println("[1] - Adicionar empresa")
                 println("[2] - Adicionar candidato")
                 println("[3] - Listar empresas")
@@ -41,12 +37,23 @@ class Cli {
                 println("[7] - [Candidato] Visualizar feed de vagas (curtir Vaga)")
                 println("[8] - [Candidato] Visualizar curtidas")
                 println("[9] - Listar Matches")
+                println("[10] - Listar Matches do Candidato")
+                println("[11] - Listar Matches da Empresa")
                 println("[0] - Encerrar programa")
                 println("+================================================+")
-                print("Selecione uma opção: ")
-
-                def optionMenu = scanner.nextInt()
-                scanner.nextLine()
+                // Implementação futura: dividir am abas (Empresa, Cnadidato e Admin) simulando um login
+                /* println("[1] - Empresa")
+                println("[2] - Candidato")
+                println("[3] - Admin")
+                println("+================================================+")*/
+                Integer optionMenu = readInt("Selecione uma opção: ")
+                if (optionMenu == null) {
+                    println("+================================================+")
+                    println("Adicione a entrada correta (números de 0 - 11).")
+                    println("+================================================+")
+                    pause()
+                    continue
+                }
 
                 if (optionMenu == 1) {
                     cliCreateEmpresa()
@@ -57,31 +64,33 @@ class Cli {
                 } else if (optionMenu == 4) {
                     cliListCandidatos()
                 } else if (optionMenu == 5) {
-                    cliCreateVaga() // Done
+                    cliCreateVaga()
                 } else if (optionMenu == 6) {
-                    cliVerifyLikesEmpresa() // Doing 2
+                    cliVerifyLikesEmpresa()
                 } else if (optionMenu == 7) {
-                    cliListVagas() // Done
+                    cliListVagas()
                 } else if (optionMenu == 8) {
-                    cliListLikesCandidato() // Doing 1
-                }else if (optionMenu == 9) {
-                    cliListMacthes() // Doing 3
+                    cliListLikesCandidato()
+                } else if (optionMenu == 9) {
+                    cliListMatches()
+                } else if (optionMenu == 10) {
+                    cliListMatchesCandidato()
+                } else if (optionMenu == 11) {
+                    cliListMatchesEmpresa()
                 } else if (optionMenu == 0) {
                     scanner.close()
                     break
                 } else {
                     println("+================================================+")
-                    println("Insira uma opção válida (números de 0 - 9). Erro: opção fora do limite")
+                    println("Insira uma opção válida (números de 0 - 11). Erro: opção fora do limite")
                     println("+================================================+")
-                    println("Aperte \"Enter\" para continuar")
-                    scanner.nextLine()
+                    pause()
                 }
             } catch (Exception e) {
                 println("+================================================+")
-                println("Adicione a entrada correta (números de 0 - 9). Erro: ${e}")
+                println("Adicione a entrada correta (números de 0 - 11). Erro: ${e}")
                 println("+================================================+")
-                println("Aperte \"Enter\" para continuar")
-                scanner.nextLine()
+                pause()
             }
         }
     }
@@ -91,38 +100,36 @@ class Cli {
             println("+================================================+")
             println("|                Cadastrar empresa               |")
             println("+================================================+")
-            println("Nome: ")
+            print("Nome: ")
             String name = scanner.nextLine()
-            println("Email: ")
+            print("Email: ")
             String email = scanner.nextLine()
-            println("CNPJ: ")
+            print("CNPJ: ")
             String cnpj = scanner.nextLine()
-            println("País: ")
+            print("País: ")
             String country = scanner.nextLine()
-            println("Estado: ")
+            print("Estado: ")
             String state = scanner.nextLine()
-            println("CEP: ")
+            print("CEP: ")
             String cep = scanner.nextLine()
-            println("Descrição: ")
+            print("Descrição: ")
             String description = scanner.nextLine()
-            println("Lista de habilidades (separado por ','): ")
+            print("Lista de habilidades (separado por ','): ")
             String input = scanner.nextLine()
-            List<String> skills = input.split(",").collect { it.trim() }
+            List<String> skills = parseSkills(input)
 
             pessoaServices.createEmpresa(name, email, cnpj, country, state, cep, description, skills)
 
             println("+================================================+")
             println("Empresa cadastrada com sucesso!")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         catch (Exception e) {
             println("+================================================+")
             println("Falha ao cadastrar candidato. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
     }
 
@@ -131,39 +138,42 @@ class Cli {
             println("+================================================+")
             println("|               Cadastrar candidato              |")
             println("+================================================+")
-            println("Nome: ")
+            print("Nome: ")
             String name = scanner.nextLine()
-            println("Email: ")
+            print("Email: ")
             String email = scanner.nextLine()
-            println("CPF: ")
+            print("CPF: ")
             String cpf = scanner.nextLine()
-            println("Idade: ")
-            int old = scanner.nextInt()
-            scanner.nextLine()
-            println("Estado: ")
+            Integer old = readInt("Idade: ")
+            if (old == null || old < 0) {
+                println("+================================================+")
+                println("Idade inválida.")
+                println("+================================================+")
+                pause()
+                return
+            }
+            print("Estado: ")
             String state = scanner.nextLine()
-            println("CEP: ")
+            print("CEP: ")
             String cep = scanner.nextLine()
-            println("Descrição: ")
+            print("Descrição: ")
             String description = scanner.nextLine()
-            println("Lista de habilidades (separado por ','): ")
+            print("Lista de habilidades (separado por ','): ")
             String input = scanner.nextLine()
-            List<String> skills = input.split(",").collect { it.trim() }
+            List<String> skills = parseSkills(input)
 
             pessoaServices.createCandidato(name, email, cpf, old, state, cep, description, skills)
 
             println("+================================================+")
             println("Candidato cadastrado com sucesso!")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         catch (Exception e) {
             println("+================================================+")
             println("Falha ao cadastrar candidato. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
     }
 
@@ -175,15 +185,13 @@ class Cli {
 
             pessoaServices.listCandidatos()
 
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         catch (Exception e) {
             println("+================================================+")
             println("Falha ao listar candidatos. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
     }
 
@@ -195,15 +203,13 @@ class Cli {
 
             pessoaServices.listEmpresas()
 
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         catch (Exception e) {
             println("+================================================+")
             println("Falha ao listar candidatos. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
     }
 
@@ -211,14 +217,9 @@ class Cli {
         Empresa empresa = null
 
         try {
-            println("+================================================+")
-            println("|                 Cadastrar vaga                 |")
-            println("+================================================+")
-
             pessoaServices.listEmpresas()
 
-            println("+================================================+")
-            println("Escolha a empresa da vaga (pelo CNPJ): ")
+            print("Escolha uma empresa (pelo CNPJ): ")
             def cnpj = scanner.nextLine()
 
             empresa = vagaServices.searchEmpresa(cnpj)
@@ -227,8 +228,7 @@ class Cli {
                 println("+================================================+")
                 println("Essa empresa não existe!")
                 println("+================================================+")
-                println("Aperte \"Enter\" para continuar")
-                scanner.nextLine()
+                pause()
                 return empresa
             }
         }
@@ -236,8 +236,7 @@ class Cli {
             println("+================================================+")
             println("Falha ao confirmar empresa. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         return empresa
     }
@@ -248,8 +247,7 @@ class Cli {
         try {
             pessoaServices.listCandidatos()
 
-            println("+================================================+")
-            println("Escolha o candidato para ver as vagas (pelo CPF): ")
+            print("Escolha o candidato (pelo CPF): ")
             def cpf = scanner.nextLine()
 
             candidato = vagaServices.searchCandidato(cpf)
@@ -258,8 +256,7 @@ class Cli {
                 println("+================================================+")
                 println("Esse candidato não existe!")
                 println("+================================================+")
-                println("Aperte \"Enter\" para continuar")
-                scanner.nextLine()
+                pause()
                 return null
             }
         }
@@ -267,8 +264,7 @@ class Cli {
             println("+================================================+")
             println("Falha ao confirmar candidato. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         return candidato
     }
@@ -281,29 +277,28 @@ class Cli {
             def empresa = cliChoiceEmpresa()
             if (empresa == null) return
 
-            println("${empresa.name} preencha as informações: ")
-            println("Título: ")
+            println("+================================================+")
+            println("${empresa.name}, preencha as informações da vaga: ")
+            print("Título: ")
             String title = scanner.nextLine()
-            println("Descrição da vaga: ")
+            print("Descrição da vaga: ")
             String description = scanner.nextLine()
-            println("Lista de habilidades requeridas (separado por ','): ")
+            print("Lista de habilidades requeridas (separado por ','): ")
             String input = scanner.nextLine()
-            List<String> skillsRequests = input.split(",").collect { it.trim() }
+            List<String> skillsRequests = parseSkills(input)
 
             vagaServices.createVaga(title, description, empresa, skillsRequests)
 
             println("+================================================+")
             println("Vaga cadastrada com sucesso!")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         catch (Exception e) {
             println("+================================================+")
             println("Falha ao cadastrar vaga. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
     }
 
@@ -314,16 +309,27 @@ class Cli {
         def candidato = cliChoiceCandidato()
         if (candidato == null) return
 
+        println("+================================================+")
+        println("Seja bem vindo(a), ${candidato.name}.")
+        println("+================================================+")
+        pause()
+
         try {
             vagaServices.listVagas()
 
-            println("${candidato.name}, deseja curtir alguma vaga? (s/n)")
-            def answer = scanner.nextLine()
+            print("${candidato.name}, deseja curtir alguma vaga? (s/n): ")
+            def answer = scanner.nextLine().toLowerCase().trim()
 
             while (answer == "s") {
-                println("Escolha o Id da vaga que deseja curtir: ")
-                def id = scanner.nextInt()
-                scanner.nextLine()
+                println("+================================================+")
+                Integer id = readInt("Escolha o Id da vaga que deseja curtir: ")
+                if (id == null) {
+                    println("+================================================+")
+                    println("Id inválido.")
+                    println("+================================================+")
+                    pause()
+                    return
+                }
 
                 def vaga = vagaServices.searchIdVaga(id)
 
@@ -331,8 +337,7 @@ class Cli {
                     println("+================================================+")
                     println("Essa vaga não existe!")
                     println("+================================================+")
-                    println("Aperte \"Enter\" para continuar")
-                    scanner.nextLine()
+                    pause()
                     return
                 }
 
@@ -340,27 +345,24 @@ class Cli {
                 sistemaCurtidas.candidatoCurteVaga(candidato, vaga)
 
                 println("+================================================+")
-                println("${candidato.name} curtiu a vaga '${vaga.title}' (${vaga.empresa.name}). Vaga CURTIDA com sucesso!")
+                println("${candidato.name} curtiu a vaga '${vaga.title}' da Empresa ${vaga.empresa.name}. Vaga CURTIDA com sucesso!")
                 println("+================================================+")
-                println("Aperte \"Enter\" para continuar")
-                scanner.nextLine()
 
-                println("Deseja curtir outra vaga? (s/n)")
-                answer = scanner.nextLine()
+                print("Deseja curtir outra vaga? (s/n): ")
+                answer = scanner.nextLine().toLowerCase().trim()
             }
         }
         catch (Exception e) {
             println("+================================================+")
             println("Falha ao listar vagas ou ao curtir. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
     }
 
     void cliVerifyLikesEmpresa() {
         println("+================================================+")
-        println("|          CANDIDATOS QUE CURTIRAM VOCÊ          |")
+        println("|          Candidatos que curtiram você          |")
         println("|                     Empresa                    |")
         println("+================================================+")
 
@@ -368,68 +370,85 @@ class Cli {
         if (empresa == null) return
 
         try {
-            def curtidasRecebidas = sistemaCurtidas.allCurtidas.findAll { it.vaga.empresa.cnpj == empresa.cnpj }
+            def curtidasRecebidas = sistemaCurtidas.allCurtidasCandidatos.findAll { it.vaga.empresa.cnpj == empresa.cnpj }
 
             if (curtidasRecebidas.isEmpty()) {
                 println("+================================================+")
                 println("Nenhum candidato curtiu suas vagas ainda.")
                 println("+================================================+")
-                println("Aperte \"Enter\" para continuar")
-                scanner.nextLine()
+                pause()
                 return
             }
 
             println("+================================================+")
-            println "Candidatos interessados:"
-            curtidasRecebidas.eachWithIndex { curtida, index ->
-                def c = curtida.candidato
-                println "[${index + 1}] - Nome: ${c.name} | Skills: ${c.skills.join(', ')}"
-                println "      Vaga: ${curtida.vaga.title} | Status: ${curtida.isMatch() ? '🔥 MATCH!' : '⌛ Pendente'}"
-                println("+================================================+")
-            }
+            sistemaCurtidas.listCurtidasRecebidasEmpresa(curtidasRecebidas)
 
-            println("Deseja curtir algum candidato de volta? (s/n)")
+            print("Deseja curtir algum candidato de volta? (s/n): ")
             def answer = scanner.nextLine().toLowerCase().trim()
 
             while (answer == "s") {
-                println("Digite o número do candidato da lista acima: ")
-                def inputIndex = scanner.nextInt()
-                scanner.nextLine()
+                println("+================================================+")
+                print("Digite o CPF do candidato da lista acima: ")
+                String cpf = scanner.nextLine().trim()
 
-                if (inputIndex > 0 && inputIndex <= curtidasRecebidas.size()) {
-                    def curtidaSelecionada = curtidasRecebidas[inputIndex - 1]
-                    def candidatoAlvo = curtidaSelecionada.candidato
+                Integer idVaga = readInt("Digite o ID da vaga que o candidato curtiu: ")
 
-                    // 3. Lógica de curtir e verificar Match
-                    // Usando o método que já existe na sua classe Empresa
-                    def resultadoMatch = empresa.curtirCandidato(candidatoAlvo, sistemaCurtidas.allCurtidas)
+                def vagaSearch = vagaServices.searchIdVaga(idVaga)
 
-                    if (resultadoMatch != null && resultadoMatch.isMatch()) {
-                        println("+================================================+")
-                        println("🔥 É UM MATCH! Você e ${candidatoAlvo.name} agora estão conectados.")
-                        println("+================================================+")
-                    } else {
-                        println("+================================================+")
-                        println("Você curtiu ${candidatoAlvo.name} com sucesso!")
-                        println("+================================================+")
-                    }
-                } else {
-                    println("Índice inválido!")
+                if (idVaga == null) {
+                    println("+================================================+")
+                    println("ID de vaga inválido.")
+                    println("+================================================+")
+                    pause()
+                    continue
                 }
 
-                println("Deseja curtir outro candidato? (s/n)")
-                answer = scanner.nextLine().toLowerCase()
+                if (vagaSearch == null) {
+                    println("+================================================+")
+                    println("Essa vaga não existe!")
+                    println("+================================================+")
+                    pause()
+                    return
+                }
+
+                def curtidaSelecionada = curtidasRecebidas.find {
+                    it.candidato.cpf == cpf && it.vaga.id == idVaga
+                }
+                if (curtidaSelecionada == null) {
+                    println("+================================================+")
+                    println("Candidato inválido. Use somente CPF e vaga exibidos na lista acima.")
+                    println("+================================================+")
+                    pause()
+                    continue
+                }
+
+                def candidato = curtidaSelecionada.candidato
+                def vaga = curtidaSelecionada.vaga
+                def resultadoMatch = sistemaCurtidas.empresaCurteCandidato(empresa, candidato, vaga)
+                if (resultadoMatch == null) {
+                    println("+================================================+")
+                    println("Não foi possível gerar match para essa seleção.")
+                    println("+================================================+")
+                    pause()
+                    continue
+                }
+
+                println("+================================================+")
+                println("É UM MATCH! Você e ${candidato.name} agora estão conectados.")
+                println("${empresa.name} curtiu o candidato ${candidato.name} para a vaga: ${vaga.title}")
+                println("+================================================+")
+
+                print("Deseja curtir outro candidato? (s/n): ")
+                answer = scanner.nextLine().toLowerCase().trim()
             }
 
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         catch (Exception e) {
             println("+================================================+")
             println("Erro ao processar curtidas da empresa: ${e.message}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
     }
 
@@ -444,35 +463,129 @@ class Cli {
 
         try {
             def vagasCurtidas = candidato.listCurtidas()
-            if (vagasCurtidas == null) {
+            if (vagasCurtidas == null || vagasCurtidas.isEmpty()) {
                 println("+================================================+")
                 println("${candidato.name} não possui curtidas")
                 println("+================================================+")
             } else {
+                println("+================================================+")
                 sistemaCurtidas.listCurtidasCandidato(vagasCurtidas)
             }
 
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
         catch (Exception e) {
             println("+================================================+")
             println("Falha ao listar candidatos. Erro: ${e}")
             println("+================================================+")
-            println("Aperte \"Enter\" para continuar")
-            scanner.nextLine()
+            pause()
         }
     }
 
-    void cliListMacthes() {
-        // listar todos os matches
+    void cliListMatches() {
+        println("+================================================+")
+        println("|                 Todos os matches               |")
+        println("+================================================+")
+
+        if (sistemaCurtidas.allMatches.isEmpty()) {
+            println("Nenhum match registrado até agora.")
+            println("+================================================+")
+            pause()
+            return
+        }
+
+        sistemaCurtidas.allMatches.eachWithIndex { m, index ->
+            println("Match: ${index + 1}")
+            println("Candidato: ${m.candidato.name} (${m.candidato.cpf})")
+            println("Empresa: ${m.empresa.name} (${m.empresa.cnpj})")
+            println("Vaga: ${m.vaga.title} [id=${m.vaga.id}]")
+            println("Data: ${m.dateMatch}")
+            println("+================================================+")
+        }
+        pause()
     }
 
-    void cliListMacthesCandidato() {
-        // listar todos os matches de um candidato
+    void cliListMatchesCandidato() {
+        println("+================================================+")
+        println("|            Matches do candidato                |")
+        println("+================================================+")
+
+        def candidato = cliChoiceCandidato()
+        if (candidato == null) return
+
+        def matchesCandidato = sistemaCurtidas.allMatches.findAll { it.candidato?.cpf == candidato.cpf }
+
+        if (matchesCandidato.isEmpty()) {
+            println("Nenhum match para ${candidato.name}.")
+            println("+================================================+")
+            pause()
+            return
+        }
+
+        matchesCandidato.eachWithIndex { m, index ->
+            println("Match: ${index + 1}")
+            println("Empresa: ${m.empresa.name} (${m.empresa.cnpj})")
+            println("Vaga: ${m.vaga.title} [id=${m.vaga.id}]")
+            println("Data: ${m.dateMatch}")
+            println("+================================================+")
+        }
+        pause()
     }
 
-    void cliListMacthesEmpresa() {
-        // listar todos os matches de uma empresa
+    void cliListMatchesEmpresa() {
+        println("+================================================+")
+        println("|             Matches da empresa                 |")
+        println("+================================================+")
+
+        def empresa = cliChoiceEmpresa()
+        if (empresa == null) return
+
+        def matchesEmpresa = sistemaCurtidas.allMatches.findAll { it.empresa?.cnpj == empresa.cnpj }
+
+        if (matchesEmpresa.isEmpty()) {
+            println("Nenhum match para ${empresa.name}.")
+            println("+================================================+")
+            pause()
+            return
+        }
+
+        matchesEmpresa.eachWithIndex { m, index ->
+            println("Match: ${index + 1}")
+            println("Candidato: ${m.candidato.name} (${m.candidato.cpf})")
+            println("Vaga: ${m.vaga.title} [id=${m.vaga.id}]")
+            println("Data: ${m.dateMatch}")
+            println("+================================================+")
+        }
+        pause()
+    }
+
+    // Auxiliar method
+    Integer readInt(String prompt) {
+        print(prompt)
+        String value = scanner.nextLine()?.trim()
+        if (value == null || value.isEmpty()) {
+            return null
+        }
+        try {
+            return Integer.parseInt(value)
+        } catch (NumberFormatException ignored) {
+            return null
+        }
+    }
+
+    // Auxiliar method
+    private List<String> parseSkills(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return []
+        }
+        return input.split(",")
+                .collect { it.trim() }
+                .findAll { !it.isEmpty() }
+    }
+
+    // Auxiliar method
+    private void pause() {
+        print("Aperte \"Enter\" para continuar")
+        scanner.nextLine()
     }
 }

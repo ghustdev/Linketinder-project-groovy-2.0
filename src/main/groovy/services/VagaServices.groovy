@@ -82,7 +82,7 @@ class VagaServices {
     @CompileDynamic
     void listVagas() {
         repository.arrayVagas.each { v ->
-            println "Id: ${v.id}"
+            println "Id vaga: ${v.id}"
             println "Empresa: ${v.empresa.name}"
             println "CNPJ: ${v.empresa.cnpj}"
             println "Título: ${v.title}"

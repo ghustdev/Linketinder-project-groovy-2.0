@@ -5,6 +5,8 @@ import groovy.transform.builder.Builder
 import model.Candidato
 import model.Curtida
 
+import java.time.LocalDateTime
+
 @Builder
 @ToString(includeSuper = true, includeNames = true)
 class Empresa extends Pessoa {
@@ -17,36 +19,50 @@ class Empresa extends Pessoa {
     // Specific fields
     String cnpj
     String country
-    // Likes
+    // Curtidas da empresa (array/lista)
     List<Curtida> candidatosCurtidos = []
 
-    Curtida curtirCandidato(Candidato candidato, List<Curtida> allCurtidas) {
+    Match curtirCandidato(Candidato candidato, Vaga vaga, List<Curtida> allCurtidasCandidatos) {
         if (candidatosCurtidos == null) {
             candidatosCurtidos = []
         }
-        if (jaCurtiuCandidato(candidato)) {
+        if (candidato == null || vaga == null) {
+            throw new IllegalArgumentException("Candidato e vaga são obrigatórios.")
+        }
+        if (vaga.empresa.cnpj != this.cnpj) {
+            throw new IllegalArgumentException("A vaga '${vaga.title}' não pertence à empresa ${name}.")
+        }
+        if (jaCurtiuCandidato(candidato, vaga)) {
             throw new IllegalStateException("Erro: ${name} já curtiu o candidato ${candidato.cpf}.")
         }
-        candidatosCurtidos.add(candidato)
-        /*println "💙 [EMPRESA] ${nome} curtiu o candidato (skills: ${candidato.skills})"*/
 
-        // Verifica se existe curtida desse candidato em alguma vaga desta empresa
-        def curtidaMatch = allCurtidas.find { curtida ->
-            curtida.candidato == candidato && curtida.vaga.empresa == this && !curtida.isMatch()
-        }
+        candidatosCurtidos.add(new Curtida(
+                candidato: candidato,
+                vaga: vaga,
+                empresa: this,
+                date: LocalDateTime.now()
+        ))
 
-        if (curtidaMatch) {
-            curtidaMatch.completarMatch(this)
-            return curtidaMatch
-        }
-        return null
+        def match = new Match(
+                candidato: candidato,
+                empresa: this,
+                vaga: vaga,
+                dateMatch: LocalDateTime.now()
+        )
+
+        return match.isMatch(candidatosCurtidos, allCurtidasCandidatos) ? match : null
     }
 
-    boolean jaCurtiuCandidato(Candidato candidato) {
-        candidatosCurtidos.contains(candidato)
+    boolean jaCurtiuCandidato(Candidato candidato, Vaga vaga) {
+        if (candidatosCurtidos == null) {
+            candidatosCurtidos = []
+        }
+        candidatosCurtidos.any {
+            it.candidato.cpf == candidato.cpf && it.vaga.id == vaga.id
+        }
     }
 
-    List<Candidato> listCurtidas() {
+    List<Curtida> listCurtidas() {
         return candidatosCurtidos
     }
 }

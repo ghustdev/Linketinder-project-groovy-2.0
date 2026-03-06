@@ -1,6 +1,5 @@
 package model
 
-
 import java.time.LocalDateTime
 
 class Curtida {
@@ -8,8 +7,4 @@ class Curtida {
     Vaga vaga
     Empresa empresa
     LocalDateTime date
-
-    boolean isMatch() {
-        return empresa != null
-    }
 }
