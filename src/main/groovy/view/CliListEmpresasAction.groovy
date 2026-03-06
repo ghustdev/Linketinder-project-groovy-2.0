@@ -13,7 +13,7 @@ class CliListEmpresasAction {
         }
         catch (Exception e) {
             println("+================================================+")
-            println("Falha ao listar candidatos. Erro: ${e}")
+            println("Falha ao listar empresas. Erro: ${e}")
             println("+================================================+")
             cli.pause()
         }
