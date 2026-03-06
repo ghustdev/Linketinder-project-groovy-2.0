@@ -10,9 +10,10 @@ import repository.Repository
 
 class SistemaCurtidas {
 
-//    Repository repository
-//    def allCurtidasCandidatos = repository.allCurtidasCandidatos
-//    def allMatches = repository.allCurtidasCandidatos
+    // Adicionar ao repository:
+    //    Repository repository
+    //    def allCurtidasCandidatos = repository.allCurtidasCandidatos
+    //    def allMatches = repository.allCurtidasCandidatos
 
     List<Curtida> allCurtidasCandidatos = []
     List<Match> allMatches = []

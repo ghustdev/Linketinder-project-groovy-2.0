@@ -19,8 +19,8 @@ class Main {
             def cli = new Cli(pessoaServices, repository, vagaServices, sistemaCurtidas)
 
             cli.cliMenu()
-        } catch (Throwable t) {
-            t.printStackTrace()
+        } catch (Exception e) {
+            e.printStackTrace()
         }
     }
 }

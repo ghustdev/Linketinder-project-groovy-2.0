@@ -20,6 +20,11 @@ class CliMenuAction {
                 println("[11] - Listar Matches da Empresa")
                 println("[0] - Encerrar programa")
                 println("+================================================+")
+                // Implementação futura: separar cada sessão em Empresa, Candidato e Admin, simulando um login
+                /* println("[1] - Empresa")
+                println("[2] - Candidato")
+                println("[3] - Admin")
+                println("+================================================+")*/
                 Integer optionMenu = cli.readInt("Selecione uma opção: ")
                 if (optionMenu == null) {
                     println("+================================================+")
