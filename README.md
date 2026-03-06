@@ -1,103 +1,89 @@
-# Linketinder (Groovy CLI Version)
+# Linketinder (Groovy CLI)
 
-MVP de uma plataforma de recrutamento em linha de comando inspirada no conceito de *match* por competências.
+Plataforma de recrutamento em linha de comando com fluxo de vagas, curtidas e match bidirecional entre candidato e empresa.
 
-## Status atual
+## Estado atual
 
-O projeto está funcional como aplicação CLI e já possui testes automatizados para a camada de serviço.
+- Aplicação CLI funcional com menu expandido (opções `0` a `11`)
+- Fluxo completo de vagas e curtidas implementado
+- Match registrado quando há reciprocidade para a mesma vaga
+- Suíte de testes automatizados com Spock validando modelos, serviços e repositório
 
-## Funcionalidades implementadas
+## Funcionalidades
 
-- Menu interativo no terminal
-- Cadastro de empresas
-- Cadastro de candidatos
-- Listagem de empresas
-- Listagem de candidatos
-- Carga inicial com dados em memória (7 candidatos e 7 empresas)
+- Cadastro e listagem de empresas
+- Cadastro e listagem de candidatos
+- Cadastro de vagas por empresa
+- Feed de vagas para candidato curtir
+- Visualização de curtidas do candidato
+- Visualização de curtidas recebidas pela empresa
+- Curtiu de volta da empresa com geração de match
+- Listagem de todos os matches, matches por candidato e por empresa
+- Carga inicial em memória: `7` empresas, `7` candidatos e `2` vagas
 
-## Estrutura do projeto
+## Stack
+
+- Groovy `4.0.15`
+- Gradle Wrapper `9.2.0`
+- Spock `2.3` (Groovy 4)
+- JUnit Platform
+- Mockito (disponível no projeto)
+
+## Pré-requisitos
+
+- JDK 17+
+- Terminal Bash
+
+## Execução
+
+```bash
+groovy src/main/groovy/Main.groovy
+```
+
+## Testes
+
+```bash
+./gradlew test
+```
+
+Resultado da execução mais recente:
+
+- `BUILD SUCCESSFUL`
+
+Relatórios:
+
+- `build/reports/tests/test/index.html`
+- `build/test-results/test/`
+
+## Estrutura principal
 
 ```text
 src/main/groovy
 ├── Main.groovy
 ├── model
 │   ├── Candidato.groovy
+│   ├── Curtida.groovy
 │   ├── Empresa.groovy
 │   ├── InterfacePessoa.groovy
-│   └── Pessoa.groovy
+│   ├── Match.groovy
+│   ├── Pessoa.groovy
+│   └── Vaga.groovy
 ├── repository
 │   └── Repository.groovy
 ├── services
-│   └── PessoaServices.groovy
+│   ├── PessoaServices.groovy
+│   ├── SistemaCurtidas.groovy
+│   └── VagaServices.groovy
 └── view
-    └── Interface.groovy
+    ├── Cli.groovy
+    └── Cli*Action.groovy
 
 src/test/groovy
+├── model
+├── repository
 └── services
-    └── PessoaServicesTest.groovy
 ```
 
-#### Modelagem UML Básica (apenas para visualizar)
-<div align="center">
-    <img width="721" height="541" alt="UML Linketinder Groovy 2 0 drawio" src="https://github.com/user-attachments/assets/81d8d3b9-a33a-439a-b136-34a640adf317" />
-</div>
+## Documentação
 
-## Tecnologias
-
-- Groovy 4
-- Gradle (wrapper: 9.2.0)
-- Spock Framework
-- JUnit Platform
-- Mockito (dependência disponível no projeto)
-
-## Pré-requisitos
-
-- JDK 17+
-- Bash/terminal
-
-## Como executar
-
-Na raiz do projeto:
-
-```bash
-groovy src/main/groovy/Main.groovy
-```
-
-Menu disponível:
-
-- `[1]` Adicionar empresa
-- `[2]` Adicionar candidato
-- `[3]` Listar empresas
-- `[4]` Listar candidatos
-- `[0]` Encerrar
-
-## Como testar
-
-Executar todos os testes:
-
-```bash
-./gradlew test
-```
-
-Relatórios gerados em:
-
-- `build/reports/tests/test/index.html`
-- `build/test-results/test/`
-
-## Documentação detalhada
-
-- [Documentação técnica do projeto](docs/PROJETO.md)
-- [Documentação de testes](docs/TESTES.md)
-
-## Limitações atuais
-
-- Persistência apenas em memória
-- Sem validações de formato/consistência (CPF, CNPJ, e-mail, CEP)
-- Sem mecanismo de match automático entre candidatos e empresas
-
-## Próximos passos sugeridos
-
-- Persistência em banco de dados
-- Validação de entrada e tratamento de erros por regra de domínio
-- Implementação de algoritmo de match por skills
-- Expansão da cobertura de testes (camadas de repositório e interface)
+- [Visão técnica e arquitetura](docs/PROJETO.md)
