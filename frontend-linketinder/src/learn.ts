@@ -1,3 +1,8 @@
+// ============================================
+// Configuran ambiente, tsconfig e package
 console.log("Aprendendo TS");
-alert("Teste")
-alert("Teste 2")
+console.log("Teste 1");
+console.log("Teste 2");
+
+// ============================================
+// Tipos de dados

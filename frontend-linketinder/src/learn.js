@@ -1,2 +1,9 @@
+// ============================================
+// Configuran ambiente, tsconfig e package
 console.log("Aprendendo TS");
-alert("Teste");
+console.log("Teste 1");
+console.log("Teste 2");
+export {};
+// ============================================
+// Tipos de dados
+//# sourceMappingURL=learn.js.map
