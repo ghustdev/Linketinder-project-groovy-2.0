@@ -138,3 +138,25 @@ const product = {
     }
 }
 product.validarProduto()
+
+console.log("Teste");
+
+// =================================================
+// Classes e POO
+// TypeScript = procedural, estruturada, OO e funcional
+
+class Data {
+    dia: number
+    mes: number
+    public ano: number
+
+    constructor(dia: number = 1, mes: number = 1, ano: number = 1970) {
+        this.dia = dia
+        this.mes = mes
+        this.ano = ano
+    }
+}
+
+const data = new Data(14, 12, 2019)
+console.log(data);
+console.log(data.ano);
