@@ -160,3 +160,47 @@ class Data {
 const data = new Data(14, 12, 2019)
 console.log(data);
 console.log(data.ano);
+
+// Desafio
+
+class Product {
+    private name: string
+    private price: number
+    private discount: number
+
+    constructor(name: string, price: number, discount: number = 0) {
+        this.name = name
+        this.price = price
+        this.discount = discount
+    }
+
+    getName(): string {
+        return this.name
+    }
+
+    getPrice(): number {
+        return this.price
+    }
+
+    getPriceWithDiscount(): number {
+        return this.price * (1 - this.discount)
+    }
+
+    setName(name: string): void {
+        this.name = name
+    }
+
+    setPrice(price: number): void {
+        if (price <= 0) {
+            throw new Error("Preço inválido!")
+        }
+        this.price = price
+    }
+}
+
+const computer = new Product("Notebook", 1000, 0.05)
+const phone = new Product("iPhone", 2000)
+
+console.log(computer);
+console.log(phone);
+
