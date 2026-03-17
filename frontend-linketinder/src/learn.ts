@@ -266,3 +266,6 @@ abstract class AB implements A, B {
     abstract b(): void
     abstract c(): void
 }
+
+// =========================================
+// Generics - tornar um tipo genérico

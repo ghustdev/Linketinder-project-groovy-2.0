@@ -44,9 +44,4 @@ class Candidato extends Pessoa {
     List<Curtida> listCurtidas() {
         return vagasCurtidas
     }
-
-    // Retorna apenas o perfil anônimo (skills) — sem dados pessoais
-//    Map<String, Object> perfilAnonimo() {
-//        return [skills: skills]
-//    }
 }
