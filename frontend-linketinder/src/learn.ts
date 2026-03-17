@@ -209,9 +209,45 @@ console.log(phone);
 // ///<reference path="./area.ts"/>
 // import { areaCircunferencia } from './area'
 
-import { areaCircunferencia } from './area'
+// import { areaCircunferencia } from './area'
 
-console.log(areaCircunferencia(5));
-console.log(areaCircunferencia(5));
+console.log(5);
+// console.log(areaCircunferencia(5));
 
 // Baixar dependencia SystemJS para carregar modulos no browser, porém no cenario regal terá alguma ferramete de build para auxiliar isso (webpack / node)
+
+// =================================================
+// Interface (exclusivo do TS)
+
+interface Humano {
+    nome: string
+    idade?: number
+    altura?: number
+    [prop: string]: any
+}
+
+function saudar(pessoa: Humano) {
+    console.log('Ola, ' + pessoa.nome);
+    
+}
+
+const pessoa: Humano = {
+    nome: "João",
+    idade: 27,
+    altura: 1.75
+}
+
+saudar(pessoa)
+
+// herdando o compromisso
+class Cliente implements Humano {
+    nome: string = 'Gustavo'
+    idade: number = 1
+    altura: number = 1.8
+    saudar(sobrenome: string) {
+        console.log("Olá, " + this.nome + " " + sobrenome);
+    }
+}
+
+const cliente = new Cliente()
+cliente.saudar("Schmidt")

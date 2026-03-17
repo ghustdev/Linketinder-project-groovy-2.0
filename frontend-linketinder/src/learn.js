@@ -1,7 +1,5 @@
-"use strict";
 // ============================================
 // Configuran ambiente, tsconfig e package
-Object.defineProperty(exports, "__esModule", { value: true });
 console.log("Aprendendo TS");
 console.log("Teste 1");
 console.log("Teste 2");
@@ -159,7 +157,28 @@ console.log(phone);
 // Namespaces (funções / classes) - espaço reservado que não irá conflitar com escopo global, deve ser exportada
 // ///<reference path="./area.ts"/>
 // import { areaCircunferencia } from './area'
-var area_1 = require("./area");
-console.log((0, area_1.areaCircunferencia)(5));
-console.log((0, area_1.areaCircunferencia)(5));
-// Baixar dependencia SystemJS para carregar modulos no browser, porém no cenario regal terá alguma ferramete de build para auxiliar isso (webpack / node)
+// import { areaCircunferencia } from './area'
+console.log(5);
+function saudar(pessoa) {
+    console.log('Ola, ' + pessoa.nome);
+}
+var pessoa = {
+    nome: "João",
+    idade: 27,
+    altura: 1.75
+};
+saudar(pessoa);
+// herdando o compromisso
+var Cliente = /** @class */ (function () {
+    function Cliente() {
+        this.nome = 'Gustavo';
+        this.idade = 1;
+        this.altura = 1.8;
+    }
+    Cliente.prototype.saudar = function (sobrenome) {
+        console.log("Olá, " + this.nome + " " + sobrenome);
+    };
+    return Cliente;
+}());
+var cliente = new Cliente();
+cliente.saudar("Schmidt");

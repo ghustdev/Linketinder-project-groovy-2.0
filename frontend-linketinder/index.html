@@ -7,6 +7,22 @@
 </head>
 <body>
 
+    <!-- <script src="./node_modules/systemjs/dist/system.js"></script> -->
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.21.6/system.js"></script> -->
+
+    
+    <script>
+        SystemJS.config({
+            baseUrl: "./src",
+            packages: {
+                defaultJSExtension: 'js'
+            }
+        })
+        
+        SystemJS.import('learn.js')
+    </script>
+
     <script type="module" src="./src/learn.js"></script>
 </body>
 </html>
