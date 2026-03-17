@@ -239,7 +239,7 @@ const pessoa: Humano = {
 
 saudar(pessoa)
 
-// herdando o compromisso
+// herdando o compromisso (obriga a implementar o que tem nele, semelhante ao abstratc, porém orbigando a usar os mesmos métodos)
 class Cliente implements Humano {
     nome: string = 'Gustavo'
     idade: number = 1
@@ -251,3 +251,18 @@ class Cliente implements Humano {
 
 const cliente = new Cliente()
 cliente.saudar("Schmidt")
+
+
+interface A {
+    a(): void
+}
+
+interface B {
+    b(): void
+}
+
+abstract class AB implements A, B {
+    abstract a(): void
+    abstract b(): void
+    abstract c(): void
+}

@@ -168,7 +168,7 @@ var pessoa = {
     altura: 1.75
 };
 saudar(pessoa);
-// herdando o compromisso
+// herdando o compromisso (obriga a implementar o que tem nele, semelhante ao abstratc, porém orbigando a usar os mesmos métodos)
 var Cliente = /** @class */ (function () {
     function Cliente() {
         this.nome = 'Gustavo';
@@ -182,3 +182,8 @@ var Cliente = /** @class */ (function () {
 }());
 var cliente = new Cliente();
 cliente.saudar("Schmidt");
+var AB = /** @class */ (function () {
+    function AB() {
+    }
+    return AB;
+}());
