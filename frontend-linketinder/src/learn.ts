@@ -204,3 +204,14 @@ const phone = new Product("iPhone", 2000)
 console.log(computer);
 console.log(phone);
 
+// Namespaces (funções / classes) - espaço reservado que não irá conflitar com escopo global, deve ser exportada
+
+// ///<reference path="./area.ts"/>
+// import { areaCircunferencia } from './area'
+
+import { areaCircunferencia } from './area'
+
+console.log(areaCircunferencia(5));
+console.log(areaCircunferencia(5));
+
+// Baixar dependencia SystemJS para carregar modulos no browser, porém no cenario regal terá alguma ferramete de build para auxiliar isso (webpack / node)

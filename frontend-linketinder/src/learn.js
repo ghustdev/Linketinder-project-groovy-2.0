@@ -1,29 +1,31 @@
+"use strict";
 // ============================================
 // Configuran ambiente, tsconfig e package
+Object.defineProperty(exports, "__esModule", { value: true });
 console.log("Aprendendo TS");
 console.log("Teste 1");
 console.log("Teste 2");
 // ============================================
 // Tipos de dados - any, number, string, enum, array, funçao, tipo função,checagem de tipos automática
-let nome = "Gust";
+var nome = "Gust";
 // nome = 25 - erro (não para a compilação)
 console.log(nome);
-let idade = 20;
+var idade = 20;
 idade = 20.8;
 console.log(idade);
-let logic = false;
+var logic = false;
 // logic = 1 - erro
 console.log(logic);
-let minhaIdade;
+var minhaIdade;
 minhaIdade = 20;
 // minhaIdade = "20" - erro
 console.log(minhaIdade);
-let hobbies = ["cozinhar", 10];
+var hobbies = ["cozinhar", 10];
 console.log(typeof hobbies);
 hobbies = ["nome"];
 hobbies = [100];
 console.log(hobbies[0]);
-let address = ["Av Principal", 123]; // tupla
+var address = ["Av Principal", 123]; // tupla
 console.log(address[1]);
 console.log(address);
 var Cor;
@@ -32,9 +34,9 @@ var Cor;
     Cor[Cor["cinza"] = 1] = "cinza";
     Cor[Cor["azul"] = 10] = "azul";
 })(Cor || (Cor = {}));
-let cor = Cor.azul;
+var cor = Cor.azul;
 console.log(cor);
-let carro = "Texto";
+var carro = "Texto";
 carro = {
     marca: "BMW",
 };
@@ -51,19 +53,19 @@ function soma(a, b) {
     return a + b;
 }
 console.log(soma(5, 3));
-let calculo;
+var calculo;
 calculo = soma;
 console.log(calculo(3, 10));
-let user = {
+var user = {
     nome: "Gust",
     idade: 20
 };
 console.log(user);
 // ==============================================
 // Desafio:
-let employee = {
+var employee = {
     supervisors: ["Ana", "Fernando"],
-    baterPonto(horario) {
+    baterPonto: function (horario) {
         if (horario <= 8) {
             return "Ponto normal";
         }
@@ -74,9 +76,9 @@ let employee = {
 };
 console.log(employee.supervisors[1]);
 console.log(employee.baterPonto(9));
-let funcionario = {
+var funcionario = {
     supervisors: ["Ana", "Fernando"],
-    baterPonto(horario) {
+    baterPonto: function (horario) {
         if (horario <= 8) {
             return "Ponto normal";
         }
@@ -85,16 +87,16 @@ let funcionario = {
         }
     }
 };
-let nota = 10;
+var nota = 10;
 // ==================================================
 // never - esse tipo nunca acontece, usado em  excessões
 function falha(msg) {
     throw new Error(msg);
 }
-const product = {
+var product = {
     name: "Nome",
     price: 4,
-    validarProduto() {
+    validarProduto: function () {
         if (!this.name || this.name.trim().length === 0) {
             falha("Precisa ter um nome");
         }
@@ -104,5 +106,60 @@ const product = {
     }
 };
 product.validarProduto();
-export {};
-//# sourceMappingURL=learn.js.map
+console.log("Teste");
+// =================================================
+// Classes e POO
+// TypeScript = procedural, estruturada, OO e funcional
+var Data = /** @class */ (function () {
+    function Data(dia, mes, ano) {
+        if (dia === void 0) { dia = 1; }
+        if (mes === void 0) { mes = 1; }
+        if (ano === void 0) { ano = 1970; }
+        this.dia = dia;
+        this.mes = mes;
+        this.ano = ano;
+    }
+    return Data;
+}());
+var data = new Data(14, 12, 2019);
+console.log(data);
+console.log(data.ano);
+// Desafio
+var Product = /** @class */ (function () {
+    function Product(name, price, discount) {
+        if (discount === void 0) { discount = 0; }
+        this.name = name;
+        this.price = price;
+        this.discount = discount;
+    }
+    Product.prototype.getName = function () {
+        return this.name;
+    };
+    Product.prototype.getPrice = function () {
+        return this.price;
+    };
+    Product.prototype.getPriceWithDiscount = function () {
+        return this.price * (1 - this.discount);
+    };
+    Product.prototype.setName = function (name) {
+        this.name = name;
+    };
+    Product.prototype.setPrice = function (price) {
+        if (price <= 0) {
+            throw new Error("Preço inválido!");
+        }
+        this.price = price;
+    };
+    return Product;
+}());
+var computer = new Product("Notebook", 1000, 0.05);
+var phone = new Product("iPhone", 2000);
+console.log(computer);
+console.log(phone);
+// Namespaces (funções / classes) - espaço reservado que não irá conflitar com escopo global, deve ser exportada
+// ///<reference path="./area.ts"/>
+// import { areaCircunferencia } from './area'
+var area_1 = require("./area");
+console.log((0, area_1.areaCircunferencia)(5));
+console.log((0, area_1.areaCircunferencia)(5));
+// Baixar dependencia SystemJS para carregar modulos no browser, porém no cenario regal terá alguma ferramete de build para auxiliar isso (webpack / node)
