@@ -1,4 +1,4 @@
-# Linketinder (Groovy CLI)
+# Linketinder
 
 Plataforma de recrutamento em linha de comando com fluxo de vagas, curtidas e match bidirecional entre candidato e empresa.
 
