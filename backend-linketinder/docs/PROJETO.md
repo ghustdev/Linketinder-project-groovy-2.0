@@ -2,7 +2,7 @@
 
 ## 1. Visão geral
 
-O **Linketinder** é uma aplicação CLI em Groovy para recrutamento, com fluxo de:
+O **Linketinder Backend** é uma aplicação CLI em Groovy para recrutamento, com fluxo de:
 
 - gestão de candidatos e empresas
 - publicação de vagas
