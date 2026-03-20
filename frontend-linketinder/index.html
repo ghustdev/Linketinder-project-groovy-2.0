@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linketinder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="./src/assets/global.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Linketinder</h1>
+        </header>
+
+        <main id="app">
+            <!-- Aba Vagas -->
+            <section id="vagas-tab" class="tab active">
+                <div class="tab-header">
+                    <h2>Vagas Disponíveis</h2>
+                </div>
+                <div id="vagas-feed" class="feed"></div>
+            </section>
+
+            <!-- Aba Candidatos -->
+            <section id="candidatos-tab" class="tab">
+                <div class="tab-header">
+                    <h2>Candidatos</h2>
+                    <button id="btn-grafico" class="btn-icon">
+                        <i class="fas fa-chart-bar"></i> Gráfico
+                    </button>
+                </div>
+                <div id="candidatos-feed" class="feed"></div>
+            </section>
+
+            <!-- Aba Cadastro -->
+            <section id="cadastro-tab" class="tab">
+                <div class="tab-header">
+                    <h2>Cadastro</h2>
+                </div>
+                
+                <div class="form-tabs">
+                    <button id="btn-form-candidato" class="form-tab active">Candidato</button>
+                    <button id="btn-form-empresa" class="form-tab">Empresa</button>
+                    <button id="btn-form-vaga" class="form-tab">Vaga</button>
+                </div>
+
+                <!-- Form Candidato -->
+                <form id="form-candidato" class="form active">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" id="candidato-nome" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" id="candidato-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CPF</label>
+                            <input type="text" id="candidato-cpf" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Idade</label>
+                            <input type="number" id="candidato-idade" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <input type="text" id="candidato-estado" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CEP</label>
+                            <input type="text" id="candidato-cep" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea id="candidato-descricao" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Formação</label>
+                        <input type="text" id="candidato-formacao" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Competências (separadas por vírgula)</label>
+                        <input type="text" id="candidato-competencias" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Cadastrar</button>
+                </form>
+
+                <!-- Form Empresa -->
+                <form id="form-empresa" class="form">
+                    <div class="form-group">
+                        <label>Nome da Empresa</label>
+                        <input type="text" id="empresa-nome" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>E-mail Corporativo</label>
+                            <input type="email" id="empresa-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CNPJ</label>
+                            <input type="text" id="empresa-cnpj" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>País</label>
+                            <input type="text" id="empresa-pais" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <input type="text" id="empresa-estado" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CEP</label>
+                            <input type="text" id="empresa-cep" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea id="empresa-descricao" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Cadastrar</button>
+                </form>
+
+                <!-- Form Vaga -->
+                <form id="form-vaga" class="form">
+                    <div class="form-group">
+                        <label>Título da Vaga</label>
+                        <input type="text" id="vaga-titulo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea id="vaga-descricao" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>CNPJ da Empresa</label>
+                        <input type="text" id="vaga-cnpj" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Competências Necessárias (separadas por vírgula)</label>
+                        <input type="text" id="vaga-competencias" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Cadastrar</button>
+                </form>
+
+                <!-- Listagem -->
+                <div class="listagem">
+                    <div class="list-actions">
+                        <button id="btn-listar-candidatos" class="btn-secondary">
+                            <i class="fas fa-users"></i> Listar Candidatos
+                        </button>
+                        <button id="btn-listar-empresas" class="btn-secondary">
+                            <i class="fas fa-building"></i> Listar Empresas
+                        </button>
+                        <button id="btn-listar-vagas" class="btn-secondary">
+                            <i class="fas fa-building"></i> Listar Vagas
+                        </button>
+                    </div>
+                    <div id="lista-cadastros"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Gráfico -->
+    <div id="modal-grafico" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Competências dos Candidatos</h2>
+                <button class="close"><i class="fas fa-times"></i></button>
+            </div>
+            <canvas id="chart-competencias"></canvas>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button data-tab="vagas-tab" class="nav-btn active">
+            <i class="fas fa-briefcase"></i>
+            <span>Vagas</span>
+        </button>
+        <button data-tab="candidatos-tab" class="nav-btn">
+            <i class="fas fa-users"></i>
+            <span>Candidatos</span>
+        </button>
+        <button data-tab="cadastro-tab" class="nav-btn">
+            <i class="fas fa-plus-circle"></i>
+            <span>Cadastro</span>
+        </button>
+    </nav>
+
+    <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
