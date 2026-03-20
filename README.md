@@ -1,4 +1,4 @@
-# Linketinder
+# Linketinder MVP - Projeto Full Stack
 
 Plataforma de recrutamento em linha de comando com fluxo de vagas, curtidas e match bidirecional entre candidato e empresa.
 

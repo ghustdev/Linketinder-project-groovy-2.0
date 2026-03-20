@@ -53,8 +53,12 @@ export class StorageService {
         this.salvarCandidatos(candidatos);
     }
 
-    static excluirEmpresa(id: string): void {
+    static excluirEmpresa(id: string, cnpj: string): void {
         const empresas = this.obterEmpresas().filter(e => e.id !== id);
+        const vagasEmpresa = this.obterVagas().filter(v => v.cnpjEmpresa === cnpj);
+        vagasEmpresa.forEach((vaga) => {
+            this.excluirVaga(vaga.id);
+        })
         this.salvarEmpresas(empresas);
     }
 
