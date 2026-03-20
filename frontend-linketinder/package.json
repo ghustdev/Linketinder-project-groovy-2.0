@@ -1,19 +1,22 @@
 {
   "name": "frontend-linketinder",
   "version": "1.0.0",
-  "description": "",
-  "main": "learn.js",
+  "description": "Linketinder MVP",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "live-server"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "keywords": [],
-  "type": "module",
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.30.0",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0"
+  },
   "dependencies": {
-    "live-server": "^1.2.2",
-    "systemjs": "^6.15.1"
+    "chart.js": "^4.4.0"
   }
 }
