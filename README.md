@@ -2,6 +2,12 @@
 
 Plataforma de recrutamento em linha de comando com fluxo de vagas, curtidas e match bidirecional entre candidato e empresa.
 
+<img width="1891" height="946" alt="mvp linketinder" src="https://github.com/user-attachments/assets/64d87f35-c135-4eb7-a5c3-d2a9bc809023" />
+
+## Deploy
+[linketinder.io](https://linketinder.vercel.app/)
+
+
 ## Estado atual
 
 - Aplicação CLI funcional com menu expandido (opções `0` a `11`)
