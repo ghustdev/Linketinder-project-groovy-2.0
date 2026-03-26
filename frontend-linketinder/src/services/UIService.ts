@@ -1,7 +1,6 @@
 import { StorageService } from "../repository/StorageService.js";
 
 export class UIService {
-  
   static renderizarVagas(): void {
     const vagas = StorageService.obterVagas();
     const empresas = StorageService.obterEmpresas();
@@ -149,4 +148,14 @@ export class UIService {
       lista.appendChild(item);
     });
   }
+
+  static readonly regex = {
+    nome: /[a-zA-Z]+(?:\s+[a-zA-Z]+)*/g,
+    email: /[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,4}/g,
+    cpf: /\d{3}\.\d{3}\.\d{3}-\d{2}/g,
+    cnpj: /\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/g,
+    skill: /[a-zA-Z0-9#+.\-]{1,20}/g,
+    linkedin: /(https:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?/g,
+    cep: /\d{5}-\d{3}/g
+  };
 }

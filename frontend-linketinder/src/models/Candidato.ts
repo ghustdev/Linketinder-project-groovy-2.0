@@ -9,6 +9,7 @@ export class Candidato {
     descricao: string;
     formacao: string;
     competencias: string[];
+    linkedin: string;
 
     constructor(
         nome: string,
@@ -19,7 +20,8 @@ export class Candidato {
         cep: string,
         descricao: string,
         formacao: string,
-        competencias: string[]
+        competencias: string[],
+        linkedin: string
     ) {
         this.id = Date.now().toString();
         this.nome = nome;
@@ -31,5 +33,6 @@ export class Candidato {
         this.descricao = descricao;
         this.formacao = formacao;
         this.competencias = competencias;
+        this.linkedin = linkedin;
     }
 }
