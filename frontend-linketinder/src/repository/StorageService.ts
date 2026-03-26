@@ -3,6 +3,7 @@ import { Empresa } from '../models/Empresa.js';
 import { Vaga } from '../models/Vaga.js';
 
 export class StorageService {
+
     static salvarCandidatos(candidatos: Candidato[]): void {
         localStorage.setItem('candidatos', JSON.stringify(candidatos));
     }
@@ -58,7 +59,7 @@ export class StorageService {
         const vagasEmpresa = this.obterVagas().filter(v => v.cnpjEmpresa === cnpj);
         vagasEmpresa.forEach((vaga) => {
             this.excluirVaga(vaga.id);
-        })
+        });
         this.salvarEmpresas(empresas);
     }
 
@@ -68,7 +69,6 @@ export class StorageService {
     }
 
     static empresaExiste(cnpj: string): boolean {
-        const empresa = this.obterEmpresas().some(e => e.cnpj === cnpj); 
-        return empresa;
+        return this.obterEmpresas().some(e => e.cnpj === cnpj);
     }
 }

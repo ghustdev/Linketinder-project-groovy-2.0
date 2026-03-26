@@ -1,6 +1,7 @@
 import { StorageService } from "../repository/StorageService.js";
 
 export class UIService {
+
   static renderizarVagas(): void {
     const vagas = StorageService.obterVagas();
     const empresas = StorageService.obterEmpresas();
@@ -65,9 +66,7 @@ export class UIService {
     const labels = Object.keys(competenciasMap);
     const data = Object.values(competenciasMap);
 
-    const canvas = document.getElementById(
-      "chart-competencias",
-    ) as HTMLCanvasElement;
+    const canvas = document.getElementById("chart-competencias") as HTMLCanvasElement;
     if (!canvas) return;
 
     new (window as any).Chart(canvas, {
@@ -87,9 +86,7 @@ export class UIService {
       options: {
         responsive: true,
         scales: {
-          y: {
-            beginAtZero: true,
-          },
+          y: { beginAtZero: true },
         },
       },
     });
@@ -150,12 +147,12 @@ export class UIService {
   }
 
   static readonly regex = {
-    nome: /[a-zA-Z]+(?:\s+[a-zA-Z]+)*/g,
-    email: /[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,4}/g,
-    cpf: /\d{3}\.\d{3}\.\d{3}-\d{2}/g,
-    cnpj: /\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/g,
-    skill: /[a-zA-Z0-9#+.\-]{1,20}/g,
-    linkedin: /(https:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?/g,
-    cep: /\d{5}-\d{3}/g
+    nome: /[a-zA-Z]+(?:\s+[a-zA-Z]+)*/,
+    email: /[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,4}/,
+    cpf: /\d{3}\.\d{3}\.\d{3}-\d{2}/,
+    cnpj: /\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/,
+    skill: /[a-zA-Z0-9#+.\-]{1,20}/,
+    linkedin: /(https:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?/,
+    cep: /\d{5}-\d{3}/,
   };
 }
