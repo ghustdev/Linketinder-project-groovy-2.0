@@ -168,6 +168,7 @@ Este projeto está sob a licença de `Gustavo Cardoso` e `Acelera ZG`.
 
 Desenvolvido por [ghustdev](https://github.com/ghustdev)
 
+
 ---
 
 ⭐ Se este projeto foi útil para você, considere dar uma estrela!
