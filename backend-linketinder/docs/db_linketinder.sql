@@ -87,7 +87,7 @@ WHERE e.cnpj = '12345678000199';
 COMMIT;
 
 -- ------------------------------------------------------------
--- Caso real simples: cadastro do candidato + competencias
+-- Caso real simples com CTE: cadastro do candidato + competencias
 -- ------------------------------------------------------------
 
 BEGIN;
@@ -120,7 +120,7 @@ FROM novo_candidato, competencias_ids
 COMMIT;
 
 -- ------------------------------------------------------------
--- Caso real simples: cadastro de vaga + competencias
+-- Caso real simples com CTE: cadastro de vaga + competencias
 -- ------------------------------------------------------------
 BEGIN;
 

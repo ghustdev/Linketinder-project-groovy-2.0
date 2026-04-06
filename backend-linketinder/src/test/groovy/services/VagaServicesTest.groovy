@@ -1,6 +1,6 @@
 package services
 
-import model.Empresa
+
 import repository.Repository
 import spock.lang.Specification
 
@@ -53,7 +53,7 @@ class VagaServicesTest extends Specification {
         then:
         repository.arrayVagas.size() == 3
         repository.arrayVagas.last().id == idAntes + 1
-        repository.arrayVagas.last().title == "Nova Vaga"
+        repository.arrayVagas.last().nome == "Nova Vaga"
     }
 
     def "listagem de vagas deve executar sem lançar excecao"() {

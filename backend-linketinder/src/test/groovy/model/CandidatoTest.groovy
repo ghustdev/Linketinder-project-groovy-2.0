@@ -6,9 +6,9 @@ class CandidatoTest extends Specification {
 
     def "deve curtir vaga e registrar curtida no candidato"() {
         given:
-        def empresa = Empresa.builder().name("Tech").cnpj("11").build()
-        def vaga = Vaga.builder().id(1).title("Dev").empresa(empresa).build()
-        def candidato = Candidato.builder().name("Ana").cpf("123").build()
+        def empresa = Empresa.builder().nome("Tech").cnpj("11").build()
+        def vaga = Vaga.builder().id(1).nome("Dev").empresa(empresa).build()
+        def candidato = Candidato.builder().nome("Ana").cpf("123").build()
 
         when:
         def curtida = candidato.curtirVaga(vaga)
@@ -23,9 +23,9 @@ class CandidatoTest extends Specification {
 
     def "deve impedir curtida duplicada para mesma vaga"() {
         given:
-        def empresa = Empresa.builder().name("Tech").cnpj("11").build()
-        def vaga = Vaga.builder().id(1).title("Dev").empresa(empresa).build()
-        def candidato = Candidato.builder().name("Ana").cpf("123").build()
+        def empresa = Empresa.builder().nome("Tech").cnpj("11").build()
+        def vaga = Vaga.builder().id(1).nome("Dev").empresa(empresa).build()
+        def candidato = Candidato.builder().nome("Ana").cpf("123").build()
         candidato.curtirVaga(vaga)
 
         when:
@@ -37,9 +37,9 @@ class CandidatoTest extends Specification {
 
     def "deve inicializar lista de curtidas quando estiver nula"() {
         given:
-        def empresa = Empresa.builder().name("Tech").cnpj("11").build()
-        def vaga = Vaga.builder().id(1).title("Dev").empresa(empresa).build()
-        def candidato = Candidato.builder().name("Ana").cpf("123").build()
+        def empresa = Empresa.builder().nome("Tech").cnpj("11").build()
+        def vaga = Vaga.builder().id(1).nome("Dev").empresa(empresa).build()
+        def candidato = Candidato.builder().nome("Ana").cpf("123").build()
         candidato.vagasCurtidas = null
 
         when:

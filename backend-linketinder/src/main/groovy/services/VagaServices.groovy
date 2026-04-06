@@ -1,94 +1,78 @@
 package services
 
+import dao.CandidatoDao
+import dao.CompetenciaDao
+import dao.EmpresaDao
+import dao.VagaDao
 import groovy.transform.CompileDynamic
 import model.Candidato
-import repository.Repository
 import model.Empresa
 import model.Vaga
 
 class VagaServices {
-    Repository repository
-    Empresa empresa
+    VagaDao vagaDao
+    EmpresaDao empresaDao
+    CandidatoDao candidatoDao
+    CompetenciaDao competenciaDao
 
     @CompileDynamic
-    VagaServices(Repository repository, Empresa empresa) {
-        this.repository = repository
-        this.empresa = empresa
+    VagaServices(VagaDao vagaDao, EmpresaDao empresaDao, CandidatoDao candidatoDao, CompetenciaDao competenciaDao) {
+        this.vagaDao = vagaDao
+        this.empresaDao = empresaDao
+        this.candidatoDao = candidatoDao
+        this.competenciaDao = competenciaDao
     }
 
     @CompileDynamic
     Empresa searchEmpresa(String cnpj) {
-        try {
-            def empresa = repository.arrayEmpresas.find {it.cnpj.equalsIgnoreCase(cnpj)}
-
-            if (empresa != null) {
-                return empresa
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace()
-        }
-        return null
+        return empresaDao.findByCnpj(cnpj)
     }
 
     @CompileDynamic
-    Vaga searchIdVaga(int id) {
-        try {
-            def vaga = repository.arrayVagas.find { (it.id == id) }
-
-            if (vaga != null) {
-                return vaga
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace()
-        }
-        return null
+    Vaga searchIdVaga(Long id) {
+        return vagaDao.findById(id)
     }
 
     @CompileDynamic
     Candidato searchCandidato(String cpf) {
-        try {
-            def candidato = repository.arrayCandidatos.find {it.cpf.equalsIgnoreCase(cpf)}
-
-            if (candidato != null) {
-                return candidato
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace()
-        }
-        return null
+        return candidatoDao.findByCpf(cpf)
     }
 
     @CompileDynamic
-    void createVaga(String title, String description, Empresa empresa, List<String> skillsRequests) {
-        try {
-            int maxId = repository.arrayVagas.stream().mapToInt(Vaga::getId).max().orElse(0) + 1
+    Vaga createVaga(String title,
+                    String description,
+                    String estado,
+                    String cidade,
+                    Empresa empresa,
+                    List<String> skillsRequests) {
+        if (vagaDao.findByEmpresaAndNome(empresa.id, title) != null) {
+            throw new IllegalStateException("Vaga já cadastrada para esta empresa.")
+        }
 
-            repository.arrayVagas.add(Vaga.builder()
-                    .id(maxId)
-                    .title(title)
-                    .description(description)
-                    .empresa(empresa)
-                    .skillsRequests(skillsRequests)
-                    .build())
+        Long vagaId = vagaDao.insert(empresa.id, title, description, estado, cidade)
+        if (vagaId == null) {
+            throw new IllegalStateException("Não foi possível criar a vaga.")
         }
-        catch (Exception e) {
-            e.printStackTrace()
-        }
+
+        competenciaDao.insert(skillsRequests)
+        Map<String, Long> ids = competenciaDao.findIdsByNames(skillsRequests)
+        vagaDao.addCompetencias(vagaId, ids.values() as List<Long>)
+
+        return vagaDao.findById(vagaId)
     }
 
     @CompileDynamic
     void listVagas() {
-        repository.arrayVagas.each { v ->
+        vagaDao.listAll().each { v ->
             println "Id vaga: ${v.id}"
-            println "Empresa: ${v.empresa.name}"
-            println "CNPJ: ${v.empresa.cnpj}"
-            println "Título: ${v.title}"
-            println "Descrição: ${v.description}"
+            println "Empresa: ${v.empresa?.nome}"
+            println "CNPJ: ${v.empresa?.cnpj}"
+            println "Título: ${v.nome}"
+            println "Descrição: ${v.descricao}"
+            println "Estado: ${v.estado}"
+            println "Cidade: ${v.cidade}"
             println "Requisitos: "
-            v.skillsRequests.each {s ->
+            v.skillsRequests.each { s ->
                 println " - ${s}"
             }
             println("+================================================+")

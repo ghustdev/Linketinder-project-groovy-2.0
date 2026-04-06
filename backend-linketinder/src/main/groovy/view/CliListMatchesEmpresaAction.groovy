@@ -12,7 +12,7 @@ class CliListMatchesEmpresaAction {
         def matchesEmpresa = cli.sistemaCurtidas.allMatches.findAll { it.empresa?.cnpj == empresa.cnpj }
 
         if (matchesEmpresa.isEmpty()) {
-            println("Nenhum match para ${empresa.name}.")
+            println("Nenhum match para ${empresa.nome}.")
             println("+================================================+")
             cli.pause()
             return
@@ -20,8 +20,8 @@ class CliListMatchesEmpresaAction {
 
         matchesEmpresa.eachWithIndex { m, index ->
             println("Match: ${index + 1}")
-            println("Candidato: ${m.candidato.name} (${m.candidato.cpf})")
-            println("Vaga: ${m.vaga.title} [id=${m.vaga.id}]")
+            println("Candidato: ${m.candidato.nome} (${m.candidato.cpf})")
+            println("Vaga: ${m.vaga.nome} [id=${m.vaga.id}]")
             println("Data: ${m.dateMatch}")
             println("+================================================+")
         }

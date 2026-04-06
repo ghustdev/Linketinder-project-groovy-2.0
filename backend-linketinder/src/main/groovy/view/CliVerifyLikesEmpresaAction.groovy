@@ -32,17 +32,17 @@ class CliVerifyLikesEmpresaAction {
                 print("Digite o CPF do candidato da lista acima: ")
                 String cpf = cli.scanner.nextLine().trim()
 
-                Integer idVaga = cli.readInt("Digite o ID da vaga que o candidato curtiu: ")
-
-                def vagaSearch = cli.vagaServices.searchIdVaga(idVaga)
-
-                if (idVaga == null) {
+                Integer idVagaInput = cli.readInt("Digite o ID da vaga que o candidato curtiu: ")
+                if (idVagaInput == null) {
                     println("+================================================+")
                     println("ID de vaga inválido.")
                     println("+================================================+")
                     cli.pause()
                     continue
                 }
+
+                Long idVaga = (idVagaInput as Long)
+                def vagaSearch = cli.vagaServices.searchIdVaga(idVaga)
 
                 if (vagaSearch == null) {
                     println("+================================================+")
@@ -75,8 +75,8 @@ class CliVerifyLikesEmpresaAction {
                 }
 
                 println("+================================================+")
-                println("É UM MATCH! Você e ${candidato.name} agora estão conectados.")
-                println("${empresa.name} curtiu o candidato ${candidato.name} para a vaga: ${vaga.title}")
+                println("É UM MATCH! Você e ${candidato.nome} agora estão conectados.")
+                println("${empresa.nome} curtiu o candidato ${candidato.nome} para a vaga: ${vaga.nome}")
                 println("+================================================+")
 
                 print("Deseja curtir outro candidato? (s/n): ")
@@ -93,4 +93,3 @@ class CliVerifyLikesEmpresaAction {
         }
     }
 }
-

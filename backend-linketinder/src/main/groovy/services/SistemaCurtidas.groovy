@@ -6,7 +6,6 @@ import model.Candidato
 import model.Empresa
 import model.Match
 import model.Vaga
-import repository.Repository
 
 class SistemaCurtidas {
 
@@ -15,10 +14,10 @@ class SistemaCurtidas {
 
     void listCurtidasCandidato(List<Curtida> vagasCurtidas) {
         vagasCurtidas.each { c ->
-            println("Vaga: ${c.vaga.title}")
-            println("Candidato: ${c.candidato.name}")
+            println("Vaga: ${c.vaga.nome}")
+            println("Candidato: ${c.candidato.nome}")
             println("CPF: ${c.candidato.cpf}")
-            println("Empresa: ${c.empresa.name}")
+            println("Empresa: ${c.empresa.nome}")
             println("CNPJ: ${c.empresa.cnpj}")
             println("+================================================+")
         }
@@ -32,11 +31,11 @@ class SistemaCurtidas {
                 def match = new Match(candidato: c, empresa: curtida.empresa, vaga: curtida.vaga)
                 status = match.isMatch(curtida.empresa.candidatosCurtidos, allCurtidasCandidatos) ? "MATCH!" : "Pendente"
             }
-            println("Candidato: ${c.name}")
+            println("Candidato: ${c.nome}")
             println("CPF: ${c.cpf}")
             println("Id Vaga: ${curtida.vaga.id}")
             println("Skills: ${c.skills.join(', ')}")
-            println("Vaga: ${curtida.vaga.title}")
+            println("Vaga: ${curtida.vaga.nome}")
             println("--------------------------------------------------")
             println("Status: ${status}")
             println("+================================================+")

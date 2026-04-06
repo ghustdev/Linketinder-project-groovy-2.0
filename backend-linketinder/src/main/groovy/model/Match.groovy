@@ -27,7 +27,7 @@ class Match {
         return likesEmpresa.contains(target) && likesCandidato.contains(target)
     }
 
-    static String buildKey(String cpf, String cnpj, Integer vagaId) {
+    static String buildKey(String cpf, String cnpj, Long vagaId) {
         return "${cpf}|${cnpj}|${vagaId}"
     }
 }

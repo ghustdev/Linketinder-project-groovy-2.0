@@ -14,7 +14,7 @@ class CliListLikesCandidatoAction {
             def vagasCurtidas = candidato.listCurtidas()
             if (vagasCurtidas == null || vagasCurtidas.isEmpty()) {
                 println("+================================================+")
-                println("${candidato.name} não possui curtidas")
+                println("${candidato.nome} não possui curtidas")
                 println("+================================================+")
             } else {
                 println("+================================================+")

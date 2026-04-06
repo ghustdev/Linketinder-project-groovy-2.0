@@ -17,13 +17,13 @@ class PessoaServicesBehaviorTest extends Specification {
         then:
         repository.arrayCandidatos.size() == totalAntes + 1
         repository.arrayCandidatos.last().with {
-            name == "Novo"
+            nome == "Novo"
             email == "novo@mail.com"
             cpf == "999"
             old == 20
             state == "SP"
             cep == "01000"
-            description == "Desc"
+            descricao == "Desc"
             skills == ["Groovy"]
         }
     }
@@ -40,13 +40,13 @@ class PessoaServicesBehaviorTest extends Specification {
         then:
         repository.arrayEmpresas.size() == totalAntes + 1
         repository.arrayEmpresas.last().with {
-            name == "Empresa X"
+            nome == "Empresa X"
             email == "x@mail.com"
             cnpj == "0001"
             country == "Brasil"
             state == "GO"
             cep == "74000"
-            description == "Desc"
+            descricao == "Desc"
             skills == ["Java"]
         }
     }

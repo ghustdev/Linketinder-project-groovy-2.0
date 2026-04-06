@@ -1,6 +1,6 @@
 package model
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.ToString
 import groovy.transform.builder.Builder
 
@@ -9,15 +9,18 @@ import java.time.LocalDateTime
 @Builder
 @ToString(includeSuper = true, includeNames = true)
 class Candidato extends Pessoa {
-    String name
+    Long id
+    String nome
+    String sobrenome
     String email
-    String description
-    String state
+    String descricao
+    String pais
     String cep
+    String senha_hash
     List<String> skills = []
     // Specific fields
     String cpf
-    int old
+    Date data_nascimento
     // Likes
     List<Curtida> vagasCurtidas = []
 
@@ -27,7 +30,7 @@ class Candidato extends Pessoa {
         }
 
         if (jaCortiuVaga(vaga)) {
-            throw new IllegalStateException("Erro: ${name} já curtiu a vaga '${vaga.title}'.")
+            throw new IllegalStateException("Erro: ${nome} já curtiu a vaga '${vaga.nome}'.")
         }
 
         LocalDateTime date = LocalDateTime.now()

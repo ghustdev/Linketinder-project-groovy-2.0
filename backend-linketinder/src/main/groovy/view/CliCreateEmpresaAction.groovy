@@ -1,5 +1,7 @@
 package view
 
+import model.Empresa
+
 class CliCreateEmpresaAction {
     static void cliCreateEmpresa(Cli cli) {
         try {
@@ -7,27 +9,44 @@ class CliCreateEmpresaAction {
             println("|                Cadastrar empresa               |")
             println("+================================================+")
             print("Nome: ")
-            String name = cli.scanner.nextLine()
+            String nome = cli.scanner.nextLine()
             print("Email: ")
             String email = cli.scanner.nextLine()
             print("CNPJ: ")
             String cnpj = cli.scanner.nextLine()
             print("País: ")
-            String country = cli.scanner.nextLine()
-            print("Estado: ")
-            String state = cli.scanner.nextLine()
+            String pais = cli.scanner.nextLine()
             print("CEP: ")
             String cep = cli.scanner.nextLine()
             print("Descrição: ")
             String description = cli.scanner.nextLine()
-            print("Lista de habilidades (separado por ','): ")
-            String input = cli.scanner.nextLine()
-            List<String> skills = cli.parseSkills(input)
+            print("Senha (6+ dígitos): ")
+            String senha = cli.scanner.nextLine()
 
-            cli.pessoaServices.createEmpresa(name, email, cnpj, country, state, cep, description, skills)
+            Empresa empresa = cli.pessoaServices.createEmpresa(nome, email, cnpj, pais, cep, description, senha)
 
             println("+================================================+")
-            println("Empresa cadastrada com sucesso!")
+            println("Empresa, ${empresa.nome}, cadastrada com sucesso!")
+            println("+================================================+")
+
+            println("+================================================+")
+            println("Agora cadastre uma vaga para a empresa ${empresa.nome}:")
+            print("Título: ")
+            String title = cli.scanner.nextLine()
+            print("Descrição da vaga: ")
+            String vagaDescription = cli.scanner.nextLine()
+            print("Estado: ")
+            String estado = cli.scanner.nextLine()
+            print("Cidade: ")
+            String cidade = cli.scanner.nextLine()
+            print("Lista de habilidades requeridas (separado por ','): ")
+            String input = cli.scanner.nextLine()
+            List<String> skillsRequests = cli.parseSkills(input)
+
+            cli.vagaServices.createVaga(title, vagaDescription, estado, cidade, empresa, skillsRequests)
+
+            println("+================================================+")
+            println("Vaga cadastrada com sucesso!")
             println("+================================================+")
             cli.pause()
         }
@@ -39,4 +58,3 @@ class CliCreateEmpresaAction {
         }
     }
 }
-

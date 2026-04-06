@@ -15,9 +15,9 @@ class CliListMatchesAction {
 
         cli.sistemaCurtidas.allMatches.eachWithIndex { m, index ->
             println("Match: ${index + 1}")
-            println("Candidato: ${m.candidato.name} (${m.candidato.cpf})")
-            println("Empresa: ${m.empresa.name} (${m.empresa.cnpj})")
-            println("Vaga: ${m.vaga.title} [id=${m.vaga.id}]")
+            println("Candidato: ${m.candidato.nome} (${m.candidato.cpf})")
+            println("Empresa: ${m.empresa.nome} (${m.empresa.cnpj})")
+            println("Vaga: ${m.vaga.nome} [id=${m.vaga.id}]")
             println("Data: ${m.dateMatch}")
             println("+================================================+")
         }
