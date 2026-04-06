@@ -23,6 +23,8 @@ class Main {
             def sistemaCurtidas = new SistemaCurtidas()
             def cli = new Cli(pessoaServices, repository, vagaServices, sistemaCurtidas)
 
+            repository.loadFromDb(candidatoDao, empresaDao, vagaDao)
+
             cli.cliMenu()
         } catch (Exception e) {
             e.printStackTrace()

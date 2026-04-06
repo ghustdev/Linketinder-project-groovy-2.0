@@ -1,5 +1,8 @@
 package repository
 
+import dao.CandidatoDao
+import dao.EmpresaDao
+import dao.VagaDao
 import model.Candidato
 import model.Curtida
 import model.Empresa
@@ -14,5 +17,11 @@ class Repository {
     List<Match> allMatches = []
 
     Repository() {
+    }
+
+    void loadFromDb(CandidatoDao candidatoDao, EmpresaDao empresaDao, VagaDao vagaDao) {
+        arrayCandidatos = candidatoDao.listAll()
+        arrayEmpresas = empresaDao.listAll()
+        arrayVagas = vagaDao.listAll()
     }
 }

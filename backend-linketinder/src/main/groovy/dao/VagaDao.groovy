@@ -13,6 +13,7 @@ class VagaDao {
         this.empresaDao = empresaDao
     }
 
+    // Inserir vaga baseado na empresa no DB
     Long insert(Long empresaId,
                 String nome,
                 String descricao,
@@ -41,6 +42,7 @@ RETURNING id
         }
     }
 
+    // Inserir competencias exigidas para a vaga
     void addCompetencias(Long vagaId, List<Long> competenciaIds) {
         if (vagaId == null || competenciaIds == null || competenciaIds.isEmpty()) {
             return
@@ -83,6 +85,7 @@ ON CONFLICT DO NOTHING
         }
     }
 
+    // Evitar duplicidade
     Vaga findByEmpresaAndNome(Long empresaId, String nome) {
         String sql = "SELECT * FROM vagas WHERE empresa_id = ? AND nome = ?"
         Connection conn = Db.getConnection()
@@ -122,6 +125,7 @@ ON CONFLICT DO NOTHING
         }
     }
 
+    // Função auxiliar
     private List<String> listSkillsByVagaId(Connection conn, Long vagaId) {
         String sql = """\
 SELECT comp.nome

@@ -57,12 +57,12 @@ class PessoaServices {
 
     @CompileDynamic
     Empresa createEmpresa(String nome,
-                          String email,
-                          String cnpj,
-                          String pais,
-                          String cep,
-                          String descricao,
-                          String senhaHash) {
+                            String email,
+                            String cnpj,
+                            String pais,
+                            String cep,
+                            String descricao,
+                            String senhaHash) {
         if (empresaDao.findByCnpj(cnpj) != null) {
             throw new IllegalStateException("CNPJ já cadastrado.")
         }
