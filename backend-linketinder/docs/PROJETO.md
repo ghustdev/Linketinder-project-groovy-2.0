@@ -32,7 +32,7 @@ O sistema mantém a separação por camadas (`view`, `services`, `repository`, `
 
 - **Model (`model.*`)**
   - `Pessoa` + `InterfacePessoa`: estrutura base
-  - `Candidato`, `Empresa`, `Vaga`, `Curtida`, `Match`
+  - `Candidato`, `Empresa`, `Vaga`, `Competencia`, `Curtida`, `Match`
 
 - **DAO (`dao.*`)**
   - `CandidatoDao`, `EmpresaDao`, `VagaDao`, `CompetenciaDao`
@@ -63,6 +63,7 @@ Depois carrega os dados do banco no `Repository` e inicia o loop principal com `
 ### 3.2 `Candidato`
 
 - campos específicos: `cpf`, `sobrenome`, `data_nascimento`, `pais`, `senha_hash`
+- `skills` é uma lista de objetos `Competencia`
 - mantém `vagasCurtidas`
 - regras:
   - impede curtida duplicada na mesma vaga (`jaCortiuVaga`)
@@ -80,7 +81,8 @@ Depois carrega os dados do banco no `Repository` e inicia o loop principal com `
 
 ### 3.4 `Vaga`
 
-- `id`, `title`, `description`, `empresa`, `estado`, `cidade`, `skillsRequests`
+- `id`, `nome`, `descricao`, `empresa`, `estado`, `cidade`, `skillsRequests`
+  - `skillsRequests` é uma lista de objetos `Competencia`
 
 ### 3.5 `Curtida`
 

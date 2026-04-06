@@ -32,9 +32,9 @@ class CliCreateEmpresaAction {
             println("+================================================+")
             println("Agora cadastre uma vaga para a empresa ${empresa.nome}:")
             print("Título: ")
-            String title = cli.scanner.nextLine()
+            String nomeVaga = cli.scanner.nextLine()
             print("Descrição da vaga: ")
-            String vagaDescription = cli.scanner.nextLine()
+            String vagaDescricao = cli.scanner.nextLine()
             print("Estado: ")
             String estado = cli.scanner.nextLine()
             print("Cidade: ")
@@ -43,7 +43,7 @@ class CliCreateEmpresaAction {
             String input = cli.scanner.nextLine()
             List<String> skillsRequests = cli.parseSkills(input)
 
-            cli.vagaServices.createVaga(title, vagaDescription, estado, cidade, empresa, skillsRequests)
+            cli.vagaServices.createVaga(nomeVaga, vagaDescricao, estado, cidade, empresa, skillsRequests)
 
             println("+================================================+")
             println("Vaga cadastrada com sucesso!")

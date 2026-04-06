@@ -54,3 +54,4 @@ groovy src/main/groovy/Main.groovy
 
 - Curtidas e Matches seguem a lógica atual em memória.
 - Testes antigos ainda podem falhar por dependerem do modelo anterior em memória.
+- As habilidades agora são objetos (`Competencia`) em candidatos e vagas.

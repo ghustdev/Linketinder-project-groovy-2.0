@@ -110,7 +110,7 @@ class PessoaServices {
             println "CEP: ${c.cep}"
             println "Habilidades: "
             c.skills.each { s ->
-                println "   ${s}"
+                println "   ${s.nome}"
             }
             id++
             println("+================================================+")

@@ -17,7 +17,7 @@ class Candidato extends Pessoa {
     String pais
     String cep
     String senha_hash
-    List<String> skills = []
+    List<Competencia> skills = []
     // Specific fields
     String cpf
     Date data_nascimento

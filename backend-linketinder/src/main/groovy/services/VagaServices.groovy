@@ -39,17 +39,17 @@ class VagaServices {
     }
 
     @CompileDynamic
-    Vaga createVaga(String title,
-                    String description,
+    Vaga createVaga(String nome,
+                    String descricao,
                     String estado,
                     String cidade,
                     Empresa empresa,
                     List<String> skillsRequests) {
-        if (vagaDao.findByEmpresaAndNome(empresa.id, title) != null) {
+        if (vagaDao.findByEmpresaAndNome(empresa.id, nome) != null) {
             throw new IllegalStateException("Vaga já cadastrada para esta empresa.")
         }
 
-        Long vagaId = vagaDao.insert(empresa.id, title, description, estado, cidade)
+        Long vagaId = vagaDao.insert(empresa.id, nome, descricao, estado, cidade)
         if (vagaId == null) {
             throw new IllegalStateException("Não foi possível criar a vaga.")
         }
@@ -73,7 +73,7 @@ class VagaServices {
             println "Cidade: ${v.cidade}"
             println "Requisitos: "
             v.skillsRequests.each { s ->
-                println " - ${s}"
+                println " - ${s.nome}"
             }
             println("+================================================+")
         }

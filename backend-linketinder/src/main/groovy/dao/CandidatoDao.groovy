@@ -2,6 +2,7 @@ package dao
 
 import db.Db
 import model.Candidato
+import model.Competencia
 
 import java.sql.Connection
 import java.sql.Date
@@ -109,20 +110,23 @@ ON CONFLICT DO NOTHING
         }
     }
 
-    private List<String> listSkillsByCandidatoId(Connection conn, Long candidatoId) {
+    private List<Competencia> listSkillsByCandidatoId(Connection conn, Long candidatoId) {
         String sql = """\
-SELECT comp.nome
+SELECT comp.id, comp.nome
 FROM competencias comp, candidato_competencia cc
 WHERE cc.candidato_id = ?
   AND cc.competencia_id = comp.id
 ORDER BY comp.nome
 """
-        List<String> skills = []
+        List<Competencia> skills = []
         PreparedStatement stmt = conn.prepareStatement(sql)
         stmt.setLong(1, candidatoId)
         def rs = stmt.executeQuery()
         while (rs.next()) {
-            skills.add(rs.getString("nome"))
+            skills.add(Competencia.builder()
+                    .id(rs.getLong("id"))
+                    .nome(rs.getString("nome"))
+                    .build())
         }
         rs.close()
         stmt.close()

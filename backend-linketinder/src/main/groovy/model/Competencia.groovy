@@ -5,13 +5,7 @@ import groovy.transform.builder.Builder
 
 @Builder
 @ToString(includeNames = true)
-class Vaga {
+class Competencia {
     Long id
-    Long empresa_id
     String nome
-    String descricao
-    String estado
-    String cidade
-    Empresa empresa
-    List<Competencia> skillsRequests = []
 }

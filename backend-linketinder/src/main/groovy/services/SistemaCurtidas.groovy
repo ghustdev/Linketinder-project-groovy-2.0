@@ -34,7 +34,7 @@ class SistemaCurtidas {
             println("Candidato: ${c.nome}")
             println("CPF: ${c.cpf}")
             println("Id Vaga: ${curtida.vaga.id}")
-            println("Skills: ${c.skills.join(', ')}")
+            println("Skills: ${c.skills.collect { it.nome }.join(', ')}")
             println("Vaga: ${curtida.vaga.nome}")
             println("--------------------------------------------------")
             println("Status: ${status}")

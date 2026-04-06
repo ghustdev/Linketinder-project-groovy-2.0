@@ -1,6 +1,7 @@
 package dao
 
 import db.Db
+import model.Competencia
 import model.Vaga
 
 import java.sql.Connection
@@ -126,20 +127,23 @@ ON CONFLICT DO NOTHING
     }
 
     // Função auxiliar
-    private List<String> listSkillsByVagaId(Connection conn, Long vagaId) {
+    private List<Competencia> listSkillsByVagaId(Connection conn, Long vagaId) {
         String sql = """\
-SELECT comp.nome
+SELECT comp.id, comp.nome
 FROM competencias comp, vaga_competencia vc
 WHERE vc.vaga_id = ?
   AND vc.competencia_id = comp.id
 ORDER BY comp.nome
 """
-        List<String> skills = []
+        List<Competencia> skills = []
         PreparedStatement stmt = conn.prepareStatement(sql)
         stmt.setLong(1, vagaId)
         def rs = stmt.executeQuery()
         while (rs.next()) {
-            skills.add(rs.getString("nome"))
+            skills.add(Competencia.builder()
+                    .id(rs.getLong("id"))
+                    .nome(rs.getString("nome"))
+                    .build())
         }
         rs.close()
         stmt.close()

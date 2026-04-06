@@ -12,9 +12,9 @@ class CliCreateVagaAction {
             println("+================================================+")
             println("${empresa.nome}, preencha as informações da vaga: ")
             print("Título: ")
-            String title = cli.scanner.nextLine()
+            String nome = cli.scanner.nextLine()
             print("Descrição da vaga: ")
-            String description = cli.scanner.nextLine()
+            String descricao = cli.scanner.nextLine()
             print("Estado: ")
             String estado = cli.scanner.nextLine()
             print("Cidade: ")
@@ -23,7 +23,7 @@ class CliCreateVagaAction {
             String input = cli.scanner.nextLine()
             List<String> skillsRequests = cli.parseSkills(input)
 
-            cli.vagaServices.createVaga(title, description, estado, cidade, empresa, skillsRequests)
+            cli.vagaServices.createVaga(nome, descricao, estado, cidade, empresa, skillsRequests)
 
             println("+================================================+")
             println("Vaga cadastrada com sucesso!")
