@@ -2,7 +2,8 @@
 
 ## 1. Visão geral
 
-O **Linketinder Backend** é uma aplicação CLI em Groovy para recrutamento, com fluxo de:
+O **Linketinder Backend** é uma aplicação CLI em Groovy para recrutamento com persistência em PostgreSQL via JDBC.
+O fluxo principal cobre:
 
 - gestão de candidatos e empresas
 - publicação de vagas
@@ -10,7 +11,7 @@ O **Linketinder Backend** é uma aplicação CLI em Groovy para recrutamento, co
 - curtidas de empresa em candidato
 - geração de match quando há reciprocidade para a mesma vaga
 
-O sistema roda com armazenamento em memória e separação por camadas (`view`, `services`, `repository`, `model`).
+O sistema mantém a separação por camadas (`view`, `services`, `repository`, `model`) e usa DAOs para acesso ao banco.
 
 ## 2. Arquitetura
 
@@ -21,29 +22,33 @@ O sistema roda com armazenamento em memória e separação por camadas (`view`, 
   - delega cada ação para classes específicas (`CliCreateVagaAction`, `CliListMatchesAction`, etc.)
 
 - **Services**
-  - `PessoaServices`: criação e listagem de candidatos/empresas
-  - `VagaServices`: busca de empresa/candidato/vaga, criação e listagem de vagas
+  - `PessoaServices`: criação e listagem de candidatos/empresas via JDBC
+  - `VagaServices`: busca de empresa/candidato/vaga, criação e listagem de vagas via JDBC
   - `SistemaCurtidas`: registro de curtidas e manutenção de matches
 
 - **Repository (`repository.Repository`)**
-  - listas em memória para candidatos, empresas, vagas, curtidas e matches
-  - carga inicial de dados para uso imediato da CLI
+  - mantém listas em memória para uso pelas regras de Curtidas/Matches
+  - é carregado a partir do banco no início da aplicação
 
 - **Model (`model.*`)**
   - `Pessoa` + `InterfacePessoa`: estrutura base
   - `Candidato`, `Empresa`, `Vaga`, `Curtida`, `Match`
+
+- **DAO (`dao.*`)**
+  - `CandidatoDao`, `EmpresaDao`, `VagaDao`, `CompetenciaDao`
+  - acesso ao PostgreSQL usando `PreparedStatement`
 
 ### 2.2 Ponto de entrada
 
 `Main.groovy` instancia:
 
 - `Repository`
-- `PessoaServices`
-- `VagaServices`
+- `PessoaServices` (com DAOs)
+- `VagaServices` (com DAOs)
 - `SistemaCurtidas`
 - `Cli`
 
-Depois inicia o loop principal com `cli.cliMenu()`.
+Depois carrega os dados do banco no `Repository` e inicia o loop principal com `cli.cliMenu()`.
 
 ## 3. Modelo de domínio
 
@@ -52,13 +57,12 @@ Depois inicia o loop principal com `cli.cliMenu()`.
 - `name`
 - `description`
 - `email`
-- `state`
 - `cep`
-- `skills`
+- `pais`
 
 ### 3.2 `Candidato`
 
-- campos específicos: `cpf`, `old`
+- campos específicos: `cpf`, `sobrenome`, `data_nascimento`, `pais`, `senha_hash`
 - mantém `vagasCurtidas`
 - regras:
   - impede curtida duplicada na mesma vaga (`jaCortiuVaga`)
@@ -66,7 +70,7 @@ Depois inicia o loop principal com `cli.cliMenu()`.
 
 ### 3.3 `Empresa`
 
-- campos específicos: `cnpj`, `country`
+- campos específicos: `cnpj`, `pais`, `senha_hash`
 - mantém `candidatosCurtidos`
 - regras:
   - valida candidato e vaga obrigatórios
@@ -76,7 +80,7 @@ Depois inicia o loop principal com `cli.cliMenu()`.
 
 ### 3.4 `Vaga`
 
-- `id`, `title`, `description`, `empresa`, `skillsRequests`
+- `id`, `title`, `description`, `empresa`, `estado`, `cidade`, `skillsRequests`
 
 ### 3.5 `Curtida`
 
@@ -90,11 +94,11 @@ Depois inicia o loop principal com `cli.cliMenu()`.
 
 ## 4. Menu CLI atual
 
-- `[1]` Adicionar empresa
+- `[1]` Adicionar empresa (com vaga)
 - `[2]` Adicionar candidato
 - `[3]` Listar empresas
 - `[4]` Listar candidatos
-- `[5]` Empresa cadastrar vaga
+- `[5]` Empresa cadastrar vaga (empresa já cadastrada)
 - `[6]` Empresa visualizar curtidas e curtir candidato
 - `[7]` Candidato visualizar vagas e curtir vaga
 - `[8]` Candidato visualizar curtidas
@@ -105,12 +109,12 @@ Depois inicia o loop principal com `cli.cliMenu()`.
 
 ## 5. Fluxos principais
 
-### 5.1 Empresa cria vaga
+### 5.1 Cadastro de empresa e vaga
 
-1. Seleciona opção `[5]`
-2. Escolhe empresa pelo CNPJ
-3. Informa dados da vaga
-4. `VagaServices.createVaga(...)` cria com próximo ID sequencial
+1. Seleciona opção `[1]`
+2. Informa dados da empresa
+3. Em seguida informa dados da vaga (estado/cidade e competências)
+4. `VagaServices.createVaga(...)` persiste a vaga no BD
 
 ### 5.2 Candidato curte vaga
 
@@ -130,11 +134,7 @@ Depois inicia o loop principal com `cli.cliMenu()`.
 
 ## 6. Dados de bootstrap
 
-Inicialização automática no `Repository`:
-
-- `7` empresas
-- `7` candidatos
-- `2` vagas
+Não há dados de bootstrap no código. Os dados vêm do banco PostgreSQL.
 
 ## 7. Build e execução
 
@@ -144,7 +144,7 @@ Executar aplicação:
 groovy src/main/groovy/Main.groovy
 ```
 
-Executar testes:
+Executar testes (observação abaixo):
 
 ```bash
 ./gradlew test
@@ -152,7 +152,27 @@ Executar testes:
 
 ## 8. Limitações atuais
 
-- persistência apenas em memória
-- sem validação formal de CPF/CNPJ/e-mail/CEP
+- sem validação formal de CPF/CNPJ/CEP além de unicidade
 - sem autenticação/perfis (empresa/candidato/admin)
 - sem API HTTP (somente CLI)
+- testes antigos ainda referem-se ao modelo em memória e podem falhar
+
+## 9. Banco de dados
+
+O script principal do schema está em:
+
+- `docs/db_linketinder.sql`
+
+### 9.1 Variáveis de ambiente
+
+O backend usa JDBC. Configure com:
+
+- `DB_URL` (ex.: `jdbc:postgresql://localhost:5432/linketinder`)
+- `DB_USER`
+- `DB_PASSWORD`
+
+Se não forem definidos, o sistema usa:
+
+- `jdbc:postgresql://localhost:5432/linketinder`
+- usuário `postgres`
+- senha `postgres`
