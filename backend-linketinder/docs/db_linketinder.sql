@@ -1,8 +1,8 @@
 BEGIN;
 
 CREATE TABLE IF NOT EXISTS candidatos (
-                                          id BIGSERIAL PRIMARY KEY,
-                                          nome VARCHAR(100) NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
     sobrenome VARCHAR(100) NOT NULL,
     data_nascimento DATE NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS vagas (
 
 -- Relacao N:N candidatos <-> competencias
 CREATE TABLE IF NOT EXISTS candidato_competencia (
-                                                     candidato_id BIGINT NOT NULL REFERENCES candidatos(id) ON DELETE CASCADE,
+    candidato_id BIGINT NOT NULL REFERENCES candidatos(id) ON DELETE CASCADE,
     competencia_id BIGINT NOT NULL REFERENCES competencias(id) ON DELETE CASCADE,
     PRIMARY KEY (candidato_id, competencia_id)
     );
@@ -98,7 +98,7 @@ VALUES ('Joao', 'Pereira', '1998-09-15', 'joao@example.com', '34567890123', 'Bra
     RETURNING id
     ),
 
-    novas_competencias AS (
+novas_competencias AS (
 INSERT INTO competencias (nome) VALUES
     ('Docker'),
     ('Kubernetes'),
@@ -107,7 +107,7 @@ ON CONFLICT (nome) DO NOTHING
     RETURNING id
     ),
 
-    competencias_ids AS (
+competencias_ids AS (
 SELECT id FROM competencias
 WHERE nome IN ('Docker', 'Kubernetes', 'SQL')
     )

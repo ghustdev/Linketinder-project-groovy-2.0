@@ -98,9 +98,9 @@ class PessoaServices {
 
     @CompileDynamic
     void listCandidatos() {
-        int id = 1
+//        int id = 1
         candidatoDao.listAll().each { c ->
-            println "Candidato: ${id}"
+            println "Candidato: ${c.id}"
             println "CPF: ${c.cpf}"
             println "Nome candidato: ${c.nome} ${c.sobrenome}"
             println "Email pessoal: ${c.email}"
@@ -112,7 +112,7 @@ class PessoaServices {
             c.skills.each { s ->
                 println "   ${s.nome}"
             }
-            id++
+//            id++
             println("+================================================+")
         }
     }
