@@ -147,7 +147,7 @@ export class UIService {
   }
 
   static readonly regex = {
-    nome: /[a-zA-Z]+(?:\s+[a-zA-Z]+)*/,
+    nome: /[a-zA-Z]+/,
     email: /[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,4}/,
     cpf: /\d{3}\.\d{3}\.\d{3}-\d{2}/,
     cnpj: /\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/,

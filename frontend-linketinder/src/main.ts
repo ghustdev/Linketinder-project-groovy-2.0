@@ -47,6 +47,8 @@ document.getElementById('form-candidato')?.addEventListener('submit', (e) => {
   const cep = (document.getElementById('candidato-cep') as HTMLInputElement).value;
   const competencias = (document.getElementById('candidato-competencias') as HTMLInputElement).value.split(',').map(c => c.trim());
 
+  if (StorageService.candidatoExiste(cpf)) { alert('Candidato com esse CPF já existe.'); return; }
+
   if (!regex.nome.test(nome)) { alert('Nome inválido. Use apenas letras.'); return; }
   if (!regex.email.test(email)) { alert('E-mail inválido.'); return; }
   if (!regex.cpf.test(cpf)) { alert('CPF inválido. Use o formato 000.000.000-00.'); return; }

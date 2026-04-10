@@ -71,4 +71,8 @@ export class StorageService {
     static empresaExiste(cnpj: string): boolean {
         return this.obterEmpresas().some(e => e.cnpj === cnpj);
     }
+
+    static candidatoExiste(cpf: string): boolean {
+        return this.obterCandidatos().some(e => e.cpf === cpf);
+    }
 }
