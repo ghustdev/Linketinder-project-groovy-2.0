@@ -1,7 +1,7 @@
 package view
 
 class CliMenuAction {
-    static void cliMenu(Cli cli) {
+    static void cliMenu(MainCli cli) {
         while (true) {
             try {
                 println("+================================================+")
@@ -35,27 +35,27 @@ class CliMenuAction {
                 }
 
                 if (optionMenu == 1) {
-                    cli.cliCreateEmpresa()
+                    cli.createCompany()
                 } else if (optionMenu == 2) {
-                    cli.cliCreateCandidato()
+                    cli.createCandidate()
                 } else if (optionMenu == 3) {
-                    cli.cliListEmpresas()
+                    cli.listCompanies()
                 } else if (optionMenu == 4) {
-                    cli.cliListCandidatos()
+                    cli.listCandidates()
                 } else if (optionMenu == 5) {
-                    cli.cliCreateVaga()
+                    cli.createVacancy()
                 } else if (optionMenu == 6) {
-                    cli.cliVerifyLikesEmpresa()
+                    cli.reviewCompanyLikes()
                 } else if (optionMenu == 7) {
-                    cli.cliListVagas()
+                    cli.listVacancies()
                 } else if (optionMenu == 8) {
-                    cli.cliListLikesCandidato()
+                    cli.listCandidateLikes()
                 } else if (optionMenu == 9) {
-                    cli.cliListMatches()
+                    cli.listMatches()
                 } else if (optionMenu == 10) {
-                    cli.cliListMatchesCandidato()
+                    cli.listCandidateMatches()
                 } else if (optionMenu == 11) {
-                    cli.cliListMatchesEmpresa()
+                    cli.listCompanyMatches()
                 } else if (optionMenu == 0) {
                     cli.scanner.close()
                     break
