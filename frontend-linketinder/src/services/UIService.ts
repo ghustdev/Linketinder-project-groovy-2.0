@@ -1,9 +1,11 @@
-import { StorageService } from "../repositories/Storage.js";
+import { LocalStorageRepository } from "../repositories/LocalStorageRepository.js";
 
 export class UIService {
-  static renderizarVagas(): void {
-    const vagas = StorageService.obterVagas();
-    const empresas = StorageService.obterEmpresas();
+  constructor(private localStorage: LocalStorageRepository) {}
+
+  renderizarVagas(): void {
+    const vagas = this.localStorage.obterVagas();
+    const empresas = this.localStorage.obterEmpresas();
     const feed = document.getElementById("vagas-feed");
 
     if (!feed) return;
@@ -27,8 +29,8 @@ export class UIService {
     });
   }
 
-  static renderizarCandidatos(): void {
-    const candidatos = StorageService.obterCandidatos();
+  renderizarCandidatos(): void {
+    const candidatos = this.localStorage.obterCandidatos();
     const feed = document.getElementById("candidatos-feed");
 
     if (!feed) return;
@@ -52,8 +54,8 @@ export class UIService {
     });
   }
 
-  static renderizarGrafico(): void {
-    const candidatos = StorageService.obterCandidatos();
+  renderizarGrafico(): void {
+    const candidatos = this.localStorage.obterCandidatos();
     const competenciasMap: { [key: string]: number } = {};
 
     candidatos.forEach((candidato) => {
@@ -93,8 +95,8 @@ export class UIService {
     });
   }
 
-  static listarCandidatos(): void {
-    const candidatos = StorageService.obterCandidatos();
+  listarCandidatos(): void {
+    const candidatos = this.localStorage.obterCandidatos();
     const lista = document.getElementById("lista-cadastros");
 
     if (!lista) return;
@@ -111,8 +113,8 @@ export class UIService {
     });
   }
 
-  static listarEmpresas(): void {
-    const empresas = StorageService.obterEmpresas();
+  listarEmpresas(): void {
+    const empresas = this.localStorage.obterEmpresas();
     const lista = document.getElementById("lista-cadastros");
 
     if (!lista) return;
@@ -129,8 +131,8 @@ export class UIService {
     });
   }
 
-  static listarVagas(): void {
-    const vagas = StorageService.obterVagas();
+  listarVagas(): void {
+    const vagas = this.localStorage.obterVagas();
     const lista = document.getElementById("lista-cadastros");
 
     if (!lista) return;

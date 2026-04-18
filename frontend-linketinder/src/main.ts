@@ -2,7 +2,10 @@ import { Candidato } from "./entities/Candidato.js";
 import { Empresa } from "./entities/Empresa.js";
 import { Vaga } from "./entities/Vaga.js";
 import { UIService } from "./services/UIService.js";
-import { StorageService } from "./repositories/Storage.js";
+import { LocalStorageRepository } from "./repositories/LocalStorageRepository.js";
+
+const localStorage = new LocalStorageRepository();
+const uiService = new UIService(localStorage);
 const { regex } = UIService;
 
 const navButtons = document.querySelectorAll(".nav-btn");
@@ -18,8 +21,8 @@ navButtons.forEach((btn) => {
     btn.classList.add("active");
     document.getElementById(targetTab!)?.classList.add("active");
 
-    if (targetTab === "vagas-tab") UIService.renderizarVagas();
-    if (targetTab === "candidatos-tab") UIService.renderizarCandidatos();
+    if (targetTab === "vagas-tab") uiService.renderizarVagas();
+    if (targetTab === "candidatos-tab") uiService.renderizarCandidatos();
   });
 });
 
@@ -57,7 +60,7 @@ document.getElementById("form-candidato")?.addEventListener("submit", (e) => {
     .split(",")
     .map((c) => c.trim());
 
-  if (StorageService.candidatoExiste(cpf)) {
+  if (localStorage.candidatoExiste(cpf)) {
     alert("Candidato com esse CPF já existe.");
     return;
   }
@@ -87,7 +90,7 @@ document.getElementById("form-candidato")?.addEventListener("submit", (e) => {
     return;
   }
 
-  StorageService.adicionarCandidato(
+  localStorage.adicionarCandidato(
     new Candidato({
       nome,
       email,
@@ -140,7 +143,7 @@ document.getElementById("form-empresa")?.addEventListener("submit", (e) => {
     return;
   }
 
-  StorageService.adicionarEmpresa(
+  localStorage.adicionarEmpresa(
     new Empresa({
       nome,
       email,
@@ -171,7 +174,7 @@ document.getElementById("form-vaga")?.addEventListener("submit", (e) => {
     alert("CNPJ inválido. Use o formato 00.000.000/0000-00.");
     return;
   }
-  if (!StorageService.empresaExiste(cnpj)) {
+  if (!localStorage.empresaExiste(cnpj)) {
     alert("Empresa com esse CNPJ não encontrada. Cadastre a empresa primeiro.");
     return;
   }
@@ -180,7 +183,7 @@ document.getElementById("form-vaga")?.addEventListener("submit", (e) => {
     return;
   }
 
-  StorageService.adicionarVaga(
+  localStorage.adicionarVaga(
     new Vaga({
       titulo: (document.getElementById("vaga-titulo") as HTMLInputElement)
         .value,
@@ -198,17 +201,17 @@ document.getElementById("form-vaga")?.addEventListener("submit", (e) => {
 document
   .getElementById("btn-listar-candidatos")
   ?.addEventListener("click", () => {
-    UIService.listarCandidatos();
+    uiService.listarCandidatos();
   });
 
 document.getElementById("btn-listar-vagas")?.addEventListener("click", () => {
-  UIService.listarVagas();
+  uiService.listarVagas();
 });
 
 document
   .getElementById("btn-listar-empresas")
   ?.addEventListener("click", () => {
-    UIService.listarEmpresas();
+    uiService.listarEmpresas();
   });
 
 // Botões de excluir
@@ -218,18 +221,18 @@ document.getElementById("lista-cadastros")?.addEventListener("click", (e) => {
   if (!id) return;
 
   if (target.classList.contains("btn-excluir-candidato")) {
-    StorageService.excluirCandidato(id);
-    UIService.listarCandidatos();
+    localStorage.excluirCandidato(id);
+    uiService.listarCandidatos();
   }
 
   if (target.classList.contains("btn-excluir-empresa")) {
-    StorageService.excluirEmpresa(id, target.getAttribute("data-cnpj")!);
-    UIService.listarEmpresas();
+    localStorage.excluirEmpresa(id, target.getAttribute("data-cnpj")!);
+    uiService.listarEmpresas();
   }
 
   if (target.classList.contains("btn-excluir-vaga")) {
-    StorageService.excluirVaga(id);
-    UIService.listarVagas();
+    localStorage.excluirVaga(id);
+    uiService.listarVagas();
   }
 });
 
@@ -240,7 +243,7 @@ const closeModal = document.querySelector(".close");
 
 btnGrafico?.addEventListener("click", () => {
   modal?.classList.add("active");
-  UIService.renderizarGrafico();
+  uiService.renderizarGrafico();
 });
 
 closeModal?.addEventListener("click", () => {
@@ -253,4 +256,4 @@ window.addEventListener("click", (e) => {
   }
 });
 
-UIService.renderizarVagas();
+uiService.renderizarVagas();
