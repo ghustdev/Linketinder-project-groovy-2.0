@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS competencias (
   nome VARCHAR(100) NOT NULL UNIQUE
 );
 
--- Relacao 1:N empresas <-> vagas
 CREATE TABLE IF NOT EXISTS vagas (
   id BIGSERIAL PRIMARY KEY,
   empresa_id BIGINT NOT NULL REFERENCES empresas(id) ON DELETE CASCADE,
@@ -42,14 +41,12 @@ CREATE TABLE IF NOT EXISTS vagas (
   criado_em TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- Relacao N:N candidatos <-> competencias
 CREATE TABLE IF NOT EXISTS candidato_competencia (
   candidato_id BIGINT NOT NULL REFERENCES candidatos(id) ON DELETE CASCADE,
   competencia_id BIGINT NOT NULL REFERENCES competencias(id) ON DELETE CASCADE,
   PRIMARY KEY (candidato_id, competencia_id)
 );
 
--- Relacao N:N vagas <-> competencias
 CREATE TABLE IF NOT EXISTS vaga_competencia (
   vaga_id BIGINT NOT NULL REFERENCES vagas(id) ON DELETE CASCADE,
   competencia_id BIGINT NOT NULL REFERENCES competencias(id) ON DELETE CASCADE,

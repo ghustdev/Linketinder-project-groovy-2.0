@@ -1,5 +1,6 @@
 package model
 
+import exceptions.DuplicateResourceException
 import groovy.transform.ToString
 import groovy.transform.builder.Builder
 
@@ -7,41 +8,41 @@ import java.time.LocalDateTime
 
 @Builder
 @ToString(includeSuper = true, includeNames = true)
-class Candidato extends Pessoa {
+class Candidate extends Person {
     Long id
     String name
-    String last_name
+    String lastName
     String email
     String description
     String country
     String cep
     String password
-    List<Competencia> skills = []
+    List<Skill> skills = []
     String cpf
     Date birth
-    List<Curtida> likeVacancies = []
+    List<Like> likedVacancies = []
 
-    Curtida curtirVaga(Vaga vaga) {
-        if (likeVacancies == null) {
-            likeVacancies = []
+    Like likeVacancy(Vacancy vacancy) {
+        if (likedVacancies == null) {
+            likedVacancies = []
         }
 
-        if (jaCortiuVaga(vaga)) {
-            throw new IllegalStateException("Erro: ${name} já curtiu a vaga '${vaga.name}'.")
+        if (hasLikedVacancy(vacancy)) {
+            throw new DuplicateResourceException("Erro: ${name} já curtiu a vaga '${vacancy.name}'.")
         }
 
-        LocalDateTime date = LocalDateTime.now()
+        LocalDateTime likeTimestamp = LocalDateTime.now()
 
-        def curtida = new Curtida(candidate: this, vacancy: vaga, enterprise: vaga.enterprise, likeDate: date)
-        likeVacancies.add(curtida)
-        return curtida
+        def like = new Like(candidate: this, vacancy: vacancy, company: vacancy.company, likeDate: likeTimestamp)
+        likedVacancies.add(like)
+        return like
     }
 
-    boolean jaCortiuVaga(Vaga vaga) {
-        likeVacancies.any { it.vacancy.id == vaga.id }
+    boolean hasLikedVacancy(Vacancy vacancy) {
+        likedVacancies.any { it.vacancy.id == vacancy.id }
     }
 
-    List<Curtida> listCurtidas() {
-        return likeVacancies
+    List<Like> listLikes() {
+        return likedVacancies
     }
 }

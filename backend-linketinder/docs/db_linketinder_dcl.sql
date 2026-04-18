@@ -1,3 +1,4 @@
+-- Exemplos
 -- Listar candidatos e suas competencias
 SELECT c.nome, c.sobrenome, c.cpf, comp.nome AS competencia
 FROM candidatos c, candidato_competencia cc, competencias comp

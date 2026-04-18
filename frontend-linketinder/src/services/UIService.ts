@@ -1,7 +1,6 @@
-import { StorageService } from "../repository/StorageService.js";
+import { StorageService } from "../repositories/Storage.js";
 
 export class UIService {
-
   static renderizarVagas(): void {
     const vagas = StorageService.obterVagas();
     const empresas = StorageService.obterEmpresas();
@@ -16,7 +15,7 @@ export class UIService {
     }
 
     vagas.forEach((vaga) => {
-      const empresa = empresas.find((e) => e.cnpj === vaga.cnpjEmpresa);
+      const empresa = empresas.find((e) => e.cnpj === vaga.cnpj);
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
@@ -66,7 +65,9 @@ export class UIService {
     const labels = Object.keys(competenciasMap);
     const data = Object.values(competenciasMap);
 
-    const canvas = document.getElementById("chart-competencias") as HTMLCanvasElement;
+    const canvas = document.getElementById(
+      "chart-competencias",
+    ) as HTMLCanvasElement;
     if (!canvas) return;
 
     new (window as any).Chart(canvas, {
@@ -139,7 +140,7 @@ export class UIService {
       const item = document.createElement("div");
       item.className = "item-lista";
       item.innerHTML = `
-                <span>${vagas.titulo} - ${vagas.id} - ${vagas.cnpjEmpresa}</span>
+                <span>${vagas.titulo} - ${vagas.id} - ${vagas.cnpj}</span>
                 <button data-id="${vagas.id}" class="btn-excluir-vaga">Excluir</button>
             `;
       lista.appendChild(item);

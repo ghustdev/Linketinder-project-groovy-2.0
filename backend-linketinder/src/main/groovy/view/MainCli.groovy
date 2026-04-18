@@ -3,93 +3,105 @@ package view
 import model.Candidate
 import model.Company
 import repository.Repository
-import services.LikeSystem
+import services.LikeServices
 import services.PersonServices
 import services.VacancyServices
 
-class Cli {
+class MainCli {
     PersonServices personServices
     VacancyServices vacancyServices
+    LikeServices likeServices
     Repository repository
-    LikeSystem likeSystem
 
-    Scanner scanner = new Scanner(System.in)
+    static Scanner scanner = new Scanner(System.in)
 
-    Cli(PersonServices personServices, Repository repository, VacancyServices vacancyServices, LikeSystem likeSystem) {
+    MainCli(PersonServices personServices, Repository repository, VacancyServices vacancyServices, LikeServices likeServices) {
         this.personServices = personServices
         this.repository = repository
         this.vacancyServices = vacancyServices
-        this.likeSystem = likeSystem
+        this.likeServices = likeServices
     }
 
     void cliMenu() {
-        CliMenuAction.cliMenu(this)
+        MenuCli.cliMainMenu(this)
     }
 
     void createCompany() {
-        CliCreateCompanyAction.createCompany(this)
+        CompanyCli.createCompany(this)
     }
 
     void createCandidate() {
-        CliCreateCandidateAction.createCandidate(this)
+        CandidateCli.createCandidate(this)
     }
 
     void listCandidates() {
-        CliListCandidatesAction.listCandidates(this)
+        CandidateCli.listCandidates(this)
     }
 
     void listCompanies() {
-        CliListCompaniesAction.listCompanies(this)
+        CompanyCli.listCompanies(this)
     }
 
     Company chooseCompany() {
-        return CliChooseCompanyAction.chooseCompany(this)
+        return CompanyCli.chooseCompany(this)
     }
 
     Candidate chooseCandidate() {
-        return CliChooseCandidateAction.chooseCandidate(this)
+        return CandidateCli.chooseCandidate(this)
     }
 
     void createVacancy() {
-        CliCreateVacancyAction.createVacancy(this)
+        VacancyCli.createVacancy(this)
     }
 
     void listVacancies() {
-        CliListVacanciesAction.listVacancies(this)
+        VacancyCli.listVacancies(this)
     }
 
     void reviewCompanyLikes() {
-        CliReviewCompanyLikesAction.reviewCompanyLikes(this)
+        CompanyCli.reviewCompanyLikes(this)
     }
 
     void listCandidateLikes() {
-        CliListCandidateLikesAction.listCandidateLikes(this)
+        CandidateCli.listCandidateLikes(this)
     }
 
     void listMatches() {
-        CliListMatchesAction.listMatches(this)
+        MatchesCli.listMatches(this)
     }
 
     void listCandidateMatches() {
-        CliListCandidateMatchesAction.listCandidateMatches(this)
+        CandidateCli.listCandidateMatches(this)
     }
 
     void listCompanyMatches() {
-        CliListCompanyMatchesAction.listCompanyMatches(this)
+        CompanyCli.listCompanyMatches(this)
     }
 
-    // Auxiliar method
-    Integer readInt(String prompt) {
-        return CliReadIntAction.readInt(this, prompt)
+    static List<String> parseSkills(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return []
+        }
+        return input.split(",")
+                .collect { it.trim() }
+                .findAll { !it.isEmpty() }
     }
 
-    // Auxiliar method
-    List<String> parseSkills(String input) {
-        return CliParseSkillsAction.parseSkills(input)
+    static Integer readInt(String prompt) {
+        print(prompt)
+        String value = scanner.nextLine()?.trim()
+        if (value == null || value.isEmpty()) {
+            return null
+        }
+        try {
+            return Integer.parseInt(value)
+        } catch (NumberFormatException ignored) {
+            return null
+        }
     }
 
-    // Auxiliar method
-    void pause() {
-        CliPauseAction.pause(this)
+    static void pause(MainCli cli) {
+        print("Aperte \"Enter\" para continuar")
+        cli.scanner.nextLine()
     }
 }

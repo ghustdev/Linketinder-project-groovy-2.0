@@ -17,7 +17,7 @@ O sistema mantém a separação por camadas (`view`, `services`, `repository`, `
 
 ### 2.1 Camadas
 
-- **View (`view.Cli` + `Cli*Action`)**
+- **View (`view.MainCli` + `Cli*Action`)**
   - menu interativo e entrada via `Scanner`
   - delega cada ação para classes específicas (`CliCreateVagaAction`, `CliListMatchesAction`, etc.)
 

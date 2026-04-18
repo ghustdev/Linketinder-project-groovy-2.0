@@ -1,29 +1,30 @@
-import dao.CandidatoDao
-import dao.CompetenciaDao
-import dao.EmpresaDao
-import dao.VagaDao
+import dao.CandidateDao
+import dao.CompanyDao
+import dao.SkillDao
+import dao.VacancyDao
 import repository.Repository
-import services.PessoaServices
-import services.SistemaCurtidas
-import services.VagaServices
-import view.Cli
+import services.LikeServices
+import services.PersonServices
+import services.VacancyServices
+import view.MainCli
 
 class Main {
     static void main(String[] args) {
         try {
-            // Constructors / Dependency Injections
             def repository = new Repository()
-            def competenciaDao = new CompetenciaDao()
-            def candidatoDao = new CandidatoDao()
-            def empresaDao = new EmpresaDao()
-            def vagaDao = new VagaDao(empresaDao)
 
-            def pessoaServices = new PessoaServices(candidatoDao, empresaDao, competenciaDao)
-            def vagaServices = new VagaServices(vagaDao, empresaDao, candidatoDao, competenciaDao)
-            def sistemaCurtidas = new SistemaCurtidas()
-            def cli = new Cli(pessoaServices, repository, vagaServices, sistemaCurtidas)
+            def skillDao = new SkillDao()
+            def candidateDao = new CandidateDao()
+            def companyDao = new CompanyDao()
+            def vacancyDao = new VacancyDao(companyDao)
 
-            repository.loadFromDb(candidatoDao, empresaDao, vagaDao)
+            def personServices = new PersonServices(candidateDao, companyDao, skillDao)
+            def vacancyServices = new VacancyServices(vacancyDao, companyDao, candidateDao, skillDao)
+            def likeServices = new LikeServices()
+
+            def cli = new MainCli(personServices, repository, vacancyServices, likeServices)
+
+            repository.loadFromDao(candidateDao, companyDao, vacancyDao)
 
             cli.cliMenu()
         } catch (Exception e) {

@@ -5,29 +5,29 @@ import java.time.LocalDateTime
 
 class Match {
 
-    Candidato candidato
-    Empresa empresa
-    Vaga vaga
-    LocalDateTime dateMatch
+    Candidate candidate
+    Company company
+    Vacancy vacancy
+    LocalDateTime matchDate
 
-    boolean isMatch(List<Curtida> curtidasEmpresaCandidatosCurtidos, List<Curtida> curtidasCandidatosVagasCurtidas) {
-        if (candidato == null || empresa == null || vaga == null || curtidasEmpresaCandidatosCurtidos == null || curtidasCandidatosVagasCurtidas == null) {
+    boolean isMatch(List<Like> companyLikedCandidates, List<Like> candidateLikedVacancies) {
+        if (candidate == null || company == null || vacancy == null || companyLikedCandidates == null || candidateLikedVacancies == null) {
             return false
         }
 
-        String target = buildKey(candidato.cpf, empresa.cnpj, vaga.id)
+        String target = buildKey(candidate.cpf, company.cnpj, vacancy.id)
 
-        List<String> likesEmpresa = curtidasEmpresaCandidatosCurtidos.collect {
-            buildKey(it.candidato.cpf, it.empresa.cnpj, it.vaga.id)
+        List<String> companyLikes = companyLikedCandidates.collect {
+            buildKey(it.candidate.cpf, it.company.cnpj, it.vacancy.id)
         }
-        List<String> likesCandidato = curtidasCandidatosVagasCurtidas.collect {
-            buildKey(it.candidato.cpf, it.empresa.cnpj, it.vaga.id)
+        List<String> candidateLikes = candidateLikedVacancies.collect {
+            buildKey(it.candidate.cpf, it.company.cnpj, it.vacancy.id)
         }
 
-        return likesEmpresa.contains(target) && likesCandidato.contains(target)
+        return companyLikes.contains(target) && candidateLikes.contains(target)
     }
 
-    static String buildKey(String cpf, String cnpj, Long vagaId) {
-        return "${cpf}|${cnpj}|${vagaId}"
+    static String buildKey(String cpf, String cnpj, Long vacancyId) {
+        return "${cpf}|${cnpj}|${vacancyId}"
     }
 }

@@ -1,8 +1,8 @@
-import { Candidato } from "./models/Candidato.js";
-import { Empresa } from "./models/Empresa.js";
-import { Vaga } from "./models/Vaga.js";
+import { Candidato } from "./entities/Candidato.js";
+import { Empresa } from "./entities/Empresa.js";
+import { Vaga } from "./entities/Vaga.js";
 import { UIService } from "./services/UIService.js";
-import { StorageService } from "./repository/StorageService.js";
+import { StorageService } from "./repositories/Storage.js";
 const { regex } = UIService;
 
 const navButtons = document.querySelectorAll(".nav-btn");
@@ -38,81 +38,165 @@ formButtons.forEach((btn) => {
   });
 });
 
-document.getElementById('form-candidato')?.addEventListener('submit', (e) => {
+document.getElementById("form-candidato")?.addEventListener("submit", (e) => {
   e.preventDefault();
-  const nome = (document.getElementById('candidato-nome') as HTMLInputElement).value;
-  const email = (document.getElementById('candidato-email') as HTMLInputElement).value;
-  const cpf = (document.getElementById('candidato-cpf') as HTMLInputElement).value;
-  const linkedin = (document.getElementById('candidato-linkedin') as HTMLInputElement).value;
-  const cep = (document.getElementById('candidato-cep') as HTMLInputElement).value;
-  const competencias = (document.getElementById('candidato-competencias') as HTMLInputElement).value.split(',').map(c => c.trim());
+  const nome = (document.getElementById("candidato-nome") as HTMLInputElement)
+    .value;
+  const email = (document.getElementById("candidato-email") as HTMLInputElement)
+    .value;
+  const cpf = (document.getElementById("candidato-cpf") as HTMLInputElement)
+    .value;
+  const linkedin = (
+    document.getElementById("candidato-linkedin") as HTMLInputElement
+  ).value;
+  const cep = (document.getElementById("candidato-cep") as HTMLInputElement)
+    .value;
+  const competencias = (
+    document.getElementById("candidato-competencias") as HTMLInputElement
+  ).value
+    .split(",")
+    .map((c) => c.trim());
 
-  if (StorageService.candidatoExiste(cpf)) { alert('Candidato com esse CPF já existe.'); return; }
+  if (StorageService.candidatoExiste(cpf)) {
+    alert("Candidato com esse CPF já existe.");
+    return;
+  }
 
-  if (!regex.nome.test(nome)) { alert('Nome inválido. Use apenas letras.'); return; }
-  if (!regex.email.test(email)) { alert('E-mail inválido.'); return; }
-  if (!regex.cpf.test(cpf)) { alert('CPF inválido. Use o formato 000.000.000-00.'); return; }
-  if (!regex.linkedin.test(linkedin)) { alert('LinkedIn inválido. Ex: linkedin.com/in/seu-perfil'); return; }
-  if (!regex.cep.test(cep)) { alert('CEP inválido. Use o formato 00000-000.'); return; }
-  if (!competencias.every(c => regex.skill.test(c))) { alert('Competência inválida. Use apenas letras, números e # + . -'); return; }
+  if (!regex.nome.test(nome)) {
+    alert("Nome inválido. Use apenas letras.");
+    return;
+  }
+  if (!regex.email.test(email)) {
+    alert("E-mail inválido.");
+    return;
+  }
+  if (!regex.cpf.test(cpf)) {
+    alert("CPF inválido. Use o formato 000.000.000-00.");
+    return;
+  }
+  if (!regex.linkedin.test(linkedin)) {
+    alert("LinkedIn inválido. Ex: linkedin.com/in/seu-perfil");
+    return;
+  }
+  if (!regex.cep.test(cep)) {
+    alert("CEP inválido. Use o formato 00000-000.");
+    return;
+  }
+  if (!competencias.every((c) => regex.skill.test(c))) {
+    alert("Competência inválida. Use apenas letras, números e # + . -");
+    return;
+  }
 
-  StorageService.adicionarCandidato(new Candidato(
-    nome, email, cpf,
-    parseInt((document.getElementById('candidato-idade') as HTMLInputElement).value),
-    (document.getElementById('candidato-estado') as HTMLInputElement).value,
-    cep,
-    (document.getElementById('candidato-descricao') as HTMLTextAreaElement).value,
-    (document.getElementById('candidato-formacao') as HTMLInputElement).value,
-    competencias,
-    linkedin
-  ));
-  alert('Candidato cadastrado com sucesso!');
+  StorageService.adicionarCandidato(
+    new Candidato({
+      nome,
+      email,
+      cpf,
+      idade: parseInt(
+        (document.getElementById("candidato-idade") as HTMLInputElement).value,
+      ),
+      estado: (document.getElementById("candidato-estado") as HTMLInputElement)
+        .value,
+      cep,
+      descricao: (
+        document.getElementById("candidato-descricao") as HTMLTextAreaElement
+      ).value,
+      formacao: (
+        document.getElementById("candidato-formacao") as HTMLInputElement
+      ).value,
+      competencias,
+      linkedin,
+    }),
+  );
+  alert("Candidato cadastrado com sucesso!");
   (e.target as HTMLFormElement).reset();
 });
 
-document.getElementById('form-empresa')?.addEventListener('submit', (e) => {
+document.getElementById("form-empresa")?.addEventListener("submit", (e) => {
   e.preventDefault();
-  const nome = (document.getElementById('empresa-nome') as HTMLInputElement).value;
-  const email = (document.getElementById('empresa-email') as HTMLInputElement).value;
-  const cnpj = (document.getElementById('empresa-cnpj') as HTMLInputElement).value;
-  const cep = (document.getElementById('empresa-cep') as HTMLInputElement).value;
+  const nome = (document.getElementById("empresa-nome") as HTMLInputElement)
+    .value;
+  const email = (document.getElementById("empresa-email") as HTMLInputElement)
+    .value;
+  const cnpj = (document.getElementById("empresa-cnpj") as HTMLInputElement)
+    .value;
+  const cep = (document.getElementById("empresa-cep") as HTMLInputElement)
+    .value;
 
-  if (!regex.nome.test(nome)) { alert('Nome inválido. Use apenas letras.'); return; }
-  if (!regex.email.test(email)) { alert('E-mail inválido.'); return; }
-  if (!regex.cnpj.test(cnpj)) { alert('CNPJ inválido. Use o formato 00.000.000/0000-00.'); return; }
-  if (!regex.cep.test(cep)) { alert('CEP inválido. Use o formato 00000-000.'); return; }
+  if (!regex.nome.test(nome)) {
+    alert("Nome inválido. Use apenas letras.");
+    return;
+  }
+  if (!regex.email.test(email)) {
+    alert("E-mail inválido.");
+    return;
+  }
+  if (!regex.cnpj.test(cnpj)) {
+    alert("CNPJ inválido. Use o formato 00.000.000/0000-00.");
+    return;
+  }
+  if (!regex.cep.test(cep)) {
+    alert("CEP inválido. Use o formato 00000-000.");
+    return;
+  }
 
-  StorageService.adicionarEmpresa(new Empresa(
-    nome, email, cnpj,
-    (document.getElementById('empresa-pais') as HTMLInputElement).value,
-    (document.getElementById('empresa-estado') as HTMLInputElement).value,
-    cep,
-    (document.getElementById('empresa-descricao') as HTMLTextAreaElement).value
-  ));
-  alert('Empresa cadastrada com sucesso!');
+  StorageService.adicionarEmpresa(
+    new Empresa({
+      nome,
+      email,
+      cnpj,
+      pais: (document.getElementById("empresa-pais") as HTMLInputElement).value,
+      estado: (document.getElementById("empresa-estado") as HTMLInputElement)
+        .value,
+      cep,
+      descricao: (
+        document.getElementById("empresa-descricao") as HTMLTextAreaElement
+      ).value,
+    }),
+  );
+  alert("Empresa cadastrada com sucesso!");
   (e.target as HTMLFormElement).reset();
 });
 
-document.getElementById('form-vaga')?.addEventListener('submit', (e) => {
+document.getElementById("form-vaga")?.addEventListener("submit", (e) => {
   e.preventDefault();
-  const cnpj = (document.getElementById('vaga-cnpj') as HTMLInputElement).value;
-  const competencias = (document.getElementById('vaga-competencias') as HTMLInputElement).value.split(',').map(c => c.trim());
+  const cnpj = (document.getElementById("vaga-cnpj") as HTMLInputElement).value;
+  const competencias = (
+    document.getElementById("vaga-competencias") as HTMLInputElement
+  ).value
+    .split(",")
+    .map((c) => c.trim());
 
-  if (!regex.cnpj.test(cnpj)) { alert('CNPJ inválido. Use o formato 00.000.000/0000-00.'); return; }
-  if (!StorageService.empresaExiste(cnpj)) { alert('Empresa com esse CNPJ não encontrada. Cadastre a empresa primeiro.'); return; }
-  if (!competencias.every(c => regex.skill.test(c))) { alert('Competência inválida. Use apenas letras, números e # + . -'); return; }
+  if (!regex.cnpj.test(cnpj)) {
+    alert("CNPJ inválido. Use o formato 00.000.000/0000-00.");
+    return;
+  }
+  if (!StorageService.empresaExiste(cnpj)) {
+    alert("Empresa com esse CNPJ não encontrada. Cadastre a empresa primeiro.");
+    return;
+  }
+  if (!competencias.every((c) => regex.skill.test(c))) {
+    alert("Competência inválida. Use apenas letras, números e # + . -");
+    return;
+  }
 
-  StorageService.adicionarVaga(new Vaga(
-    (document.getElementById('vaga-titulo') as HTMLInputElement).value,
-    (document.getElementById('vaga-descricao') as HTMLTextAreaElement).value,
-    cnpj,
-    competencias
-  ));
-  alert('Vaga cadastrada com sucesso!');
+  StorageService.adicionarVaga(
+    new Vaga({
+      titulo: (document.getElementById("vaga-titulo") as HTMLInputElement)
+        .value,
+      descricao: (
+        document.getElementById("vaga-descricao") as HTMLTextAreaElement
+      ).value,
+      cnpj,
+      competencias,
+    }),
+  );
+  alert("Vaga cadastrada com sucesso!");
   (e.target as HTMLFormElement).reset();
 });
 
-document.getElementById("btn-listar-candidatos")
+document
+  .getElementById("btn-listar-candidatos")
   ?.addEventListener("click", () => {
     UIService.listarCandidatos();
   });
@@ -128,23 +212,24 @@ document
   });
 
 // Botões de excluir
-document.getElementById('lista-cadastros')?.addEventListener('click', (e) => {
+document.getElementById("lista-cadastros")?.addEventListener("click", (e) => {
   const target = e.target as HTMLElement;
-  const id = target.getAttribute('data-id');
+  const id = target.getAttribute("data-id");
   if (!id) return;
 
-  if (target.classList.contains('btn-excluir-candidato')) 
-  { 
-    StorageService.excluirCandidato(id); UIService.listarCandidatos(); 
+  if (target.classList.contains("btn-excluir-candidato")) {
+    StorageService.excluirCandidato(id);
+    UIService.listarCandidatos();
   }
 
-  if (target.classList.contains('btn-excluir-empresa')) 
-  { 
-    StorageService.excluirEmpresa(id, target.getAttribute('data-cnpj')!); UIService.listarEmpresas(); 
+  if (target.classList.contains("btn-excluir-empresa")) {
+    StorageService.excluirEmpresa(id, target.getAttribute("data-cnpj")!);
+    UIService.listarEmpresas();
   }
 
-  if (target.classList.contains('btn-excluir-vaga')) { 
-    StorageService.excluirVaga(id); UIService.listarVagas(); 
+  if (target.classList.contains("btn-excluir-vaga")) {
+    StorageService.excluirVaga(id);
+    UIService.listarVagas();
   }
 });
 

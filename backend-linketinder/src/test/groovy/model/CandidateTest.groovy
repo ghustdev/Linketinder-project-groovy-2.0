@@ -1,52 +1,53 @@
 package model
 
+import exceptions.DuplicateResourceException
 import spock.lang.Specification
 
-class CandidatoTest extends Specification {
+class CandidateTest extends Specification {
 
     def "deve curtir vaga e registrar curtida no candidato"() {
         given:
-        def empresa = Empresa.builder().name("Tech").cnpj("11").build()
-        def vaga = Vaga.builder().id(1).name("Dev").enterprise(empresa).build()
-        def candidato = Candidato.builder().name("Ana").cpf("123").build()
+        def company = Company.builder().name("Tech").cnpj("11").build()
+        def vacancy = Vacancy.builder().id(1).name("Dev").company(company).build()
+        def candidate = Candidate.builder().name("Ana").cpf("123").build()
 
         when:
-        def curtida = candidato.curtirVaga(vaga)
+        def like = candidate.likeVacancy(vacancy)
 
         then:
-        curtida != null
-        curtida.candidate == candidato
-        curtida.vacancy == vaga
-        curtida.enterprise == empresa
-        candidato.likeVacancies.size() == 1
+        like != null
+        like.candidate == candidate
+        like.vacancy == vacancy
+        like.company == company
+        candidate.likedVacancies.size() == 1
     }
 
     def "deve impedir curtida duplicada para mesma vaga"() {
         given:
-        def empresa = Empresa.builder().name("Tech").cnpj("11").build()
-        def vaga = Vaga.builder().id(1).name("Dev").enterprise(empresa).build()
-        def candidato = Candidato.builder().name("Ana").cpf("123").build()
-        candidato.curtirVaga(vaga)
+        def company = Company.builder().name("Tech").cnpj("11").build()
+        def vacancy = Vacancy.builder().id(1).name("Dev").company(company).build()
+        def candidate = Candidate.builder().name("Ana").cpf("123").build()
+        candidate.likeVacancy(vacancy)
 
         when:
-        candidato.curtirVaga(vaga)
+        candidate.likeVacancy(vacancy)
 
         then:
-        thrown(IllegalStateException)
+        thrown(DuplicateResourceException)
     }
 
     def "deve inicializar lista de curtidas quando estiver nula"() {
         given:
-        def empresa = Empresa.builder().name("Tech").cnpj("11").build()
-        def vaga = Vaga.builder().id(1).name("Dev").enterprise(empresa).build()
-        def candidato = Candidato.builder().name("Ana").cpf("123").build()
-        candidato.likeVacancies = null
+        def company = Company.builder().name("Tech").cnpj("11").build()
+        def vacancy = Vacancy.builder().id(1).name("Dev").company(company).build()
+        def candidate = Candidate.builder().name("Ana").cpf("123").build()
+        candidate.likedVacancies = null
 
         when:
-        candidato.curtirVaga(vaga)
+        candidate.likeVacancy(vacancy)
 
         then:
-        candidato.likeVacancies != null
-        candidato.likeVacancies.size() == 1
+        candidate.likedVacancies != null
+        candidate.likedVacancies.size() == 1
     }
 }

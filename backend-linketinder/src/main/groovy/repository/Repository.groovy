@@ -1,27 +1,27 @@
 package repository
 
-import dao.CandidatoDao
-import dao.EmpresaDao
-import dao.VagaDao
-import model.Candidato
-import model.Curtida
-import model.Empresa
+import dao.CandidateDao
+import dao.CompanyDao
+import dao.VacancyDao
+import model.Candidate
+import model.Company
+import model.Like
 import model.Match
-import model.Vaga
+import model.Vacancy
 
 class Repository {
-    List<Candidato> arrayCandidatos = []
-    List<Empresa> arrayEmpresas = []
-    List<Vaga> arrayVagas = []
-    List<Curtida> allCurtidasCandidatos = []
+    List<Candidate> candidates = []
+    List<Company> companies = []
+    List<Vacancy> vacancies = []
+    List<Like> allCandidateLikes = []
     List<Match> allMatches = []
 
     Repository() {
     }
 
-    void loadFromDb(CandidatoDao candidatoDao, EmpresaDao empresaDao, VagaDao vagaDao) {
-        arrayCandidatos = candidatoDao.listAll()
-        arrayEmpresas = empresaDao.listAll()
-        arrayVagas = vagaDao.listAll()
+    void loadFromDao(CandidateDao candidateDao, CompanyDao companyDao, VacancyDao vacancyDao) {
+        candidates = candidateDao.listAll()
+        companies = companyDao.listAll()
+        vacancies = vacancyDao.listAll()
     }
 }

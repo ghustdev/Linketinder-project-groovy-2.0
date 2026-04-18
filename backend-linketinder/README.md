@@ -55,3 +55,16 @@ groovy src/main/groovy/Main.groovy
 - Curtidas e Matches seguem a lógica atual em memória.
 - Testes antigos ainda podem falhar por dependerem do modelo anterior em memória.
 - As habilidades agora são objetos (`Competencia`) em candidatos e vagas.
+
+## Refatoração
+Backend e DB:
+- [x] Nomes autoexplicativos: alterei os nomes das variáveis, parâmetros, classes e métodos para inglês e agora faz mais sentido, deixei padronizado.
+- [x] Regra do escoteiro: limpei o código e deixei a lógica muito mais limpa entre as partes, ou seja, basicamente refatorei, tirando comentários, tratamento de exceções e testes
+- [x] Crie funções pequenas: reformulei e modularizei as funções para deixar mais divididas, estavam muito grandes.
+- [x] Don't Repeat Yourself (DRY):
+- [x] Somente comente se for estritamente necessário: retirei todos os comentários, para isso, tive que deixar o código e os métodos muito mais claros e simples de entender.
+- [x] Tratamento de erros: Já havia tratamento de exceções, porém melhorei ele aplicando modularidade no package "exception"
+- [x] Testes: Já havia alguns testes, porém adicionai mais alguns testes, principalmente para o banco de dados
+
+Frontend:
+- [x] Até esse momento fiz apenas a refatoração do Backend, mas irei daqui em diante rushar em todos Desafios do Acelera, e consequentemente refatorar todos os códigos, incluindo os Frontends

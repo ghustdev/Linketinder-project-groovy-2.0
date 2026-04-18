@@ -25,9 +25,8 @@ WHERE e.cnpj = '12345678000199'
     ON CONFLICT DO NOTHING;
 
 -- ------------------------------------------------------------
--- Caso real simples: cadastro do candidato + competencias
+-- Caso simples: cadastro do candidato + competencias
 -- ------------------------------------------------------------
-
 BEGIN;
 
 WITH novo_candidato AS (
@@ -58,7 +57,7 @@ FROM novo_candidato, competencias_ids
 COMMIT;
 
 -- ------------------------------------------------------------
--- Caso real simples: cadastro de vaga + competencias
+-- Caso simples: cadastro de vaga + competencias
 -- ------------------------------------------------------------
 BEGIN;
 

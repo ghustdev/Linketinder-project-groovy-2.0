@@ -11,14 +11,14 @@ class MatchTest extends Specification {
 
     def "deve retornar true quando curtidas coincidem para candidato empresa e vaga"() {
         given:
-        def empresa = Empresa.builder().nome("Tech").cnpj("11").build()
-        def candidato = Candidato.builder().nome("Ana").cpf("123").build()
-        def vaga = Vaga.builder().id(7).nome("Dev").empresa(empresa).build()
-        def match = new Match(candidato: candidato, empresa: empresa, vaga: vaga)
-        def curtida = new Curtida(candidato: candidato, empresa: empresa, vaga: vaga)
+        def company = Company.builder().name("Tech").cnpj("11").build()
+        def candidate = Candidate.builder().name("Ana").cpf("123").build()
+        def vacancy = Vacancy.builder().id(7).name("Dev").company(company).build()
+        def match = new Match(candidate: candidate, company: company, vacancy: vacancy)
+        def like = new Like(candidate: candidate, company: company, vacancy: vacancy)
 
         when:
-        def isMatch = match.isMatch([curtida], [curtida])
+        def isMatch = match.isMatch([like], [like])
 
         then:
         isMatch
