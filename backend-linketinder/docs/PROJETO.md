@@ -11,28 +11,23 @@ O fluxo principal cobre:
 - curtidas de empresa em candidato
 - geração de match quando há reciprocidade para a mesma vaga
 
-O sistema mantém a separação por camadas (`view`, `services`, `repository`, `model`) e usa DAOs para acesso ao banco.
+O sistema mantém separação por camadas (`view`, `services`, `dao`, `repositories`, `entities`) e usa DAOs para acesso ao banco.
 
 ## 2. Arquitetura
 
 ### 2.1 Camadas
 
-- **View (`view.MainCli` + `Cli*Action`)**
-  - menu interativo e entrada via `Scanner`
-  - delega cada ação para classes específicas (`CliCreateVagaAction`, `CliListMatchesAction`, etc.)
+- **View (`view/*Cli.groovy`)**
+  - menu interativo (`MenuCli`) e entrada via `IEntradaConsolePadrao` / `EntradaConsolePadrao`
+  - coordena a interação do usuário e delega para `services/*Service`
 
 - **Services**
-  - `PessoaServices`: criação e listagem de candidatos/empresas via JDBC
-  - `VagaServices`: busca de empresa/candidato/vaga, criação e listagem de vagas via JDBC
-  - `SistemaCurtidas`: registro de curtidas e manutenção de matches
+  - `CandidatoService`, `EmpresaService`, `VagaService`: regras e orquestração de persistência via DAO
+  - `CurtidaService`: regras de curtida/match em memória em runtime
 
-- **Repository (`repository.Repository`)**
-  - mantém listas em memória para uso pelas regras de Curtidas/Matches
-  - é carregado a partir do banco no início da aplicação
-
-- **Model (`model.*`)**
-  - `Pessoa` + `InterfacePessoa`: estrutura base
-  - `Candidato`, `Empresa`, `Vaga`, `Competencia`, `Curtida`, `Match`
+- **Repositories (`repositories/*`)**
+  - interfaces de persistência e de "storage" em memória
+  - `MatchRepositoryParaMock` é a implementação em memória usada para curtidas/matches
 
 - **DAO (`dao.*`)**
   - `CandidatoDao`, `EmpresaDao`, `VagaDao`, `CompetenciaDao`
@@ -40,59 +35,42 @@ O sistema mantém a separação por camadas (`view`, `services`, `repository`, `
 
 ### 2.2 Ponto de entrada
 
-`Main.groovy` instancia:
+`Main.groovy` instancia as dependências e conecta as camadas:
 
-- `Repository`
-- `PessoaServices` (com DAOs)
-- `VagaServices` (com DAOs)
-- `SistemaCurtidas`
-- `Cli`
+- `*Dao` (JDBC)
+- `*Service`
+- `MatchRepositoryParaMock` + `CurtidaService`
+- `*Cli` + `MenuCli`
 
-Depois carrega os dados do banco no `Repository` e inicia o loop principal com `cli.cliMenu()`.
+Depois inicia o loop principal com `menuCli.menuPrincipal()`.
 
 ## 3. Modelo de domínio
 
 ### 3.1 Interface base (`InterfacePessoa`)
 
-- `name`
-- `description`
-- `email`
-- `cep`
-- `pais`
+`Pessoa` concentra atributos comuns (`nome`, `email`, `pais`, `cep`, `descricao`) e é estendida por `Candidato` e `Empresa`.
 
 ### 3.2 `Candidato`
 
-- campos específicos: `cpf`, `sobrenome`, `data_nascimento`, `pais`, `senha_hash`
-- `skills` é uma lista de objetos `Competencia`
-- mantém `vagasCurtidas`
-- regras:
-  - impede curtida duplicada na mesma vaga (`jaCortiuVaga`)
-  - cria objeto `Curtida` ao curtir vaga
+- campos: `cpf`, `sobrenome`, `nascimento`, `formacao`, `linkedin`, `competencias`
+- `competencias` é uma lista de objetos `Competencia`
 
 ### 3.3 `Empresa`
 
-- campos específicos: `cnpj`, `pais`, `senha_hash`
-- mantém `candidatosCurtidos`
-- regras:
-  - valida candidato e vaga obrigatórios
-  - valida se a vaga pertence à empresa
-  - impede curtida duplicada para mesmo candidato + vaga
-  - retorna `Match` apenas quando há reciprocidade
+- campos: `cnpj`, `descricao`, `pais`, `cep`, `email`, `nome`
 
 ### 3.4 `Vaga`
 
-- `id`, `nome`, `descricao`, `empresa`, `estado`, `cidade`, `skillsRequests`
-  - `skillsRequests` é uma lista de objetos `Competencia`
+- campos: `id`, `titulo`, `descricao`, `estado`, `cidade`, `empresa`, `competenciasRequeridas`
+- `competenciasRequeridas` é uma lista de objetos `Competencia`
 
 ### 3.5 `Curtida`
 
-- referência para `candidato`, `vaga`, `empresa` e `date`
+Representa a ação de curtir uma vaga por um candidato (`candidato`, `vaga`, `empresa`, `dataCurtida`).
 
 ### 3.6 `Match`
 
-- referência para `candidato`, `empresa`, `vaga` e `dateMatch`
-- regra `isMatch(...)` compara curtidas usando chave composta:
-  - `cpf|cnpj|vagaId`
+Representa a reciprocidade: empresa curtiu o candidato **e** o candidato já tinha curtido uma vaga daquela empresa (`candidato`, `empresa`, `vaga`, `dataMatch`).
 
 ## 4. Menu CLI atual
 
@@ -116,14 +94,14 @@ Depois carrega os dados do banco no `Repository` e inicia o loop principal com `
 1. Seleciona opção `[1]`
 2. Informa dados da empresa
 3. Em seguida informa dados da vaga (estado/cidade e competências)
-4. `VagaServices.createVaga(...)` persiste a vaga no BD
+4. `VagaService.criarVaga(...)` persiste a vaga no BD
 
 ### 5.2 Candidato curte vaga
 
 1. Seleciona opção `[7]`
 2. Escolhe candidato pelo CPF
 3. Visualiza vagas e informa ID
-4. `SistemaCurtidas.candidatoCurteVaga(...)` registra curtida global e no candidato
+4. `CurtidaService.candidatoCurteVaga(...)` registra a curtida no repositório em memória
 
 ### 5.3 Empresa curte candidato e gera match
 
@@ -131,12 +109,14 @@ Depois carrega os dados do banco no `Repository` e inicia o loop principal com `
 2. Escolhe empresa pelo CNPJ
 3. Visualiza curtidas recebidas nas suas vagas
 4. Seleciona candidato (CPF) + vaga (ID)
-5. `SistemaCurtidas.empresaCurteCandidato(...)` tenta gerar match
+5. `CurtidaService.empresaCurteCandidato(...)` tenta gerar match
 6. Match só é salvo quando a curtida do candidato já existe para a mesma vaga
 
-## 6. Dados de bootstrap
+## 6. Persistência e estado em runtime
 
-Não há dados de bootstrap no código. Os dados vêm do banco PostgreSQL.
+- PostgreSQL persiste: `candidatos`, `empresas`, `vagas`, `competencias` e as tabelas de relacionamento.
+- Curtidas e matches: ficam em memória durante a execução, via `MatchRepositoryParaMock`.
+  - reiniciar a aplicação apaga curtidas/matches
 
 ## 7. Build e execução
 
@@ -154,27 +134,32 @@ Executar testes (observação abaixo):
 
 ## 8. Limitações atuais
 
-- sem validação formal de CPF/CNPJ/CEP além de unicidade
+- sem validação formal de CPF/CNPJ/CEP (o CLI lê texto livre)
 - sem autenticação/perfis (empresa/candidato/admin)
 - sem API HTTP (somente CLI)
-- testes antigos ainda referem-se ao modelo em memória e podem falhar
+- curtidas/matches não persistem no banco
 
 ## 9. Banco de dados
 
-O script principal do schema está em:
+Scripts SQL:
 
-- `docs/db_linketinder.sql`
+- `docs/db_linketinder_ddl.sql` (schema)
+- `docs/db_linketinder_dml.sql` (massa de dados/exemplos)
+- `docs/db_linketinder_dcl.sql` (consultas úteis)
 
-### 9.1 Variáveis de ambiente
+### 9.1 CPF/CNPJ (formato)
 
-O backend usa JDBC. Configure com:
+Os scripts DDL assumem armazenamento **somente dígitos**:
 
-- `DB_URL` (ex.: `jdbc:postgresql://localhost:5432/linketinder`)
+- CPF: `CHAR(11)`
+- CNPJ: `CHAR(14)`
+
+Como o backend atualmente **não normaliza** entrada (não remove máscara), use CPF/CNPJ sem pontuação ao digitar no CLI.
+
+## 10. Configuração de conexão
+
+O backend lê `linketinder.properties` (na raiz do projeto) para conectar no PostgreSQL:
+
+- `DB_URL`
 - `DB_USER`
 - `DB_PASSWORD`
-
-Se não forem definidos, o sistema usa:
-
-- `jdbc:postgresql://localhost:5432/linketinder`
-- usuário `postgres`
-- senha `postgres`

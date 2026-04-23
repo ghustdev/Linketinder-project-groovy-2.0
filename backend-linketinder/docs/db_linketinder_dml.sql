@@ -1,15 +1,13 @@
-INSERT INTO candidatos (nome, sobrenome, data_nascimento, email, cpf, pais, cep, descricao, senha_hash)
+INSERT INTO candidatos (nome, sobrenome, data_nascimento, email, cpf, pais, cep, descricao)
 VALUES
-    ('Sandubinha', 'Silva', '1999-05-10', 'sandu@example.com', '12345678901', 'Brasil', '01001000',
-     'Dev em busca de oportunidades.', 'hash123'),
-    ('Carla', 'Souza', '1996-03-22', 'carla@example.com', '23456789012', 'Brasil', '02002000',
-     'Front-end com foco em Angular.', 'hash789')
+    ('Sandubinha', 'Silva', '1999-05-10', 'sandu@example.com', '12345678901', 'Brasil', '01001000', 'Dev em busca de oportunidades.'),
+    ('Carla', 'Souza', '1996-03-22', 'carla@example.com', '23456789012', 'Brasil', '02002000', 'Front-end com foco em Angular.')
     ON CONFLICT DO NOTHING;
 
-INSERT INTO empresas (nome, cnpj, email, descricao, pais, cep, senha_hash)
+INSERT INTO empresas (nome, cnpj, email, descricao, pais, cep)
 VALUES
     ('Pastelsoft', '12345678000199', 'rh@pastelsoft.com', 'ERP para restaurantes e distribuidores.', 'Brasil',
-     '04000000', 'hash456')
+     '04000000')
     ON CONFLICT DO NOTHING;
 
 INSERT INTO vagas (empresa_id, nome, descricao, estado, cidade)
@@ -30,8 +28,8 @@ WHERE e.cnpj = '12345678000199'
 BEGIN;
 
 WITH novo_candidato AS (
-INSERT INTO candidatos (nome, sobrenome, data_nascimento, email, cpf, pais, cep, descricao, senha_hash)
-VALUES ('Joao', 'Pereira', '1998-09-15', 'joao@example.com', '34567890123', 'Brasil', '03003000', 'Back-end com foco em cloud.', 'hash999')
+INSERT INTO candidatos (nome, sobrenome, data_nascimento, email, cpf, pais, cep, descricao)
+VALUES ('Joao', 'Pereira', '1998-09-15', 'joao@example.com', '34567890123', 'Brasil', '03003000', 'Back-end com foco em cloud.')
     RETURNING id
     ),
 

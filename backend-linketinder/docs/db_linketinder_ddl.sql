@@ -9,8 +9,9 @@ CREATE TABLE IF NOT EXISTS candidatos (
   cpf CHAR(11) NOT NULL UNIQUE,
   pais VARCHAR(100) NOT NULL,
   cep VARCHAR(20) NOT NULL,
+  formacao TEXT,
   descricao TEXT,
-  senha_hash VARCHAR(255) NOT NULL,
+  linkedin VARCHAR(200),
   criado_em TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -22,7 +23,6 @@ CREATE TABLE IF NOT EXISTS empresas (
   descricao TEXT,
   pais VARCHAR(100) NOT NULL,
   cep VARCHAR(20) NOT NULL,
-  senha_hash VARCHAR(255) NOT NULL,
   criado_em TIMESTAMP NOT NULL DEFAULT NOW()
 );
 

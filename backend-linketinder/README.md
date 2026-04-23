@@ -9,30 +9,37 @@ Aplicação CLI para recrutamento, com persistência em PostgreSQL via JDBC.
 
 ## Banco de dados
 
-O schema está em:
+Scripts do banco estão em:
 
-- `docs/db_linketinder.sql`
+- `docs/db_linketinder_ddl.sql` (tabelas)
+- `docs/db_linketinder_dml.sql` (massa de dados/exemplos)
+- `docs/db_linketinder_dcl.sql` (consultas úteis)
 
-Crie o banco e rode o script antes de executar a aplicação.
+Crie o banco e execute primeiro o `ddl` (e opcionalmente o `dml`) antes de rodar a aplicação.
 
 ## Configuração
 
-Defina as variáveis de ambiente de conexão:
+O projeto lê as configurações de conexão a partir do arquivo `linketinder.properties` na raiz do projeto:
 
-- `DB_URL` (ex.: `jdbc:postgresql://localhost:5432/linketinder`)
+- `DB_URL` (ex.: `jdbc:postgresql://localhost:5432/db_linketinder`)
 - `DB_USER`
 - `DB_PASSWORD`
 
-Se não forem definidas, os padrões são:
+Exemplo:
 
-- `jdbc:postgresql://localhost:5432/linketinder`
-- usuário `postgres`
-- senha `postgres`
+```properties
+DB_URL=jdbc:postgresql://localhost:5432/db_linketinder
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
 
 ## Execução
 
 ```bash
 groovy src/main/groovy/Main.groovy
+```
+```bash
+./gradlew run
 ```
 
 ## Menu principal
@@ -52,19 +59,37 @@ groovy src/main/groovy/Main.groovy
 
 ## Observações
 
-- Curtidas e Matches seguem a lógica atual em memória.
-- Testes antigos ainda podem falhar por dependerem do modelo anterior em memória.
-- As habilidades agora são objetos (`Competencia`) em candidatos e vagas.
+- Curtidas de candidatos e matches ficam em memória durante a execução (via `MatchRepositoryParaMock`), não persistem no PostgreSQL.
+- Competências são objetos (`Competencia`) em candidatos e vagas.
 
-## Refatoração
-Backend e DB:
-- [x] Nomes autoexplicativos: alterei os nomes das variáveis, parâmetros, classes e métodos para inglês e agora faz mais sentido, deixei padronizado.
-- [x] Regra do escoteiro: limpei o código e deixei a lógica muito mais limpa entre as partes, ou seja, basicamente refatorei, tirando comentários, tratamento de exceções e testes
-- [x] Crie funções pequenas: reformulei e modularizei as funções para deixar mais divididas, estavam muito grandes.
-- [x] Don't Repeat Yourself (DRY):
-- [x] Somente comente se for estritamente necessário: retirei todos os comentários, para isso, tive que deixar o código e os métodos muito mais claros e simples de entender.
-- [x] Tratamento de erros: Já havia tratamento de exceções, porém melhorei ele aplicando modularidade no package "exception"
-- [x] Testes: Já havia alguns testes, porém adicionai mais alguns testes, principalmente para o banco de dados
+## Simplificações recentes
 
-Frontend:
-- [x] Até esse momento fiz apenas a refatoração do Backend, mas irei daqui em diante rushar em todos Desafios do Acelera, e consequentemente refatorar todos os códigos, incluindo os Frontends
+Mudanças feitas para reduzir estado duplicado e remover pontos frágeis no fluxo:
+
+- Curtidas do candidato e da empresa deixaram de ser armazenadas dentro de `Candidato`/`Empresa`; a fonte de verdade em runtime é o repositório de match em memória (`repositories.IMatchRepository`).
+- Fluxo de “candidato curtir vaga” e “visualizar curtidas” passou a funcionar mesmo quando o candidato é recarregado do banco (evita depender de um objeto específico em memória).
+- Remoção de normalização automática de CPF/CNPJ no backend (sem `DocumentoUtils`); as buscas agora delegam diretamente para o DAO.
+- Ajustes no input do CLI: `EntradaConsolePadrao.pausar()` não imprime texto extra.
+- Testes Spock refatorados para uma sintaxe mais direta (stubs e expectativas no `then`, sem encadeamentos confusos).
+
+## Clean Code e SOLID (avaliação)
+
+O que já está bem encaminhado:
+
+- Separação por camadas (`view` para CLI/IO, `services` para regras e orquestração, `dao` para JDBC, `entities` para domínio).
+- Repositórios como interfaces em `repositories/*`, facilitando mock em testes.
+- Exceções de domínio separadas em `exceptions/*`.
+
+O que ainda falta para ficar mais “SOLID” e sustentável:
+
+
+- Persistência de curtidas/matches: hoje o banco persiste candidatos/empresas/vagas/competências, mas curtidas e matches são apenas em memória (e se perdem ao reiniciar).
+- SRP/Clareza no CLI: algumas rotas do CLI fazem múltiplas consultas repetidas e misturam listagem com validação de vazio; dá para simplificar e evitar chamadas duplicadas.
+- Conexão com DB: `dao.ConexaoDB` lê arquivo a cada conexão e retorna `null` em erro; ideal é centralizar configuração/conexão e falhar de forma explícita.
+
+Importância dessas simplificações no desenvolvimento:
+
+- Menos estado duplicado reduz bugs “fantasmas” (ex.: objetos recarregados do DB que não carregam listas em memória).
+- Fonte de verdade única facilita debug e manutenção: o comportamento fica previsível.
+- Testes mais legíveis reduzem tempo de onboarding e ajudam a evoluir o código sem regressões.
+- Código mais coeso e com dependências mais abstratas (interfaces) facilita trocar implementações (ex.: mock em teste, repo real no futuro) sem reescrever regra de negócio.
