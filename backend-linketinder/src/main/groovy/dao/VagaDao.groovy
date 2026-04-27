@@ -22,18 +22,19 @@ VALUES (?, ?, ?, ?, ?)
 RETURNING id
 """
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, empresaId)
             stmt.setString(2, nome)
             stmt.setString(3, descricao)
             stmt.setString(4, estado)
             stmt.setString(5, cidade)
             def rs = stmt.executeQuery()
-            if (rs.next()) return rs.getLong("id")
-            return null
-        } finally {
-            conn.close()
+            try {
+                if (rs.next()) return rs.getLong("id")
+                return null
+            } finally {
+                rs.close()
+            }
         }
     }
 
@@ -46,16 +47,12 @@ VALUES (?, ?)
 ON CONFLICT DO NOTHING
 """
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             competenciaIds.each { id ->
                 stmt.setLong(1, vagaId)
                 stmt.setLong(2, id)
                 stmt.executeUpdate()
             }
-            stmt.close()
-        } finally {
-            conn.close()
         }
     }
 
@@ -63,19 +60,20 @@ ON CONFLICT DO NOTHING
     Vaga buscarPorId(Long id) {
         String sql = "SELECT * FROM vagas WHERE id = ?"
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id)
             def rs = stmt.executeQuery()
-            if (rs.next()) {
-                Vaga vaga = construirVaga(rs)
-                vaga.competenciasRequeridas = retornarCompetenciasPorVagaId(vaga.id)
-                vaga.empresa = empresaDao.buscarPorId(vaga.empresaId)
-                return vaga
+            try {
+                if (rs.next()) {
+                    Vaga vaga = construirVaga(rs)
+                    vaga.competenciasRequeridas = retornarCompetenciasPorVagaId(vaga.id)
+                    vaga.empresa = empresaDao.buscarPorId(vaga.empresaId)
+                    return vaga
+                }
+                return null
+            } finally {
+                rs.close()
             }
-            return null
-        } finally {
-            conn.close()
         }
     }
 
@@ -83,20 +81,21 @@ ON CONFLICT DO NOTHING
     Vaga buscarPorEmpresaENome(Long empresaId, String nome) {
         String sql = "SELECT * FROM vagas WHERE empresa_id = ? AND nome = ?"
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, empresaId)
             stmt.setString(2, nome)
             def rs = stmt.executeQuery()
-            if (rs.next()) {
-                Vaga vaga = construirVaga(rs)
-                vaga.competenciasRequeridas = retornarCompetenciasPorVagaId(vaga.id)
-                vaga.empresa = empresaDao.buscarPorId(vaga.empresaId)
-                return vaga
+            try {
+                if (rs.next()) {
+                    Vaga vaga = construirVaga(rs)
+                    vaga.competenciasRequeridas = retornarCompetenciasPorVagaId(vaga.id)
+                    vaga.empresa = empresaDao.buscarPorId(vaga.empresaId)
+                    return vaga
+                }
+                return null
+            } finally {
+                rs.close()
             }
-            return null
-        } finally {
-            conn.close()
         }
     }
 
@@ -105,18 +104,19 @@ ON CONFLICT DO NOTHING
         String sql = "SELECT * FROM vagas ORDER BY id"
         List<Vaga> lista = []
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             def rs = stmt.executeQuery()
-            while (rs.next()) {
-                Vaga vaga = construirVaga(rs)
-                vaga.competenciasRequeridas = retornarCompetenciasPorVagaId(vaga.id)
-                vaga.empresa = empresaDao.buscarPorId(vaga.empresaId)
-                lista.add(vaga)
+            try {
+                while (rs.next()) {
+                    Vaga vaga = construirVaga(rs)
+                    vaga.competenciasRequeridas = retornarCompetenciasPorVagaId(vaga.id)
+                    vaga.empresa = empresaDao.buscarPorId(vaga.empresaId)
+                    lista.add(vaga)
+                }
+                return lista
+            } finally {
+                rs.close()
             }
-            return lista
-        } finally {
-            conn.close()
         }
     }
 
@@ -130,22 +130,21 @@ ON CONFLICT DO NOTHING
 	"""
 
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            List<Competencia> competencias = []
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        List<Competencia> competencias = []
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, vagaId)
             def rs = stmt.executeQuery()
-            while (rs.next()) {
-                competencias.add(Competencia.builder()
-                        .id(rs.getLong("id"))
-                        .nome(rs.getString("nome"))
-                        .build())
+            try {
+                while (rs.next()) {
+                    competencias.add(Competencia.builder()
+                            .id(rs.getLong("id"))
+                            .nome(rs.getString("nome"))
+                            .build())
+                }
+                return competencias
+            } finally {
+                rs.close()
             }
-            rs.close()
-            stmt.close()
-            return competencias
-        } finally {
-            conn.close()
         }
     }
 

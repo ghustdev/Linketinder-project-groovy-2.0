@@ -19,8 +19,7 @@ ON CONFLICT (cpf) DO NOTHING
 RETURNING id
 """
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nome)
             stmt.setString(2, sobrenome)
             stmt.setDate(3, nascimento)
@@ -31,13 +30,15 @@ RETURNING id
             stmt.setString(8, descricao)
             stmt.setString(9, formacao)
             stmt.setString(10, linkedin)
-            def result = stmt.executeQuery()
-            if (result.next()) {
-                return result.getLong("id")
+            def rs = stmt.executeQuery()
+            try {
+                if (rs.next()) {
+                    return rs.getLong("id")
+                }
+                return null
+            } finally {
+                rs.close()
             }
-            return null
-        } finally {
-            conn.close()
         }
     }
 
@@ -50,16 +51,12 @@ VALUES (?, ?)
 ON CONFLICT DO NOTHING
 """
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             competenciaIds.each { competenciaId ->
                 stmt.setLong(1, candidatoId)
                 stmt.setLong(2, competenciaId)
                 stmt.executeUpdate()
             }
-            stmt.close()
-        } finally {
-            conn.close()
         }
     }
 
@@ -67,18 +64,19 @@ ON CONFLICT DO NOTHING
     Candidato buscarPorCpf(String cpf) {
         String sql = "SELECT * FROM candidatos WHERE cpf = ?"
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf)
-            def result = stmt.executeQuery()
-            if (result.next()) {
-                Candidato candidato = construirCandidato(result)
-                candidato.competencias = retornarCompetenciasPorCandidatoId(candidato.id)
-                return candidato
+            def rs = stmt.executeQuery()
+            try {
+                if (rs.next()) {
+                    Candidato candidato = construirCandidato(rs)
+                    candidato.competencias = retornarCompetenciasPorCandidatoId(candidato.id)
+                    return candidato
+                }
+                return null
+            } finally {
+                rs.close()
             }
-            return null
-        } finally {
-            conn.close()
         }
     }
 
@@ -87,17 +85,18 @@ ON CONFLICT DO NOTHING
         String sql = "SELECT * FROM candidatos ORDER BY nome"
         List<Candidato> listaCandidatos = []
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
-            def result = stmt.executeQuery()
-            while (result.next()) {
-                Candidato candidato = construirCandidato(result)
-                candidato.competencias = retornarCompetenciasPorCandidatoId(candidato.id)
-                listaCandidatos.add(candidato)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            def rs = stmt.executeQuery()
+            try {
+                while (rs.next()) {
+                    Candidato candidato = construirCandidato(rs)
+                    candidato.competencias = retornarCompetenciasPorCandidatoId(candidato.id)
+                    listaCandidatos.add(candidato)
+                }
+                return listaCandidatos
+            } finally {
+                rs.close()
             }
-            return listaCandidatos
-        } finally {
-            conn.close()
         }
     }
 
@@ -110,22 +109,21 @@ WHERE cc.candidato_id = ?
 ORDER BY c.nome
 """
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            List<Competencia> competencias = []
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        List<Competencia> competencias = []
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, candidatoId)
-            def result = stmt.executeQuery()
-            while (result.next()) {
-                competencias.add(Competencia.builder()
-                        .id(result.getLong("id"))
-                        .nome(result.getString("nome"))
-                        .build())
+            def rs = stmt.executeQuery()
+            try {
+                while (rs.next()) {
+                    competencias.add(Competencia.builder()
+                            .id(rs.getLong("id"))
+                            .nome(rs.getString("nome"))
+                            .build())
+                }
+                return competencias
+            } finally {
+                rs.close()
             }
-            result.close()
-            stmt.close()
-            return competencias
-        } finally {
-            conn.close()
         }
     }
 

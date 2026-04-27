@@ -17,8 +17,7 @@ ON CONFLICT (cnpj) DO NOTHING
 RETURNING id
 """
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nome)
             stmt.setString(2, cnpj)
             stmt.setString(3, email)
@@ -26,12 +25,14 @@ RETURNING id
             stmt.setString(5, pais)
             stmt.setString(6, cep)
             def rs = stmt.executeQuery()
-            if (rs.next()) {
-                return rs.getLong("id")
+            try {
+                if (rs.next()) {
+                    return rs.getLong("id")
+                }
+                return null
+            } finally {
+                rs.close()
             }
-            return null
-        } finally {
-            conn.close()
         }
     }
 
@@ -39,14 +40,15 @@ RETURNING id
     Empresa buscarPorCnpj(String cnpj) {
         String sql = "SELECT * FROM empresas WHERE cnpj = ?"
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cnpj)
             def rs = stmt.executeQuery()
-            if (rs.next()) return construirEmpresa(rs)
-            return null
-        } finally {
-            conn.close()
+            try {
+                if (rs.next()) return construirEmpresa(rs)
+                return null
+            } finally {
+                rs.close()
+            }
         }
     }
 
@@ -54,14 +56,15 @@ RETURNING id
     Empresa buscarPorId(Long id) {
         String sql = "SELECT * FROM empresas WHERE id = ?"
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id)
             def rs = stmt.executeQuery()
-            if (rs.next()) return construirEmpresa(rs)
-            return null
-        } finally {
-            conn.close()
+            try {
+                if (rs.next()) return construirEmpresa(rs)
+                return null
+            } finally {
+                rs.close()
+            }
         }
     }
 
@@ -70,15 +73,16 @@ RETURNING id
         String sql = "SELECT * FROM empresas ORDER BY nome"
         List<Empresa> lista = []
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             def rs = stmt.executeQuery()
-            while (rs.next()) {
-                lista.add(construirEmpresa(rs))
+            try {
+                while (rs.next()) {
+                    lista.add(construirEmpresa(rs))
+                }
+                return lista
+            } finally {
+                rs.close()
             }
-            return lista
-        } finally {
-            conn.close()
         }
     }
 

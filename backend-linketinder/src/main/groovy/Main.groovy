@@ -1,5 +1,6 @@
 import dao.CandidatoDao
 import dao.CompetenciaDao
+import dao.ConexaoDB
 import dao.EmpresaDao
 import dao.VagaDao
 import exceptions.ExecucaoException
@@ -20,31 +21,37 @@ import view.VagaCli
 class Main {
     static void main(String[] args) {
         try {
-            CompetenciaDao competenciaDao = new CompetenciaDao()
-            CandidatoDao candidatoDao = new CandidatoDao()
-            EmpresaDao empresaDao = new EmpresaDao()
-            VagaDao vagaDao = new VagaDao(empresaDao)
+            try {
+                CompetenciaDao competenciaDao = new CompetenciaDao()
+                CandidatoDao candidatoDao = new CandidatoDao()
+                EmpresaDao empresaDao = new EmpresaDao()
+                VagaDao vagaDao = new VagaDao(empresaDao)
 
-            EmpresaService empresaServico = new EmpresaService(empresaDao, competenciaDao)
-            CandidatoService candidatoServico = new CandidatoService(candidatoDao, competenciaDao)
-            VagaService vagaServico = new VagaService(vagaDao, competenciaDao)
-            IMatchRepository matchRepositorio = new MatchRepositoryParaMock()
-            CurtidaService curtidaServico = new CurtidaService(matchRepositorio)
+                EmpresaService empresaServico = new EmpresaService(empresaDao, competenciaDao)
+                CandidatoService candidatoServico = new CandidatoService(candidatoDao, competenciaDao)
+                VagaService vagaServico = new VagaService(vagaDao, competenciaDao)
+                IMatchRepository matchRepositorio = new MatchRepositoryParaMock()
+                CurtidaService curtidaServico = new CurtidaService(matchRepositorio)
 
-            IEntradaConsolePadrao io = new EntradaConsolePadrao()
+                IEntradaConsolePadrao io = new EntradaConsolePadrao()
 
-            CandidatoCli candidatoCli = new CandidatoCli(io, candidatoServico, vagaServico, curtidaServico)
-            EmpresaCli empresaCli = new EmpresaCli(io, empresaServico, vagaServico, curtidaServico)
-            MatchCli matchCli = new MatchCli(io, curtidaServico)
-            VagaCli vagaCli = new VagaCli(io, vagaServico, curtidaServico, empresaCli, candidatoCli)
+                CandidatoCli candidatoCli = new CandidatoCli(io, candidatoServico, vagaServico, curtidaServico)
+                EmpresaCli empresaCli = new EmpresaCli(io, empresaServico, vagaServico, curtidaServico)
+                MatchCli matchCli = new MatchCli(io, curtidaServico)
+                VagaCli vagaCli = new VagaCli(io, vagaServico, curtidaServico, empresaCli, candidatoCli)
 
-            MenuCli menuCli = new MenuCli(io, candidatoCli, empresaCli, matchCli, vagaCli)
+                MenuCli menuCli = new MenuCli(io, candidatoCli, empresaCli, matchCli, vagaCli)
 
-            menuCli.menuPrincipal()
+                menuCli.menuPrincipal()
+            } finally {
+                try {
+                    ConexaoDB.fecharConexao()
+                } catch (Exception ignored) {}
+            }
         } catch (ExecucaoException e) {
             System.err.println("Erro ao iniciar aplicação. Erro: ${e.message}")
         } catch (Exception e) {
-            System.err.println("Erro inesperado ao iniciar aplicação.")
+            System.err.println("Erro inesperado ao iniciar aplicação. Erro: ${e.message}")
         }
     }
 }

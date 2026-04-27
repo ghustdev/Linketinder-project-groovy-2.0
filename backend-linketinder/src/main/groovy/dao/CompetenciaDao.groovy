@@ -16,11 +16,10 @@ INSERT INTO competencias (nome)
 VALUES (?)
 ON CONFLICT (nome) DO UPDATE SET nome = EXCLUDED.nome
 RETURNING id
-"""
+        """
 
         Connection conn = ConexaoDB.obterConexao()
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql)
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nome)
             def rs = stmt.executeQuery()
             try {
@@ -28,10 +27,7 @@ RETURNING id
                 return null
             } finally {
                 rs.close()
-                stmt.close()
             }
-        } finally {
-            conn.close()
         }
     }
 }
