@@ -5,6 +5,8 @@ import exceptions.ExecucaoException
 import entities.Candidato
 import entities.Competencia
 
+import java.time.LocalDate
+
 class CandidatoCli {
     private final IEntradaConsolePadrao io
     private final CandidatoController candidatoController
@@ -33,7 +35,7 @@ class CandidatoCli {
 
             List<String> competencias = EditarEntradaCompetencia.formatarCompetencias(entrada)
 
-            def nascimento = java.sql.Date.valueOf(java.time.LocalDate.parse(dataNascimento))
+            def nascimento = java.sql.Date.valueOf(LocalDate.parse(dataNascimento))
             def comps = competencias.collect { new Competencia(nome: it) }
             Candidato candidatoEntrada = new Candidato(
                     nome: nome,
