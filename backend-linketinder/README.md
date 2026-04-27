@@ -68,17 +68,17 @@ A conexão com o PostgreSQL é centralizada em `dao.ConexaoDB`:
 
 - Lê `linketinder.properties` uma única vez (cache em memória).
 - Mantém uma única `java.sql.Connection` reutilizada durante a execução do CLI.
-- O `Main.groovy` garante o fechamento no `finally` chamando `ConexaoDB.fechar()`.
+- O `Main.groovy` garante o fechamento no `finally` chamando `ConexaoDB.fecharConexao()`.
 
-O ponto de criação da conexão usa **Factory Method** via a interface `dao.ConexaoFactory`:
+O ponto de criação da conexão usa **Factory Method** via a interface `dao.IConexaoFactory`:
 
 - Implementação padrão: `dao.ConexaoJDBCFactory` (usa `DriverManager.getConnection`).
-- Para trocar a forma de conexão (ex.: outro driver, DataSource/pool, etc.), implemente `ConexaoFactory` e chame `ConexaoDB.definirFabrica(...)` no início do `Main` (antes de qualquer DAO acessar o banco).
+- Para trocar a forma de conexão (ex.: outro driver, DataSource/pool, etc.), implemente `IConexaoFactory` e chame `ConexaoDB.definirFabrica(...)` no início do `Main` (antes de qualquer DAO acessar o banco).
 
 Exemplo (ideia):
 
 ```groovy
-class MinhaFactory implements ConexaoFactory {
+class MinhaFactory implements IConexaoFactory {
   @Override
   Connection criarConexao(String url, String usuario, String senha) {
     // criar e retornar Connection por outro mecanismo

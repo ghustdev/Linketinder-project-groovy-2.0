@@ -1,23 +1,20 @@
 package view
 
+import controllers.VagaController
 import entities.Candidato
 import entities.Curtida
 import entities.Vaga
 import exceptions.ExecucaoException
-import services.CurtidaService
-import services.VagaService
 
 class VagaCli {
     private final IEntradaConsolePadrao io
-    private final VagaService vagaService
-    private final CurtidaService curtidaService
+    private final VagaController vagaController
     private final EmpresaCli empresaCli
     private final CandidatoCli candidatoCli
 
-    VagaCli(IEntradaConsolePadrao io, VagaService vagaService, CurtidaService curtidaService, EmpresaCli empresaCli, CandidatoCli candidatoCli) {
+    VagaCli(IEntradaConsolePadrao io, VagaController vagaController, EmpresaCli empresaCli, CandidatoCli candidatoCli) {
         this.io = io
-        this.vagaService = vagaService
-        this.curtidaService = curtidaService
+        this.vagaController = vagaController
         this.empresaCli = empresaCli
         this.candidatoCli = candidatoCli
     }
@@ -39,7 +36,7 @@ class VagaCli {
             print("Lista de competências requeridas (separado por ','): "); String entrada = io.lerLinha()
             List<String> competenciasRequeridas = EditarEntradaCompetencia.formatarCompetencias(entrada)
 
-            Vaga vaga = vagaService.criarVaga(nome, descricao, estado, cidade, empresa, competenciasRequeridas)
+            Vaga vaga = vagaController.criarVaga(nome, descricao, estado, cidade, empresa, competenciasRequeridas)
 
             println("+================================================+")
             println("Vaga, ${vaga.titulo}, cadastrada com sucesso!")
@@ -75,7 +72,7 @@ class VagaCli {
         println("|             Feed: Visualizar Vagas             |")
         println("+================================================+")
         try {
-            vagaService.listarVagas().each { vaga ->
+            vagaController.listarVagas().each { vaga ->
                 println "Id vaga: ${vaga.id}"
                 println "Empresa: ${vaga.empresa?.nome}"
                 println "CNPJ: ${vaga.empresa?.cnpj}"
@@ -118,7 +115,7 @@ class VagaCli {
             }
 
             Long id = idEntrada as Long
-            def vaga = vagaService.buscarVagaPorId(id)
+            def vaga = vagaController.buscarVagaPorId(id)
 
             if (vaga == null) {
                 println("+================================================+")
@@ -128,7 +125,7 @@ class VagaCli {
                 return
             }
 
-            Curtida curtida = curtidaService.candidatoCurteVaga(candidato, vaga)
+            Curtida curtida = vagaController.candidatoCurteVaga(candidato, vaga)
 
             println("+================================================+")
             println("'${curtida.candidato.nome}' curtiu a vaga '${curtida.vaga.titulo}' da Empresa '${curtida.empresa.nome}'. Vaga CURTIDA com sucesso!")

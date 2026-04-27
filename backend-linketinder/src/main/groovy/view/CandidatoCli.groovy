@@ -1,22 +1,16 @@
 package view
 
+import controllers.CandidatoController
 import exceptions.ExecucaoException
 import entities.Candidato
-import services.CandidatoService
-import services.CurtidaService
-import services.VagaService
 
 class CandidatoCli {
     private final IEntradaConsolePadrao io
-    private final CandidatoService candidatoService
-    private final VagaService vagaService
-    private final CurtidaService curtidaService
+    private final CandidatoController candidatoController
 
-    CandidatoCli(IEntradaConsolePadrao io, CandidatoService candidatoService, VagaService vagaService, CurtidaService curtidaService) {
+    CandidatoCli(IEntradaConsolePadrao io, CandidatoController candidatoController) {
         this.io = io
-        this.candidatoService = candidatoService
-        this.vagaService = vagaService
-        this.curtidaService = curtidaService
+        this.candidatoController = candidatoController
     }
 
     void criarCandidato() {
@@ -38,7 +32,7 @@ class CandidatoCli {
 
             List<String> competencias = EditarEntradaCompetencia.formatarCompetencias(entrada)
 
-            Candidato candidato = candidatoService.criarCandidato(nome, sobrenome, dataNascimento, email, cpf, pais, cep, descricao, formacao, linkedin, competencias)
+            Candidato candidato = candidatoController.criarCandidato(nome, sobrenome, dataNascimento, email, cpf, pais, cep, descricao, formacao, linkedin, competencias)
 
             println("+================================================+")
             println("Candidato, ${candidato.nome}, cadastrado com sucesso!")
@@ -62,7 +56,7 @@ class CandidatoCli {
             println("+================================================+")
             println("|              Listagem de Candidatos            |")
             println("+================================================+")
-            candidatoService.listarCandidatos().each { candidato ->
+            candidatoController.listarCandidatos().each { candidato ->
                 println "Candidato: ${candidato.id}"
                 println "CPF: ${candidato.cpf}"
                 println "Nome: ${candidato.nome} ${candidato.sobrenome}"
@@ -78,7 +72,7 @@ class CandidatoCli {
                 println("+================================================+")
             }
             io.pausar()
-            if (!candidatoService.listarCandidatos() || candidatoService.listarCandidatos() == null) {
+            if (!candidatoController.listarCandidatos() || candidatoController.listarCandidatos() == null) {
                 println "Não há candidatos cadastrados"
                 println("+================================================+")
                 io.pausar()
@@ -102,7 +96,7 @@ class CandidatoCli {
             println("+================================================+")
             println("|              Listagem de Candidatos            |")
             println("+================================================+")
-            candidatoService.listarCandidatos().each { candidato ->
+            candidatoController.listarCandidatos().each { candidato ->
                 println "Candidato: ${candidato.id}"
                 println "CPF: ${candidato.cpf}"
                 println "Nome: ${candidato.nome} ${candidato.sobrenome}"
@@ -117,7 +111,7 @@ class CandidatoCli {
                 println("-----------------------")
                 println("+================================================+")
             }
-            if (!candidatoService.listarCandidatos() || candidatoService.listarCandidatos() == null) {
+            if (!candidatoController.listarCandidatos() || candidatoController.listarCandidatos() == null) {
                 println "Não há candidatos cadastrados"
                 println("+================================================+")
                 io.pausar()
@@ -146,7 +140,7 @@ class CandidatoCli {
 
         try {
             println("${candidato.nome} curtiu essas vagas: ")
-            def vagasCurtidas = curtidaService.listarCurtidasCandidato(candidato)
+            def vagasCurtidas = candidatoController.listarCurtidasDoCandidato(candidato)
             if (!vagasCurtidas) {
                 println("+================================================+")
                 println("${candidato.nome} não possui curtidas")
@@ -182,7 +176,7 @@ class CandidatoCli {
         def candidato = selecionarCandidatoPorCpf()
         if (candidato == null) return
 
-        def matchesCandidato = curtidaService.obterTodosMatches().findAll { it.candidato?.cpf == candidato.cpf }
+        def matchesCandidato = candidatoController.listarMatchesDoCandidato(candidato)
 
         if (matchesCandidato.isEmpty()) {
             println("Nenhum match para ${candidato.nome}.")
@@ -211,7 +205,7 @@ class CandidatoCli {
             println()
             print("Escolha o candidato (pelo CPF): ")
             def cpf = io.lerLinha()
-            def candidato = candidatoService.buscarCandidato(cpf)
+            def candidato = candidatoController.buscarCandidatoPorCpf(cpf)
             if (candidato == null) {
                 println("+================================================+")
                 println("Esse candidato não existe!")

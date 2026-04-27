@@ -1,23 +1,20 @@
 package view
 
+import controllers.EmpresaController
+import controllers.VagaController
 import exceptions.ExecucaoException
 import entities.Empresa
 import entities.Vaga
-import services.CurtidaService
-import services.EmpresaService
-import services.VagaService
 
 class EmpresaCli {
     private final IEntradaConsolePadrao io
-    private final EmpresaService empresaService
-    private final VagaService vagaServico
-    private final CurtidaService curtidaServico
+    private final EmpresaController empresaController
+    private final VagaController vagaController
 
-    EmpresaCli(IEntradaConsolePadrao io, EmpresaService empresaService, VagaService vagaServico, CurtidaService curtidaServico) {
+    EmpresaCli(IEntradaConsolePadrao io, EmpresaController empresaController, VagaController vagaController) {
         this.io = io
-        this.empresaService = empresaService
-        this.vagaServico = vagaServico
-        this.curtidaServico = curtidaServico
+        this.empresaController = empresaController
+        this.vagaController = vagaController
     }
 
     void criarEmpresa() {
@@ -32,7 +29,7 @@ class EmpresaCli {
             print("CEP: "); String cep = io.lerLinha()
             print("Descrição: "); String descricao = io.lerLinha()
 
-            Empresa empresa = empresaService.criarEmpresa(nome, email, cnpj, pais, cep, descricao)
+            Empresa empresa = empresaController.criarEmpresa(nome, email, cnpj, pais, cep, descricao)
 
             println("+================================================+")
             println("Empresa, ${empresa.nome}, cadastrada com sucesso!")
@@ -48,7 +45,7 @@ class EmpresaCli {
 
             List<String> competenciasRequeridas = EditarEntradaCompetencia.formatarCompetencias(entrada)
 
-            Vaga vaga = vagaServico.criarVaga(nomeVaga, descricaoVaga, estado, cidade, empresa, competenciasRequeridas)
+            Vaga vaga = vagaController.criarVaga(nomeVaga, descricaoVaga, estado, cidade, empresa, competenciasRequeridas)
 
             println("+================================================+")
             println("Vaga, ${vaga.titulo}, cadastrada com sucesso!")
@@ -72,7 +69,7 @@ class EmpresaCli {
             println("+================================================+")
             println("|              Listagem de empresas              |")
             println("+================================================+")
-            empresaService.listarEmpresas().each { empresa ->
+            empresaController.listarEmpresas().each { empresa ->
                 println "ID Empresa: ${empresa.id}"
                 println "CNPJ: ${empresa.cnpj}"
                 println "Nome: ${empresa.nome}"
@@ -106,7 +103,7 @@ class EmpresaCli {
         if (empresa == null) return
 
         try {
-            def curtidasRecebidas = curtidaServico.listarCurtidasRecebidasEmpresa(empresa)
+            def curtidasRecebidas = empresaController.listarCurtidasRecebidas(empresa)
 
             if (curtidasRecebidas.isEmpty()) {
                 println("+================================================+")
@@ -118,7 +115,7 @@ class EmpresaCli {
 
             println("+================================================+")
             curtidasRecebidas.each { curtida ->
-                def jaTemMatch = curtidaServico.obterTodosMatches().any {
+                def jaTemMatch = empresaController.listarMatchesDaEmpresa(empresa).any {
                     it.candidato.cpf == curtida.candidato.cpf && it.vaga.id == curtida.vaga.id
                 }
                 println("Candidato: ${curtida.candidato.nome}")
@@ -148,7 +145,7 @@ class EmpresaCli {
                 }
 
                 Long vagaId = idVagaEntrada as Long
-                def vaga = vagaServico.buscarVagaPorId(vagaId)
+                def vaga = vagaController.buscarVagaPorId(vagaId)
 
                 if (vaga == null) {
                     println("+================================================+")
@@ -168,7 +165,7 @@ class EmpresaCli {
                 }
 
                 def candidato = curtidaSelecionada.candidato
-                def resultadoMatch = curtidaServico.empresaCurteCandidato(empresa, candidato, vaga)
+                def resultadoMatch = empresaController.empresaCurteCandidato(empresa, candidato, vaga)
                 if (resultadoMatch == null) {
                     println("+================================================+")
                     println("Não foi possível gerar match para essa seleção.")
@@ -207,7 +204,7 @@ class EmpresaCli {
         def empresa = selecionarEmpresaPorCnpj()
         if (empresa == null) return
 
-        def matchesEmpresa = curtidaServico.obterTodosMatches().findAll { it.empresa?.cnpj == empresa.cnpj }
+        def matchesEmpresa = empresaController.listarMatchesDaEmpresa(empresa)
 
         if (matchesEmpresa.isEmpty()) {
             println("Nenhum match para ${empresa.nome}.")
@@ -236,7 +233,7 @@ class EmpresaCli {
             println("+================================================+")
             print("Escolha uma empresa (pelo CNPJ): ")
             def cnpj = io.lerLinha()
-            def empresa = empresaService.buscarEmpresa(cnpj)
+            def empresa = empresaController.buscarEmpresaPorCnpj(cnpj)
             if (empresa == null) {
                 println("+================================================+")
                 println("Essa empresa não existe!")

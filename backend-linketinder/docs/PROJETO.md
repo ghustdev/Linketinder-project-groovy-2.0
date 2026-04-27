@@ -12,6 +12,7 @@ O fluxo principal cobre:
 - geração de match quando há reciprocidade para a mesma vaga
 
 O sistema mantém separação por camadas (`view`, `services`, `dao`, `repositories`, `entities`) e usa DAOs para acesso ao banco.
+Nesta versão, o MVC fica explícito com a adição da camada `controllers`.
 
 ## 2. Arquitetura
 
@@ -19,7 +20,11 @@ O sistema mantém separação por camadas (`view`, `services`, `dao`, `repositor
 
 - **View (`view/*Cli.groovy`)**
   - menu interativo (`MenuCli`) e entrada via `IEntradaConsolePadrao` / `EntradaConsolePadrao`
-  - coordena a interação do usuário e delega para `services/*Service`
+  - coordena a interação do usuário e delega para `controllers/*Controller`
+
+- **Controllers (`controllers/*Controller.groovy`)**
+  - camada de aplicação: recebe ações vindas do CLI e delega para `services/*Service`
+  - mantém o `view` mais enxuto e deixa o MVC explícito
 
 - **Services**
   - `CandidatoService`, `EmpresaService`, `VagaService`: regras e orquestração de persistência via DAO
@@ -40,6 +45,7 @@ O sistema mantém separação por camadas (`view`, `services`, `dao`, `repositor
 
 - `*Dao` (JDBC)
 - `*Service`
+- `*Controller`
 - `MatchRepositoryParaMock` + `CurtidaService`
 - `*Cli` + `MenuCli`
 
@@ -171,13 +177,13 @@ O acesso ao banco é centralizado em `dao.ConexaoDB`:
 
 - carrega as propriedades uma única vez (cache em memória)
 - cria e mantém uma única `java.sql.Connection` reutilizada durante a execução do CLI
-- o ponto de entrada (`Main.groovy`) fecha a conexão no encerramento chamando `ConexaoDB.fechar()` em um bloco `finally`
+- o ponto de entrada (`Main.groovy`) fecha a conexão no encerramento chamando `ConexaoDB.fecharConexao()` em um bloco `finally`
 
 Essa escolha é intencional para o cenário atual (aplicação CLI, single-thread). Em cenários concorrentes/produção, o caminho natural é evoluir para um pool (`DataSource`).
 
 ### 10.2 Factory Method para criação da conexão
 
-`ConexaoDB` não cria a conexão “direto” de forma espalhada. A criação é delegada para um **Factory Method** via a interface `dao.ConexaoFactory`:
+`ConexaoDB` não cria a conexão “direto” de forma espalhada. A criação é delegada para um **Factory Method** via a interface `dao.IConexaoFactory`:
 
 - implementação padrão: `dao.ConexaoJDBCFactory` (JDBC puro via `DriverManager`)
-- para trocar o mecanismo de conexão (ex.: outro driver, pool, etc.), basta implementar `ConexaoFactory` e configurar no início da aplicação com `ConexaoDB.definirFabrica(...)` (antes do primeiro acesso ao banco)
+- para trocar o mecanismo de conexão (ex.: outro driver, pool, etc.), basta implementar `IConexaoFactory` e configurar no início da aplicação com `ConexaoDB.definirFabrica(...)` (antes do primeiro acesso ao banco)
