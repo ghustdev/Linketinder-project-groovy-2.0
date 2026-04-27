@@ -1,6 +1,7 @@
 package services
 
 import entities.Empresa
+import entities.Competencia
 import entities.Vaga
 import exceptions.OperacaoPersistenciaException
 import exceptions.RecursoDuplicadoException
@@ -22,16 +23,24 @@ class VagaServiceTest extends Specification {
 
     def "cria vaga com sucesso"() {
         given:
-        List<String> competencias = ["Java"]
         Vaga vaga = new Vaga(id: 1L, titulo: "Dev")
+        Vaga entrada = new Vaga(
+                empresaId: empresa.id,
+                empresa: empresa,
+                titulo: "Dev",
+                descricao: "Desc",
+                estado: "GO",
+                cidade: "Goiania",
+                competenciasRequeridas: [new Competencia(nome: "Java")]
+        )
 
         when:
-        def resultado = service.criarVaga("Dev", "Desc", "GO", "Goiania", empresa, competencias)
+        def resultado = service.criarVaga(entrada)
 
         then:
         resultado == vaga
         1 * vagaDao.buscarPorEmpresaENome(empresa.id, "Dev") >> null
-        1 * vagaDao.inserir(empresa.id, "Dev", "Desc", "GO", "Goiania") >> 1L
+        1 * vagaDao.inserir(_ as Vaga) >> 1L
         1 * competenciaDao.inserir("Java") >> 1L
         1 * vagaDao.adicionarCompetencias(1L, [1L])
         1 * vagaDao.buscarPorId(1L) >> vaga
@@ -39,7 +48,7 @@ class VagaServiceTest extends Specification {
 
     def "lanca excecao quando empresa e nula"() {
         when:
-        service.criarVaga("Dev", "Desc", "GO", "Goiania", null, ["Java"])
+        service.criarVaga(new Vaga(titulo: "Dev", empresa: null, competenciasRequeridas: [new Competencia(nome: "Java")]))
 
         then:
         thrown(RegraDeNegocioException)
@@ -47,7 +56,7 @@ class VagaServiceTest extends Specification {
 
     def "lanca excecao quando lista de competencias esta vazia"() {
         when:
-        service.criarVaga("Dev", "Desc", "GO", "Goiania", empresa, [])
+        service.criarVaga(new Vaga(titulo: "Dev", empresa: empresa, competenciasRequeridas: []))
 
         then:
         thrown(RegraDeNegocioException)
@@ -55,7 +64,7 @@ class VagaServiceTest extends Specification {
 
     def "lanca excecao quando vaga ja existe para a empresa"() {
         when:
-        service.criarVaga("Dev", "Desc", "GO", "Goiania", empresa, ["Java"])
+        service.criarVaga(new Vaga(titulo: "Dev", empresa: empresa, empresaId: empresa.id, competenciasRequeridas: [new Competencia(nome: "Java")]))
 
         then:
         1 * vagaDao.buscarPorEmpresaENome(empresa.id, "Dev") >> new Vaga(titulo: "Dev")
@@ -64,11 +73,19 @@ class VagaServiceTest extends Specification {
 
     def "lanca excecao quando dao nao persiste vaga"() {
         when:
-        service.criarVaga("Dev", "Desc", "GO", "Goiania", empresa, ["Java"])
+        service.criarVaga(new Vaga(
+                titulo: "Dev",
+                descricao: "Desc",
+                estado: "GO",
+                cidade: "Goiania",
+                empresa: empresa,
+                empresaId: empresa.id,
+                competenciasRequeridas: [new Competencia(nome: "Java")]
+        ))
 
         then:
         1 * vagaDao.buscarPorEmpresaENome(empresa.id, "Dev") >> null
-        1 * vagaDao.inserir(*_) >> null
+        1 * vagaDao.inserir(_ as Vaga) >> null
         thrown(OperacaoPersistenciaException)
     }
 

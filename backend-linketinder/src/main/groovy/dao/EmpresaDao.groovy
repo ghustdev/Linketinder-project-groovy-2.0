@@ -9,7 +9,7 @@ import java.sql.PreparedStatement
 class EmpresaDao implements IEmpresaRepository {
 
     @Override
-    Long inserir(String nome, String cnpj, String email, String descricao, String pais, String cep) {
+    Long inserir(Empresa empresa) {
         String sql = """\
 INSERT INTO empresas (nome, cnpj, email, descricao, pais, cep)
 VALUES (?, ?, ?, ?, ?, ?)
@@ -18,12 +18,12 @@ RETURNING id
 """
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nome)
-            stmt.setString(2, cnpj)
-            stmt.setString(3, email)
-            stmt.setString(4, descricao)
-            stmt.setString(5, pais)
-            stmt.setString(6, cep)
+            stmt.setString(1, empresa.nome)
+            stmt.setString(2, empresa.cnpj)
+            stmt.setString(3, empresa.email)
+            stmt.setString(4, empresa.descricao)
+            stmt.setString(5, empresa.pais)
+            stmt.setString(6, empresa.cep)
             def rs = stmt.executeQuery()
             try {
                 if (rs.next()) {

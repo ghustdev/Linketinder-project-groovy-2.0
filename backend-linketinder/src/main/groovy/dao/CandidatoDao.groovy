@@ -5,13 +5,12 @@ import entities.Competencia
 import repositories.ICandidatoRepository
 
 import java.sql.Connection
-import java.sql.Date
 import java.sql.PreparedStatement
 
 class CandidatoDao implements ICandidatoRepository {
 
     @Override
-    Long inserir(String nome, String sobrenome, Date nascimento, String email, String cpf, String pais, String cep, String descricao, String formacao, String linkedin) {
+    Long inserir(Candidato candidato) {
         String sql = """\
 INSERT INTO candidatos (nome, sobrenome, data_nascimento, email, cpf, pais, cep, descricao, formacao, linkedin)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -20,16 +19,16 @@ RETURNING id
 """
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nome)
-            stmt.setString(2, sobrenome)
-            stmt.setDate(3, nascimento)
-            stmt.setString(4, email)
-            stmt.setString(5, cpf)
-            stmt.setString(6, pais)
-            stmt.setString(7, cep)
-            stmt.setString(8, descricao)
-            stmt.setString(9, formacao)
-            stmt.setString(10, linkedin)
+            stmt.setString(1, candidato.nome)
+            stmt.setString(2, candidato.sobrenome)
+            stmt.setDate(3, candidato.nascimento)
+            stmt.setString(4, candidato.email)
+            stmt.setString(5, candidato.cpf)
+            stmt.setString(6, candidato.pais)
+            stmt.setString(7, candidato.cep)
+            stmt.setString(8, candidato.descricao)
+            stmt.setString(9, candidato.formacao)
+            stmt.setString(10, candidato.linkedin)
             def rs = stmt.executeQuery()
             try {
                 if (rs.next()) {

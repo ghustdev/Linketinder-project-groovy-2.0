@@ -2,10 +2,8 @@ package repositories
 
 import entities.Candidato
 
-import java.sql.Date
-
 interface ICandidatoRepository {
-    Long inserir(String nome, String sobrenome, Date nascimento, String email, String cpf, String pais, String cep, String descricao, String formacao, String linkedin)
+    Long inserir(Candidato candidato)
 
     void adicionarCompetencias(Long candidatoId, List<Long> competenciaIds)
 

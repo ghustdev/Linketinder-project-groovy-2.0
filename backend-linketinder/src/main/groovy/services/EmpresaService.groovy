@@ -15,17 +15,17 @@ class EmpresaService {
         this.competenciaDao = competenciaDao
     }
 
-    Empresa criarEmpresa(String nome, String email, String cnpj, String pais, String cep, String descricao) {
-        if (empresaDao.buscarPorCnpj(cnpj) != null) {
+    Empresa criarEmpresa(Empresa empresa) {
+        if (empresaDao.buscarPorCnpj(empresa.cnpj) != null) {
             throw new RecursoDuplicadoException("CNPJ já cadastrado.")
         }
 
-        Long empresaId = empresaDao.inserir(nome, cnpj, email, descricao, pais, cep)
-        if (empresaId == null && empresaDao.buscarPorCnpj(cnpj) == null) {
+        Long empresaId = empresaDao.inserir(empresa)
+        if (empresaId == null && empresaDao.buscarPorCnpj(empresa.cnpj) == null) {
             throw new OperacaoPersistenciaException("Não foi possível criar a empresa.")
         }
 
-        return empresaDao.buscarPorCnpj(cnpj)
+        return empresaDao.buscarPorCnpj(empresa.cnpj)
     }
 
     List<Empresa> listarEmpresas() {

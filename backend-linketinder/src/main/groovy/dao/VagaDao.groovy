@@ -15,7 +15,7 @@ class VagaDao implements IVagaRepository {
     }
 
     @Override
-    Long inserir(Long empresaId, String nome, String descricao, String estado, String cidade) {
+    Long inserir(Vaga vaga) {
         String sql = """\
 INSERT INTO vagas (empresa_id, nome, descricao, estado, cidade)
 VALUES (?, ?, ?, ?, ?)
@@ -23,11 +23,12 @@ RETURNING id
 """
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            Long empresaId = vaga.empresaId ?: vaga.empresa?.id
             stmt.setLong(1, empresaId)
-            stmt.setString(2, nome)
-            stmt.setString(3, descricao)
-            stmt.setString(4, estado)
-            stmt.setString(5, cidade)
+            stmt.setString(2, vaga.titulo)
+            stmt.setString(3, vaga.descricao)
+            stmt.setString(4, vaga.estado)
+            stmt.setString(5, vaga.cidade)
             def rs = stmt.executeQuery()
             try {
                 if (rs.next()) return rs.getLong("id")

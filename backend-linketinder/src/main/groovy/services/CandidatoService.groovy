@@ -6,9 +6,6 @@ import entities.Candidato
 import repositories.ICandidatoRepository
 import repositories.ICompetenciaRepository
 
-import java.sql.Date
-import java.time.LocalDate
-
 class CandidatoService {
     ICandidatoRepository candidatoDao
     ICompetenciaRepository competenciaDao
@@ -18,27 +15,26 @@ class CandidatoService {
         this.competenciaDao = competenciaDao
     }
 
-    Candidato criarCandidato(String nome, String sobrenome, String dataNascimento, String email, String cpf, String pais, String cep, String descricao, String formacao, String linkedin, List<String> competencias) {
-        if (candidatoDao.buscarPorCpf(cpf) != null) {
+    Candidato criarCandidato(Candidato candidato) {
+        if (candidatoDao.buscarPorCpf(candidato.cpf) != null) {
             throw new RecursoDuplicadoException("CPF já cadastrado.")
         }
 
-        Date nascimento = Date.valueOf(LocalDate.parse(dataNascimento))
-        Long candidatoId = candidatoDao.inserir(nome, sobrenome, nascimento, email, cpf, pais, cep, descricao, formacao, linkedin)
+        Long candidatoId = candidatoDao.inserir(candidato)
         if (candidatoId == null) {
             throw new OperacaoPersistenciaException("Não foi possível criar o candidato.")
         }
 
         List<Long> competenciaIds = []
-        competencias.each { competencia ->
-            Long id = competenciaDao.inserir(competencia)
+        (candidato.competencias ?: []).each { competencia ->
+            Long id = competenciaDao.inserir(competencia?.nome)
             if (id == null) {
-                throw new OperacaoPersistenciaException("Não foi possível persistir a competência '${competencia}'.")
+                throw new OperacaoPersistenciaException("Não foi possível persistir a competência '${competencia?.nome}'.")
             }
             competenciaIds.add(id)
         }
         candidatoDao.adicionarCompetencias(candidatoId, competenciaIds)
-        return candidatoDao.buscarPorCpf(cpf)
+        return candidatoDao.buscarPorCpf(candidato.cpf)
     }
 
     List<Candidato> listarCandidatos() {

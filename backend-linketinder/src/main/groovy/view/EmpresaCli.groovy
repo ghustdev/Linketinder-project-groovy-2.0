@@ -3,6 +3,7 @@ package view
 import controllers.EmpresaController
 import controllers.VagaController
 import exceptions.ExecucaoException
+import entities.Competencia
 import entities.Empresa
 import entities.Vaga
 
@@ -29,7 +30,16 @@ class EmpresaCli {
             print("CEP: "); String cep = io.lerLinha()
             print("Descrição: "); String descricao = io.lerLinha()
 
-            Empresa empresa = empresaController.criarEmpresa(nome, email, cnpj, pais, cep, descricao)
+            Empresa empresaEntrada = new Empresa(
+                    nome: nome,
+                    email: email,
+                    cnpj: cnpj,
+                    pais: pais,
+                    cep: cep,
+                    descricao: descricao
+            )
+
+            Empresa empresa = empresaController.criarEmpresa(empresaEntrada)
 
             println("+================================================+")
             println("Empresa, ${empresa.nome}, cadastrada com sucesso!")
@@ -45,7 +55,17 @@ class EmpresaCli {
 
             List<String> competenciasRequeridas = EditarEntradaCompetencia.formatarCompetencias(entrada)
 
-            Vaga vaga = vagaController.criarVaga(nomeVaga, descricaoVaga, estado, cidade, empresa, competenciasRequeridas)
+            Vaga vagaEntrada = new Vaga(
+                    empresaId: empresa.id,
+                    empresa: empresa,
+                    titulo: nomeVaga,
+                    descricao: descricaoVaga,
+                    estado: estado,
+                    cidade: cidade,
+                    competenciasRequeridas: competenciasRequeridas.collect { new Competencia(nome: it) }
+            )
+
+            Vaga vaga = vagaController.criarVaga(vagaEntrada)
 
             println("+================================================+")
             println("Vaga, ${vaga.titulo}, cadastrada com sucesso!")

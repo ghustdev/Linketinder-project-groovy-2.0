@@ -21,27 +21,28 @@ class VagaService {
         return vagaDao.buscarPorId(id)
     }
 
-    Vaga criarVaga(String nome, String descricao, String estado, String cidade, Empresa empresa, List<String> competenciasRequeridas) {
+    Vaga criarVaga(Vaga vaga) {
+        Empresa empresa = vaga?.empresa
         if (empresa == null) {
             throw new RegraDeNegocioException("Empresa inválida para criação de vaga.")
         }
-        if (!competenciasRequeridas) {
+        if (!vaga?.competenciasRequeridas) {
             throw new RegraDeNegocioException("A vaga deve possuir ao menos uma competência requerida.")
         }
-        if (vagaDao.buscarPorEmpresaENome(empresa.id, nome) != null) {
+        if (vagaDao.buscarPorEmpresaENome(empresa.id, vaga.titulo) != null) {
             throw new RecursoDuplicadoException("Vaga já cadastrada para esta empresa.")
         }
 
-        Long vagaId = vagaDao.inserir(empresa.id, nome, descricao, estado, cidade)
+        Long vagaId = vagaDao.inserir(vaga)
         if (vagaId == null) {
             throw new OperacaoPersistenciaException("Não foi possível criar a vaga.")
         }
 
         List<Long> competenciaIds = []
-        competenciasRequeridas.each { competencia ->
-            Long id = competenciaDao.inserir(competencia)
+        vaga.competenciasRequeridas.each { competencia ->
+            Long id = competenciaDao.inserir(competencia?.nome)
             if (id == null) {
-                throw new OperacaoPersistenciaException("Não foi possível persistir a competência '${competencia}'.")
+                throw new OperacaoPersistenciaException("Não foi possível persistir a competência '${competencia?.nome}'.")
             }
             competenciaIds.add(id)
         }

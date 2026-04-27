@@ -3,7 +3,7 @@ package repositories
 import entities.Empresa
 
 interface IEmpresaRepository {
-    Long inserir(String nome, String cnpj, String email, String descricao, String pais, String cep)
+    Long inserir(Empresa empresa)
 
     Empresa buscarPorCnpj(String cnpj)
 

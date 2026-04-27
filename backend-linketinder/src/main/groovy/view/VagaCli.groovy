@@ -3,6 +3,7 @@ package view
 import controllers.VagaController
 import entities.Candidato
 import entities.Curtida
+import entities.Competencia
 import entities.Vaga
 import exceptions.ExecucaoException
 
@@ -36,7 +37,17 @@ class VagaCli {
             print("Lista de competências requeridas (separado por ','): "); String entrada = io.lerLinha()
             List<String> competenciasRequeridas = EditarEntradaCompetencia.formatarCompetencias(entrada)
 
-            Vaga vaga = vagaController.criarVaga(nome, descricao, estado, cidade, empresa, competenciasRequeridas)
+            Vaga vagaEntrada = new Vaga(
+                    empresaId: empresa.id,
+                    empresa: empresa,
+                    titulo: nome,
+                    descricao: descricao,
+                    estado: estado,
+                    cidade: cidade,
+                    competenciasRequeridas: competenciasRequeridas.collect { new Competencia(nome: it) }
+            )
+
+            Vaga vaga = vagaController.criarVaga(vagaEntrada)
 
             println("+================================================+")
             println("Vaga, ${vaga.titulo}, cadastrada com sucesso!")

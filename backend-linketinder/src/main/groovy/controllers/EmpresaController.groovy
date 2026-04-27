@@ -17,8 +17,8 @@ class EmpresaController {
         this.curtidaService = curtidaService
     }
 
-    Empresa criarEmpresa(String nome, String email, String cnpj, String pais, String cep, String descricao) {
-        return empresaService.criarEmpresa(nome, email, cnpj, pais, cep, descricao)
+    Empresa criarEmpresa(Empresa empresa) {
+        return empresaService.criarEmpresa(empresa)
     }
 
     List<Empresa> listarEmpresas() {
@@ -41,4 +41,3 @@ class EmpresaController {
         return curtidaService.obterTodosMatches().findAll { it.empresa?.cnpj == empresa?.cnpj }
     }
 }
-

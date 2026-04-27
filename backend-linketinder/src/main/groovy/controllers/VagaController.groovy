@@ -2,7 +2,6 @@ package controllers
 
 import entities.Candidato
 import entities.Curtida
-import entities.Empresa
 import entities.Vaga
 import services.CurtidaService
 import services.VagaService
@@ -16,8 +15,8 @@ class VagaController {
         this.curtidaService = curtidaService
     }
 
-    Vaga criarVaga(String nome, String descricao, String estado, String cidade, Empresa empresa, List<String> competenciasRequeridas) {
-        return vagaService.criarVaga(nome, descricao, estado, cidade, empresa, competenciasRequeridas)
+    Vaga criarVaga(Vaga vaga) {
+        return vagaService.criarVaga(vaga)
     }
 
     List<Vaga> listarVagas() {
@@ -32,4 +31,3 @@ class VagaController {
         return curtidaService.candidatoCurteVaga(candidato, vaga)
     }
 }
-

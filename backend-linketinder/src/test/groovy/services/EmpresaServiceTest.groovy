@@ -21,23 +21,25 @@ class EmpresaServiceTest extends Specification {
         String cnpj = "11"
         String email = "tech@email.com"
         Empresa empresa = new Empresa(nome: "Tech", cnpj: cnpj)
+        Empresa entrada = new Empresa(nome: "Tech", email: email, cnpj: cnpj, pais: "BR", cep: "74000", descricao: "Desc")
 
         when:
-        def resultado = service.criarEmpresa("Tech", email, cnpj, "BR", "74000", "Desc")
+        def resultado = service.criarEmpresa(entrada)
 
         then:
         resultado == empresa
         1 * empresaDao.buscarPorCnpj(cnpj) >> null
-        1 * empresaDao.inserir(*_) >> 1L
+        1 * empresaDao.inserir(_ as Empresa) >> 1L
         1 * empresaDao.buscarPorCnpj(cnpj) >> empresa
     }
 
     def "lanca excecao quando CNPJ ja cadastrado"() {
         given:
         String cnpj = "11"
+        Empresa entrada = new Empresa(cnpj: cnpj)
 
         when:
-        service.criarEmpresa("Tech", "tech@email.com", cnpj, "BR", "74000", "Desc")
+        service.criarEmpresa(entrada)
 
         then:
         1 * empresaDao.buscarPorCnpj(cnpj) >> new Empresa(cnpj: cnpj)
@@ -48,13 +50,14 @@ class EmpresaServiceTest extends Specification {
         given:
         String cnpj = "11"
         String email = "tech@email.com"
+        Empresa entrada = new Empresa(nome: "Tech", email: email, cnpj: cnpj, pais: "BR", cep: "74000", descricao: "Desc")
 
         when:
-        service.criarEmpresa("Tech", email, cnpj, "BR", "74000", "Desc")
+        service.criarEmpresa(entrada)
 
         then:
         1 * empresaDao.buscarPorCnpj(cnpj) >> null
-        1 * empresaDao.inserir(*_) >> null
+        1 * empresaDao.inserir(_ as Empresa) >> null
         1 * empresaDao.buscarPorCnpj(cnpj) >> null
         thrown(OperacaoPersistenciaException)
     }

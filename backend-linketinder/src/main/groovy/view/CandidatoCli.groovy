@@ -3,6 +3,7 @@ package view
 import controllers.CandidatoController
 import exceptions.ExecucaoException
 import entities.Candidato
+import entities.Competencia
 
 class CandidatoCli {
     private final IEntradaConsolePadrao io
@@ -32,7 +33,23 @@ class CandidatoCli {
 
             List<String> competencias = EditarEntradaCompetencia.formatarCompetencias(entrada)
 
-            Candidato candidato = candidatoController.criarCandidato(nome, sobrenome, dataNascimento, email, cpf, pais, cep, descricao, formacao, linkedin, competencias)
+            def nascimento = java.sql.Date.valueOf(java.time.LocalDate.parse(dataNascimento))
+            def comps = competencias.collect { new Competencia(nome: it) }
+            Candidato candidatoEntrada = new Candidato(
+                    nome: nome,
+                    sobrenome: sobrenome,
+                    email: email,
+                    cpf: cpf,
+                    nascimento: nascimento,
+                    pais: pais,
+                    cep: cep,
+                    descricao: descricao,
+                    formacao: formacao,
+                    linkedin: linkedin,
+                    competencias: comps
+            )
+
+            Candidato candidato = candidatoController.criarCandidato(candidatoEntrada)
 
             println("+================================================+")
             println("Candidato, ${candidato.nome}, cadastrado com sucesso!")

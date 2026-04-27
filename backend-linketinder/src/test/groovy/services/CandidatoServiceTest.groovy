@@ -1,6 +1,7 @@
 package services
 
 import entities.Candidato
+import entities.Competencia
 import exceptions.OperacaoPersistenciaException
 import exceptions.RecursoDuplicadoException
 import repositories.ICandidatoRepository
@@ -19,28 +20,28 @@ class CandidatoServiceTest extends Specification {
     def "cria candidato com sucesso"() {
         given:
         String cpf = "123"
-        List<String> competencias = ["Java"]
         Candidato candidato = new Candidato(nome: "Ana", cpf: cpf)
+        Candidato entrada = new Candidato(
+                nome: "Ana",
+                sobrenome: "Silva",
+                email: "ana@email.com",
+                cpf: cpf,
+                nascimento: java.sql.Date.valueOf("1990-01-01"),
+                pais: "BR",
+                cep: "74000",
+                descricao: "Dev",
+                formacao: "UFMG",
+                linkedin: "linkedin.com/ana",
+                competencias: [new Competencia(nome: "Java")]
+        )
 
         when:
-        def resultado = service.criarCandidato(
-                "Ana",
-                "Silva",
-                "1990-01-01",
-                "ana@email.com",
-                cpf,
-                "BR",
-                "74000",
-                "Dev",
-                "UFMG",
-                "linkedin.com/ana",
-                competencias
-        )
+        def resultado = service.criarCandidato(entrada)
 
         then:
         resultado == candidato
         1 * candidatoDao.buscarPorCpf(cpf) >> null
-        1 * candidatoDao.inserir(*_) >> 1L
+        1 * candidatoDao.inserir(_ as Candidato) >> 1L
         1 * competenciaDao.inserir("Java") >> 1L
         1 * candidatoDao.adicionarCompetencias(1L, [1L])
         1 * candidatoDao.buscarPorCpf(cpf) >> candidato
@@ -49,9 +50,10 @@ class CandidatoServiceTest extends Specification {
     def "lanca excecao quando CPF ja cadastrado"() {
         given:
         String cpf = "123"
+        Candidato entrada = new Candidato(cpf: cpf)
 
         when:
-        service.criarCandidato("Ana", "Silva", "1990-01-01", "ana@email.com", cpf, "BR", "74000", "Dev", "UFMG", "linkedin.com/ana", ["Java"])
+        service.criarCandidato(entrada)
 
         then:
         1 * candidatoDao.buscarPorCpf(cpf) >> new Candidato(cpf: cpf)
@@ -61,13 +63,14 @@ class CandidatoServiceTest extends Specification {
     def "lanca excecao quando dao nao retorna id"() {
         given:
         String cpf = "123"
+        Candidato entrada = new Candidato(cpf: cpf, competencias: [new Competencia(nome: "Java")])
 
         when:
-        service.criarCandidato("Ana", "Silva", "1990-01-01", "ana@email.com", cpf, "BR", "74000", "Dev", "UFMG", "linkedin.com/ana", ["Java"])
+        service.criarCandidato(entrada)
 
         then:
         1 * candidatoDao.buscarPorCpf(cpf) >> null
-        1 * candidatoDao.inserir(*_) >> null
+        1 * candidatoDao.inserir(_ as Candidato) >> null
         thrown(OperacaoPersistenciaException)
     }
 

@@ -1,4 +1,4 @@
-# Linketinder Backend (Groovy + PostgreSQL)
+# Linketinder Backend (Groovy + PostgreSQL) - Gustavo Cardoso Costa
 
 Aplicação CLI para recrutamento, com persistência em PostgreSQL via JDBC.
 

@@ -3,7 +3,7 @@ package repositories
 import entities.Vaga
 
 interface IVagaRepository {
-    Long inserir(Long empresaId, String nome, String descricao, String estado, String cidade)
+    Long inserir(Vaga vaga)
 
     void adicionarCompetencias(Long vagaId, List<Long> competenciaIds)
 

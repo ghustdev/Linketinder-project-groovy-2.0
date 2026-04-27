@@ -15,8 +15,8 @@ class CandidatoController {
         this.curtidaService = curtidaService
     }
 
-    Candidato criarCandidato(String nome, String sobrenome, String dataNascimento, String email, String cpf, String pais, String cep, String descricao, String formacao, String linkedin, List<String> competencias) {
-        return candidatoService.criarCandidato(nome, sobrenome, dataNascimento, email, cpf, pais, cep, descricao, formacao, linkedin, competencias)
+    Candidato criarCandidato(Candidato candidato) {
+        return candidatoService.criarCandidato(candidato)
     }
 
     List<Candidato> listarCandidatos() {
@@ -35,4 +35,3 @@ class CandidatoController {
         return curtidaService.obterTodosMatches().findAll { it.candidato?.cpf == candidato?.cpf }
     }
 }
-
