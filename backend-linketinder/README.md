@@ -62,6 +62,32 @@ groovy src/main/groovy/Main.groovy
 - Curtidas de candidatos e matches ficam em memória durante a execução (via `MatchRepositoryParaMock`), não persistem no PostgreSQL.
 - Competências são objetos (`Competencia`) em candidatos e vagas.
 
+## Conexão com banco (Factory Method)
+
+A conexão com o PostgreSQL é centralizada em `dao.ConexaoDB`:
+
+- Lê `linketinder.properties` uma única vez (cache em memória).
+- Mantém uma única `java.sql.Connection` reutilizada durante a execução do CLI.
+- O `Main.groovy` garante o fechamento no `finally` chamando `ConexaoDB.fechar()`.
+
+O ponto de criação da conexão usa **Factory Method** via a interface `dao.ConexaoFactory`:
+
+- Implementação padrão: `dao.ConexaoJDBCFactory` (usa `DriverManager.getConnection`).
+- Para trocar a forma de conexão (ex.: outro driver, DataSource/pool, etc.), implemente `ConexaoFactory` e chame `ConexaoDB.definirFabrica(...)` no início do `Main` (antes de qualquer DAO acessar o banco).
+
+Exemplo (ideia):
+
+```groovy
+class MinhaFactory implements ConexaoFactory {
+  @Override
+  Connection criarConexao(String url, String usuario, String senha) {
+    // criar e retornar Connection por outro mecanismo
+  }
+}
+
+ConexaoDB.definirFabrica(new MinhaFactory())
+```
+
 ## Simplificações recentes
 
 Mudanças feitas para reduzir estado duplicado e remover pontos frágeis no fluxo:
@@ -85,7 +111,7 @@ O que ainda falta para ficar mais “SOLID” e sustentável:
 
 - Persistência de curtidas/matches: hoje o banco persiste candidatos/empresas/vagas/competências, mas curtidas e matches são apenas em memória (e se perdem ao reiniciar).
 - SRP/Clareza no CLI: algumas rotas do CLI fazem múltiplas consultas repetidas e misturam listagem com validação de vazio; dá para simplificar e evitar chamadas duplicadas.
-- Conexão com DB: `dao.ConexaoDB` lê arquivo a cada conexão e retorna `null` em erro; ideal é centralizar configuração/conexão e falhar de forma explícita.
+- Conexão com DB: hoje já está centralizada em `dao.ConexaoDB` e falha com exceção quando a configuração está inválida; em cenários reais, o próximo passo seria trocar para pool/DataSource e melhorar observabilidade (logs/métricas).
 
 Importância dessas simplificações no desenvolvimento:
 

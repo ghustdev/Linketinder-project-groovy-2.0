@@ -32,6 +32,7 @@ O sistema mantém separação por camadas (`view`, `services`, `dao`, `repositor
 - **DAO (`dao.*`)**
   - `CandidatoDao`, `EmpresaDao`, `VagaDao`, `CompetenciaDao`
   - acesso ao PostgreSQL usando `PreparedStatement`
+  - `ConexaoDB` centraliza ciclo de vida e criação da conexão (ver seção 10)
 
 ### 2.2 Ponto de entrada
 
@@ -163,3 +164,20 @@ O backend lê `linketinder.properties` (na raiz do projeto) para conectar no Pos
 - `DB_URL`
 - `DB_USER`
 - `DB_PASSWORD`
+
+### 10.1 Ciclo de vida da conexão (ConexaoDB)
+
+O acesso ao banco é centralizado em `dao.ConexaoDB`:
+
+- carrega as propriedades uma única vez (cache em memória)
+- cria e mantém uma única `java.sql.Connection` reutilizada durante a execução do CLI
+- o ponto de entrada (`Main.groovy`) fecha a conexão no encerramento chamando `ConexaoDB.fechar()` em um bloco `finally`
+
+Essa escolha é intencional para o cenário atual (aplicação CLI, single-thread). Em cenários concorrentes/produção, o caminho natural é evoluir para um pool (`DataSource`).
+
+### 10.2 Factory Method para criação da conexão
+
+`ConexaoDB` não cria a conexão “direto” de forma espalhada. A criação é delegada para um **Factory Method** via a interface `dao.ConexaoFactory`:
+
+- implementação padrão: `dao.ConexaoJDBCFactory` (JDBC puro via `DriverManager`)
+- para trocar o mecanismo de conexão (ex.: outro driver, pool, etc.), basta implementar `ConexaoFactory` e configurar no início da aplicação com `ConexaoDB.definirFabrica(...)` (antes do primeiro acesso ao banco)

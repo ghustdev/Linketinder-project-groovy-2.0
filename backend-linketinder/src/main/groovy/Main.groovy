@@ -1,6 +1,7 @@
 import dao.CandidatoDao
 import dao.CompetenciaDao
 import dao.ConexaoDB
+import dao.ConexaoJDBCFactory
 import dao.EmpresaDao
 import dao.VagaDao
 import exceptions.ExecucaoException
@@ -22,6 +23,8 @@ class Main {
     static void main(String[] args) {
         try {
             try {
+                ConexaoDB.definirFabrica(new ConexaoJDBCFactory())
+
                 CompetenciaDao competenciaDao = new CompetenciaDao()
                 CandidatoDao candidatoDao = new CandidatoDao()
                 EmpresaDao empresaDao = new EmpresaDao()
