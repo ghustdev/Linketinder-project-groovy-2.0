@@ -3,8 +3,11 @@ package view
 import controllers.CandidatoController
 import exceptions.ExecucaoException
 import entities.Candidato
+import entities.Curtida
 import entities.Competencia
+import entities.Match
 
+import java.sql.Date
 import java.time.LocalDate
 
 class CandidatoCli {
@@ -35,8 +38,8 @@ class CandidatoCli {
 
             List<String> competencias = EditarEntradaCompetencia.formatarCompetencias(entrada)
 
-            def nascimento = java.sql.Date.valueOf(LocalDate.parse(dataNascimento))
-            def comps = competencias.collect { new Competencia(nome: it) }
+            Date nascimento = Date.valueOf(LocalDate.parse(dataNascimento))
+            List<Competencia> comps = competencias.collect { new Competencia(nome: it) }
             Candidato candidatoEntrada = new Candidato(
                     nome: nome,
                     sobrenome: sobrenome,
@@ -159,7 +162,7 @@ class CandidatoCli {
 
         try {
             println("${candidato.nome} curtiu essas vagas: ")
-            def vagasCurtidas = candidatoController.listarCurtidasDoCandidato(candidato)
+            List<Curtida> vagasCurtidas = candidatoController.listarCurtidasDoCandidato(candidato)
             if (!vagasCurtidas) {
                 println("+================================================+")
                 println("${candidato.nome} não possui curtidas")
@@ -192,10 +195,10 @@ class CandidatoCli {
         println("|            Matches do Candidato                |")
         println("+================================================+")
 
-        def candidato = selecionarCandidatoPorCpf()
+        Candidato candidato = selecionarCandidatoPorCpf()
         if (candidato == null) return
 
-        def matchesCandidato = candidatoController.listarMatchesDoCandidato(candidato)
+        List<Match> matchesCandidato = candidatoController.listarMatchesDoCandidato(candidato)
 
         if (matchesCandidato.isEmpty()) {
             println("Nenhum match para ${candidato.nome}.")
@@ -223,8 +226,8 @@ class CandidatoCli {
             println("+================================================+")
             println()
             print("Escolha o candidato (pelo CPF): ")
-            def cpf = io.lerLinha()
-            def candidato = candidatoController.buscarCandidatoPorCpf(cpf)
+            String cpf = io.lerLinha()
+            Candidato candidato = candidatoController.buscarCandidatoPorCpf(cpf)
             if (candidato == null) {
                 println("+================================================+")
                 println("Esse candidato não existe!")

@@ -6,6 +6,7 @@ import repositories.IVagaRepository
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 
 class VagaDao implements IVagaRepository {
     EmpresaDao empresaDao
@@ -29,7 +30,7 @@ RETURNING id
             stmt.setString(3, vaga.descricao)
             stmt.setString(4, vaga.estado)
             stmt.setString(5, vaga.cidade)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) return rs.getLong("id")
                 return null
@@ -63,7 +64,7 @@ ON CONFLICT DO NOTHING
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) {
                     Vaga vaga = construirVaga(rs)
@@ -85,7 +86,7 @@ ON CONFLICT DO NOTHING
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, empresaId)
             stmt.setString(2, nome)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) {
                     Vaga vaga = construirVaga(rs)
@@ -106,7 +107,7 @@ ON CONFLICT DO NOTHING
         List<Vaga> lista = []
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 while (rs.next()) {
                     Vaga vaga = construirVaga(rs)
@@ -134,7 +135,7 @@ ON CONFLICT DO NOTHING
         List<Competencia> competencias = []
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, vagaId)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 while (rs.next()) {
                     competencias.add(Competencia.builder()
@@ -149,7 +150,7 @@ ON CONFLICT DO NOTHING
         }
     }
 
-    private static Vaga construirVaga(def rs) {
+    private static Vaga construirVaga(ResultSet rs) {
         return Vaga.builder()
                 .id(rs.getLong("id"))
                 .empresaId(rs.getLong("empresa_id"))

@@ -3,8 +3,11 @@ package view
 import controllers.EmpresaController
 import controllers.VagaController
 import exceptions.ExecucaoException
+import entities.Candidato
 import entities.Competencia
+import entities.Curtida
 import entities.Empresa
+import entities.Match
 import entities.Vaga
 
 class EmpresaCli {
@@ -119,11 +122,11 @@ class EmpresaCli {
         println("|                    Empresa                     |")
         println("+================================================+")
 
-        def empresa = selecionarEmpresaPorCnpj()
+        Empresa empresa = selecionarEmpresaPorCnpj()
         if (empresa == null) return
 
         try {
-            def curtidasRecebidas = empresaController.listarCurtidasRecebidas(empresa)
+            List<Curtida> curtidasRecebidas = empresaController.listarCurtidasRecebidas(empresa)
 
             if (curtidasRecebidas.isEmpty()) {
                 println("+================================================+")
@@ -135,7 +138,7 @@ class EmpresaCli {
 
             println("+================================================+")
             curtidasRecebidas.each { curtida ->
-                def jaTemMatch = empresaController.listarMatchesDaEmpresa(empresa).any {
+                boolean jaTemMatch = empresaController.listarMatchesDaEmpresa(empresa).any {
                     it.candidato.cpf == curtida.candidato.cpf && it.vaga.id == curtida.vaga.id
                 }
                 println("Candidato: ${curtida.candidato.nome}")
@@ -148,7 +151,7 @@ class EmpresaCli {
             }
 
             print("Deseja curtir algum candidato de volta? (s/n): ")
-            def resposta = io.lerLinha().toLowerCase().trim()
+            String resposta = io.lerLinha().toLowerCase().trim()
 
             while (resposta == "s") {
                 println("+================================================+")
@@ -165,7 +168,7 @@ class EmpresaCli {
                 }
 
                 Long vagaId = idVagaEntrada as Long
-                def vaga = vagaController.buscarVagaPorId(vagaId)
+                Vaga vaga = vagaController.buscarVagaPorId(vagaId)
 
                 if (vaga == null) {
                     println("+================================================+")
@@ -175,7 +178,7 @@ class EmpresaCli {
                     return
                 }
 
-                def curtidaSelecionada = curtidasRecebidas.find { it.candidato.cpf == cpf && it.vaga.id == vagaId }
+                Curtida curtidaSelecionada = curtidasRecebidas.find { it.candidato.cpf == cpf && it.vaga.id == vagaId } as Curtida
                 if (curtidaSelecionada == null) {
                     println("+================================================+")
                     println("Candidato inválido. Use somente CPF e vaga exibidos na lista acima.")
@@ -184,8 +187,8 @@ class EmpresaCli {
                     continue
                 }
 
-                def candidato = curtidaSelecionada.candidato
-                def resultadoMatch = empresaController.empresaCurteCandidato(empresa, candidato, vaga)
+                Candidato candidato = curtidaSelecionada.candidato
+                Match resultadoMatch = empresaController.empresaCurteCandidato(empresa, candidato, vaga)
                 if (resultadoMatch == null) {
                     println("+================================================+")
                     println("Não foi possível gerar match para essa seleção.")
@@ -221,10 +224,10 @@ class EmpresaCli {
         println("|             Matches da Empresa                 |")
         println("+================================================+")
 
-        def empresa = selecionarEmpresaPorCnpj()
+        Empresa empresa = selecionarEmpresaPorCnpj()
         if (empresa == null) return
 
-        def matchesEmpresa = empresaController.listarMatchesDaEmpresa(empresa)
+        List<Match> matchesEmpresa = empresaController.listarMatchesDaEmpresa(empresa)
 
         if (matchesEmpresa.isEmpty()) {
             println("Nenhum match para ${empresa.nome}.")
@@ -252,8 +255,8 @@ class EmpresaCli {
 
             println("+================================================+")
             print("Escolha uma empresa (pelo CNPJ): ")
-            def cnpj = io.lerLinha()
-            def empresa = empresaController.buscarEmpresaPorCnpj(cnpj)
+            String cnpj = io.lerLinha()
+            Empresa empresa = empresaController.buscarEmpresaPorCnpj(cnpj)
             if (empresa == null) {
                 println("+================================================+")
                 println("Essa empresa não existe!")

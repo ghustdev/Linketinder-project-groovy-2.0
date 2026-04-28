@@ -6,6 +6,7 @@ import repositories.ICandidatoRepository
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 
 class CandidatoDao implements ICandidatoRepository {
 
@@ -29,7 +30,7 @@ RETURNING id
             stmt.setString(8, candidato.descricao)
             stmt.setString(9, candidato.formacao)
             stmt.setString(10, candidato.linkedin)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) {
                     return rs.getLong("id")
@@ -65,7 +66,7 @@ ON CONFLICT DO NOTHING
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) {
                     Candidato candidato = construirCandidato(rs)
@@ -85,7 +86,7 @@ ON CONFLICT DO NOTHING
         List<Candidato> listaCandidatos = []
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 while (rs.next()) {
                     Candidato candidato = construirCandidato(rs)
@@ -111,7 +112,7 @@ ORDER BY c.nome
         List<Competencia> competencias = []
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, candidatoId)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 while (rs.next()) {
                     competencias.add(Competencia.builder()
@@ -126,7 +127,7 @@ ORDER BY c.nome
         }
     }
 
-    private static Candidato construirCandidato(def result) {
+    private static Candidato construirCandidato(ResultSet result) {
         return Candidato.builder()
                 .id(result.getLong("id"))
                 .nome(result.getString("nome"))

@@ -4,6 +4,7 @@ import controllers.VagaController
 import entities.Candidato
 import entities.Curtida
 import entities.Competencia
+import entities.Empresa
 import entities.Vaga
 import exceptions.ExecucaoException
 
@@ -25,7 +26,7 @@ class VagaCli {
         println("|                 Cadastrar Vaga                 |")
         println("+================================================+")
         try {
-            def empresa = empresaCli.selecionarEmpresaPorCnpj()
+            Empresa empresa = empresaCli.selecionarEmpresaPorCnpj()
             if (empresa == null) return
 
             println("+================================================+")
@@ -71,7 +72,7 @@ class VagaCli {
         println("|             Feed: Visualizar Vagas             |")
         println("+================================================+")
 
-        def candidato = candidatoCli.selecionarCandidatoPorCpf()
+        Candidato candidato = candidatoCli.selecionarCandidatoPorCpf()
         if (candidato == null) return
 
         println("+================================================+")
@@ -112,7 +113,7 @@ class VagaCli {
 
     void custirVagaCandidato(Candidato candidato) {
         print("${candidato.nome}, deseja curtir alguma vaga? (s/n): ")
-        def resposta = io.lerLinha().toLowerCase().trim()
+        String resposta = io.lerLinha().toLowerCase().trim()
 
         while (resposta == "s") {
             println("+================================================+")
@@ -126,7 +127,7 @@ class VagaCli {
             }
 
             Long id = idEntrada as Long
-            def vaga = vagaController.buscarVagaPorId(id)
+            Vaga vaga = vagaController.buscarVagaPorId(id)
 
             if (vaga == null) {
                 println("+================================================+")

@@ -5,6 +5,7 @@ import repositories.IEmpresaRepository
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 
 class EmpresaDao implements IEmpresaRepository {
 
@@ -24,7 +25,7 @@ RETURNING id
             stmt.setString(4, empresa.descricao)
             stmt.setString(5, empresa.pais)
             stmt.setString(6, empresa.cep)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) {
                     return rs.getLong("id")
@@ -42,7 +43,7 @@ RETURNING id
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cnpj)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) return construirEmpresa(rs)
                 return null
@@ -58,7 +59,7 @@ RETURNING id
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) return construirEmpresa(rs)
                 return null
@@ -74,7 +75,7 @@ RETURNING id
         List<Empresa> lista = []
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 while (rs.next()) {
                     lista.add(construirEmpresa(rs))
@@ -86,7 +87,7 @@ RETURNING id
         }
     }
 
-    private static Empresa construirEmpresa(def rs) {
+    private static Empresa construirEmpresa(ResultSet rs) {
         return Empresa.builder()
                 .id(rs.getLong("id"))
                 .nome(rs.getString("nome"))

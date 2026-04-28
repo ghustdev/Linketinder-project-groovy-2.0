@@ -3,6 +3,7 @@ package dao
 import repositories.ICompetenciaRepository
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 
 class CompetenciaDao implements ICompetenciaRepository {
 
@@ -21,7 +22,7 @@ RETURNING id
         Connection conn = ConexaoDB.obterConexao()
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nome)
-            def rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery()
             try {
                 if (rs.next()) return rs.getLong("id")
                 return null
