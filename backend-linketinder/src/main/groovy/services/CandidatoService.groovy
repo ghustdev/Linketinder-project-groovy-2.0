@@ -27,9 +27,9 @@ class CandidatoService {
 
         List<Long> competenciaIds = []
         (candidato.competencias ?: []).each { competencia ->
-            Long id = competenciaDao.inserir(competencia?.nome)
+            Long id = competenciaDao.inserir(competencia.nome)
             if (id == null) {
-                throw new OperacaoPersistenciaException("Não foi possível persistir a competência '${competencia?.nome}'.")
+                throw new OperacaoPersistenciaException("Não foi possível persistir a competência '${competencia.nome}'.")
             }
             competenciaIds.add(id)
         }
