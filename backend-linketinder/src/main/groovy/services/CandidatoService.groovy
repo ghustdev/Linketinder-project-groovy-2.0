@@ -6,6 +6,9 @@ import entities.Candidato
 import repositories.ICandidatoRepository
 import repositories.ICompetenciaRepository
 
+import java.sql.Date
+import java.time.LocalDate
+
 class CandidatoService {
     ICandidatoRepository candidatoDao
     ICompetenciaRepository competenciaDao

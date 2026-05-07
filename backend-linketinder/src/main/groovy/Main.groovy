@@ -60,8 +60,6 @@ class Main {
                     ConexaoDB.fecharConexao()
                 } catch (Exception ignored) {}
             }
-        } catch (ExecucaoException e) {
-            System.err.println("Erro ao iniciar aplicação. Erro: ${e.message}")
         } catch (Exception e) {
             System.err.println("Erro inesperado ao iniciar aplicação. Erro: ${e.message}")
         }

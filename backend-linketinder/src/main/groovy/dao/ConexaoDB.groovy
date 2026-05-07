@@ -13,7 +13,9 @@ class ConexaoDB {
     private static IConexaoFactory conexaoFactory
 
     static void definirFabrica(IConexaoFactory novaFabrica) {
+
         if (novaFabrica == null) throw new IllegalArgumentException("Fábrica de conexão não pode ser nula.")
+
         if (conexao != null && !conexao.isClosed()) {
             throw new IllegalStateException("A fábrica deve ser definida antes do primeiro acesso ao banco (ou após fechar a conexão).")
         }
