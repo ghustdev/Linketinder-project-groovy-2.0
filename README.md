@@ -16,7 +16,7 @@ O projeto é composto por dois módulos independentes:
 
 | Módulo | Tecnologia | Descrição |
 |---|---|---|
-| [`backend-linketinder`](./backend-linketinder/) | Groovy + Gradle | CLI com fluxo completo de vagas, curtidas e match |
+| [`backend-linketinder`](./backend-linketinder/) | Groovy + Gradle + PostgreSQL | API REST via Servlets com persistência em banco de dados |
 | [`frontend-linketinder`](./frontend-linketinder/) | TypeScript + Vite | SPA com feed de vagas/candidatos, cadastro e gráfico de competências |
 
 ---
@@ -37,13 +37,13 @@ O projeto é composto por dois módulos independentes:
 
 ```
 Linketinder/
-├── backend-linketinder/   # CLI Groovy — model / repository / services / view
+├── backend-linketinder/   # API REST Groovy — entities / dao / services / controllers / view
 └── frontend-linketinder/  # SPA TypeScript — models / repository / services
 ```
 
-O backend segue arquitetura em camadas (`view → services → repository → model`) com armazenamento em memória e carga inicial de 7 empresas, 7 candidatos e 2 vagas.
+O backend segue arquitetura em camadas (`view → controllers → services → dao → entities`) com persistência em PostgreSQL via JDBC puro e servidor Tomcat 9 via Gretty.
 
-O frontend persiste dados no LocalStorage do navegador e não depende de nenhum servidor.
+O frontend persiste dados no LocalStorage do navegador e não depende de nenhum servidor (integração com a API planejada para etapa futura).
 
 ---
 
@@ -51,20 +51,55 @@ O frontend persiste dados no LocalStorage do navegador e não depende de nenhum 
 
 ### Stack
 
-- Groovy `4.0.15`
-- Gradle Wrapper `9.2.0`
+- Groovy `4.0`
+- Gradle Wrapper
+- Apache Tomcat `9.0` via Gretty `3.1.8`
+- PostgreSQL + JDBC puro
+- Google Gson (serialização JSON)
 - Spock `2.3` (Groovy 4) + JUnit Platform
 
 ### Pré-requisitos
 
 - JDK 17+
+- PostgreSQL rodando localmente
+- Arquivo `linketinder.properties` na raiz do módulo:
+
+```properties
+DB_URL=jdbc:postgresql://localhost:5432/db_linketinder
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
+
+### Banco de dados
+
+Antes de subir a aplicação, execute os scripts na ordem:
+
+```bash
+psql -U postgres -f docs/db_linketinder_ddl.sql   # cria schema
+psql -U postgres -f docs/db_linketinder_dml.sql   # insere dados de exemplo
+```
+
+Consultas de validação disponíveis em `docs/db_linketinder_dcl.sql`.
+
+### Schema
+
+| Tabela | Descrição |
+|---|---|
+| `candidatos` | Dados pessoais do candidato |
+| `empresas` | Dados da empresa |
+| `vagas` | Vagas vinculadas a uma empresa (1:N) |
+| `competencias` | Lista única de competências |
+| `candidato_competencia` | N:N entre candidatos e competências |
+| `vaga_competencia` | N:N entre vagas e competências |
 
 ### Executar
 
 ```bash
 cd backend-linketinder
-groovy src/main/groovy/Main.groovy
+./gradlew appRun
 ```
+
+API disponível em `http://localhost:8080`.
 
 ### Testes
 
@@ -75,11 +110,33 @@ cd backend-linketinder
 
 Relatórios gerados em `build/reports/tests/test/index.html`.
 
-### Menu CLI
+### Endpoints
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `POST` | `/candidatos` | Cadastra candidato |
+| `GET` | `/candidatos` | Lista todos os candidatos |
+| `GET` | `/candidatos?cpf=` | Busca candidato por CPF |
+| `POST` | `/empresas` | Cadastra empresa |
+| `GET` | `/empresas` | Lista todas as empresas |
+| `GET` | `/empresas?cnpj=` | Busca empresa por CNPJ |
+| `POST` | `/vagas` | Cadastra vaga |
+| `GET` | `/vagas` | Lista todas as vagas |
+| `GET` | `/vagas?id=` | Busca vaga por ID |
+
+Documentação completa dos payloads e status codes em [`docs/API_REST.md`](./backend-linketinder/docs/API_REST.md).
+
+### Menu CLI (modo alternativo)
+
+O backend também pode ser executado via CLI sem o servidor:
+
+```bash
+groovy src/main/groovy/Main.groovy
+```
 
 | Opção | Ação |
 |---|---|
-| `1` | Adicionar empresa |
+| `1` | Adicionar empresa (com vaga) |
 | `2` | Adicionar candidato |
 | `3` | Listar empresas |
 | `4` | Listar candidatos |
@@ -97,19 +154,26 @@ Relatórios gerados em `build/reports/tests/test/index.html`.
 ```
 src/main/groovy/
 ├── Main.groovy
-├── model/
-│   ├── Pessoa.groovy / InterfacePessoa.groovy
-│   ├── Candidato.groovy / Empresa.groovy
-│   ├── Vaga.groovy / Curtida.groovy / Match.groovy
-├── repository/
-│   └── Repository.groovy
+├── entities/
+│   ├── Pessoa.groovy / Candidato.groovy / Empresa.groovy
+│   ├── Vaga.groovy / Competencia.groovy
+│   ├── Curtida.groovy / Match.groovy
+├── dao/
+│   ├── ConexaoDB.groovy / IConexaoFactory.groovy / ConexaoJDBCFactory.groovy
+│   ├── CandidatoDao.groovy / EmpresaDao.groovy
+│   ├── VagaDao.groovy / CompetenciaDao.groovy
 ├── services/
-│   ├── PessoaServices.groovy
-│   ├── VagaServices.groovy
-│   └── SistemaCurtidas.groovy
+│   ├── CandidatoService.groovy / EmpresaService.groovy
+│   ├── VagaService.groovy / CurtidaService.groovy
+├── repositories/
+│   └── MatchRepositoryParaMock.groovy
+├── controllers/
+│   ├── CandidatoController.groovy
+│   ├── EmpresaController.groovy
+│   └── VagaController.groovy
 └── view/
-    ├── Cli.groovy
-    └── Cli*Action.groovy
+    ├── MenuCli.groovy
+    └── *Cli.groovy
 
 src/test/groovy/
 ├── model/        # CandidatoTest, EmpresaTest, MatchTest
@@ -160,31 +224,32 @@ src/
     └── global.css
 ```
 
-## Licença
-
-Este projeto está sob a licença de `Gustavo Cardoso` e `Acelera ZG`.
-
-## 👨‍💻 Autor
-
-Desenvolvido por [ghustdev](https://github.com/ghustdev)
-
-
----
-
-⭐ Se este projeto foi útil para você, considere dar uma estrela!
-
 ---
 
 ## Limitações atuais
 
-- Backend sem persistência em banco de dados (armazenamento em memória)
+- Frontend sem integração com a API (dados independentes no LocalStorage)
+- Curtidas e matches não persistem no banco — ficam em memória durante a execução do CLI
 - Sem autenticação ou controle de perfis
-- Sem API HTTP — comunicação apenas via CLI
-- Frontend sem integração com backend (dados independentes no LocalStorage)
+- Sem validação formal de CPF/CNPJ/CEP no CLI (leitura de texto livre)
 
 ---
 
 ## Documentação técnica
 
 - [Arquitetura e fluxos do backend](./backend-linketinder/docs/PROJETO.md)
+- [API REST — endpoints e payloads](./backend-linketinder/docs/API_REST.md)
+- [Schema SQL (DDL)](./backend-linketinder/docs/db_linketinder_ddl.sql)
+- [Dados de exemplo (DML)](./backend-linketinder/docs/db_linketinder_dml.sql)
+- [Consultas de validação](./backend-linketinder/docs/db_linketinder_dcl.sql)
 - [README do frontend](./frontend-linketinder/README.md)
+
+---
+
+## Licença
+
+Este projeto está sob a licença de `Gustavo Cardoso` e `Acelera ZG`.
+
+## Autor
+
+Desenvolvido por [ghustdev](https://github.com/ghustdev)
