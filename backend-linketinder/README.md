@@ -2,6 +2,12 @@
 
 Aplicação CLI para recrutamento, com persistência em PostgreSQL via JDBC.
 
+## API REST (Tomcat + Servlets)
+
+A documentacao completa da API REST (endpoints, payloads, troubleshooting e guia de implementacao sem frameworks) esta em:
+
+- [docs/API_REST.md](docs/API_REST.md)
+
 ## Requisitos
 
 - Java 21

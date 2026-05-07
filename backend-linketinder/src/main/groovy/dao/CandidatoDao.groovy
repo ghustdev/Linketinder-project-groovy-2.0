@@ -23,7 +23,8 @@ RETURNING id
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, candidato.nome)
             stmt.setString(2, candidato.sobrenome)
-            stmt.setDate(3, candidato.nascimento as Date)
+            stmt.setDate(3, new Date(candidato.nascimento.getTime()))
+//            stmt.setDate(3, candidato.nascimento as Date)
             stmt.setString(4, candidato.email)
             stmt.setString(5, candidato.cpf)
             stmt.setString(6, candidato.pais)
