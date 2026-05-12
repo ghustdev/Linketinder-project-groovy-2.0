@@ -50,7 +50,7 @@ dependencies {
 // Configuração do Servidor Tomcat embutido em tempo de execução (Gretty)
 gretty {
     servletContainer = 'tomcat9'
-    contextPath = '/' // localhost:8080/
+    contextPath = '/'
 }
 
 test {
